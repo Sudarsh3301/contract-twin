@@ -620,11 +620,6 @@ function renderEvidence(id, k) {
     `${counsel ? ' <span class="chip c-counsel">Question for counsel</span>' : ""}</p>`;
   const open = rows.reduce((n, r) => n + r.unconfirmed.length + r.ask.length, 0);
   if (open) h += `<p class="note prose">${open} ${plural(open, "fact behind this answer is", "facts behind this answer are")} not confirmed yet. Open “Show reasoning” to confirm or correct ${plural(open, "it", "them")}.</p>`;
-  rows.forEach((r, i) => {
-    h += `<h3>The clause: ${esc(TEMPLATE[r.template])}</h3>${quotesHi(k, r)}` +
-      (r.flips.length ? `<div class="flipbox" id="fl-${i}" aria-label="What would change this answer"></div>` : `<div id="fl-${i}"></div>`);
-  });
-  if (!rows.length) h += `<p class="note">There is no clause of this kind to quote.</p>`;
   h += `<details class="reasoning" id="reasoning"><summary>Show reasoning</summary>`;
   for (const r of rows) {
     const top = r.status === "provisional" ? sevClass(r.worst_sev) : r.status === "blocked" ? "blocked" :
@@ -637,7 +632,13 @@ function renderEvidence(id, k) {
       `${r.ask.length ? `; answer ${r.ask.map(x => `<code>${esc(x)}</code>`).join(", ")} (the compiler is unsure)` : ""}.</p>`;
     h += `<h3>Facts used from the clause</h3>` + (r.atoms.length ? atomRows(k, r.template, r.atoms, r.unconfirmed) : '<p class="note">None: no fact changes this answer.</p>') + `</div>`;
   }
-  h += `</details><p class="note prose">The rules apply the compiled reading of the clause. A reaction shown here means the clause is potentially triggered under that reading; it is not a legal conclusion.</p>`;
+  h += `</details>`;
+  rows.forEach((r, i) => {
+    h += `<h3>The clause: ${esc(TEMPLATE[r.template])}</h3>${quotesHi(k, r)}` +
+      (r.flips.length ? `<div class="flipbox" id="fl-${i}" aria-label="What would change this answer"></div>` : `<div id="fl-${i}"></div>`);
+  });
+  if (!rows.length) h += `<p class="note">There is no clause of this kind to quote.</p>`;
+  h += `<p class="note prose">The rules apply the compiled reading of the clause. A reaction shown here means the clause is potentially triggered under that reading; it is not a legal conclusion.</p>`;
   ev.innerHTML = h; ev.hidden = false;
   ev.querySelectorAll("[data-ver]").forEach(b => b.onclick = () => go("ev=" + id + "|" + b.dataset.ver, stateName));
   mountGraphs(id, k, rows);
