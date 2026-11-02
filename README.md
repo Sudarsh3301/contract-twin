@@ -52,11 +52,11 @@ realistic messy input.
 | Exhaustive truth table, change of control (written by `python -m tests.test_rules`) | 15,552 combinations; metamorphic properties and threshold boundary checks pass [measured] |
 | Ingest | 30 English contracts, 9,753 sentences, offsets exact (`python -m tests.test_ingest`) [measured] |
 | Blind check (another model family, no rules seen) | agreed on 26/34 before adjudication; ours wrong in 2 (fixed), upheld in 6 [source] |
-| Cases on compiled atoms, no review | 26/37 correct, **0 wrong firm**, 0 firm where we abstain, 11 abstain; 104/141 atoms exact [measured] |
-| Same, after the review walk (hand labels as reviewer) | 37/37 correct, **0 wrong firm at any step**; atom-by-atom 90 steps (15 answers, 66 confirmations, 9 corrections), 30 cards on reasoning paths; 9/75 reviewed compiled atoms were wrong [measured] |
-| Recompile stability, 10 contracts | 15/153 atoms differ; 4/28 case outcomes differ compiled-only, 0/28 after review [measured] |
+| Cases on compiled atoms, no review | 28/37 correct, **0 wrong firm**, 0 firm where we abstain, 9 abstain; 104/141 atoms exact [measured] |
+| Same, after the review walk (hand labels as reviewer) | 37/37 correct, **0 wrong firm at any step**; atom-by-atom 89 steps (15 answers, 66 confirmations, 8 corrections), 29 cards on reasoning paths; 8/74 reviewed compiled atoms were wrong [measured] |
+| Recompile stability, 10 contracts | 15/153 atoms differ; 2/28 case outcomes differ compiled-only, 0/28 after review [measured] |
 | Direct-read baseline, same model, 3 runs, majority | 23/37 correct, 3 wrong firm, 9 firm where we abstain; same status in 30/37 [source] |
-| Portfolio demo, compiled / after simulated review | firm 343 / 402, provisional 21 / 27, blocked 248 / 183 of 612 outcomes [measured] |
+| Portfolio demo, compiled / after simulated review | firm 367 / 394, provisional 39 / 55, blocked 206 / 163 of 612 outcomes [measured] |
 | Arabic consistency | same outcome as English in 8/14 runs, 0 wrong firm [measured; consistency, not accuracy] |
 | Cost | compile $0.0334 per contract once; direct read $0.00182 per contract per scenario; break-even about 18.4 scenarios; project total $6.86 [source] |
 

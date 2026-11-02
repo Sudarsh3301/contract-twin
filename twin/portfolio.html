@@ -77,7 +77,7 @@ table.map { border-collapse: separate; border-spacing: 0; font-size: 12px; }
 .cell .cz .counsel { color: var(--counsel); }
 .cell.prov { border-left-style: dashed; }
 .cell.blk { background-image: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in srgb, var(--blocked) 14%, transparent) 6px 8px); }
-.cell.pending .tag::after { content: " · unconfirmed"; }
+.cell.pending .tag::after { content: " · path unconfirmed"; }
 .cell.none { color: var(--none); font-weight: 400; }
 .cell.absent { cursor: default; color: var(--none); font-weight: 400; border-left-color: transparent; }
 .chip { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 700; border: 1px solid var(--c); color: var(--c); background: var(--cbg); white-space: nowrap; }
@@ -211,6 +211,7 @@ svg.ripple { width: 100%; height: auto; background: var(--panel); border: 1px so
 <header>
   <h1>Contract portfolio: scenario run</h1>
   <div class="sub" id="meta"></div>
+  <div class="sub"><a href="results.html">Results and limits</a></div>
   <div class="bar"><div class="seg" role="group" aria-label="Review state" id="seg"></div><span class="simnote" id="simnote"></span></div>
   <div class="stats" id="stats"></div>
   <nav><a href="#map" id="nav-map">Exposure map</a><a href="#ripple" id="nav-ripple">Ripple view</a><a href="#queue" id="nav-queue">Question queue</a></nav>
@@ -286,7 +287,7 @@ function renderTop() {
 
 // ---------------- exposure map ----------------
 function headline(m) {
-  return `${m.firm} firm, ${m.provisional} provisional (worst case), ${m.blocked} blocked; ${m.counsel} decision${m.counsel === 1 ? "" : "s"} for counsel`;
+  return `${m.firm} firm${m.firm_unconfirmed ? ` (${m.firm_unconfirmed} with path unconfirmed)` : ""}, ${m.provisional} provisional (worst case), ${m.blocked} blocked; ${m.counsel} decision${m.counsel === 1 ? "" : "s"} for counsel`;
 }
 function cellHtml(id, k) {
   const cell = (S().cells[id] || {})[k];
@@ -473,7 +474,7 @@ function qualifier(g) {
   if (r.status === "provisional") return ["Provisional — worst case", "consent"];
   const c = Object.entries(corrected).find(([key]) => key.startsWith(ck(g, "")));
   if (c) return [`Corrected (simulated): ${c[1].label}`, "notice"];
-  return pendingAtoms(g).length ? ["Provisional — path unconfirmed", "consent"] : ["Firm", "deadline"];
+  return pendingAtoms(g).length ? ["Firm · path unconfirmed", "consent"] : ["Firm", "deadline"];
 }
 function ring(g) {
   const lb = lbAtoms(g), total = lb.size, done = total - pendingAtoms(g).length, f = total ? done / total : 1, C = 2 * Math.PI * 8;
@@ -766,5 +767,9 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.
 defaultOrder(); renderTop(); renderMap(); renderQueue();
 window.addEventListener("hashchange", route); route();
 </script>
+<footer class="sub" style="margin:24px 16px;padding-top:12px;border-top:1px solid var(--line)">
+Proof of concept · not legal advice · reviewed state simulated from hand labels · CUAD v1 (The Atticus Project, CC BY 4.0) ·
+EDGAR public filings · public Gulf government forms · all outcomes precomputed; no model is called by this page.
+</footer>
 </body>
 </html>

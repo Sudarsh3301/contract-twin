@@ -654,7 +654,8 @@ def build_state(ctx: Ctx, sents: dict, library=LIBRARY, G: Graphs | None = None)
         n = Counter(c["status"] for c in mine)
         items = [x for x in qs + cards if sc["id"] in x["sev_by"]]
         summaries[sc["id"]] = dict(
-            firm=n["firm"], provisional=n["provisional"], blocked=n["blocked"],
+            firm=n["firm"], firm_unconfirmed=sum(c["status"] == "firm" and c.get("pending", False) for c in mine),
+            provisional=n["provisional"], blocked=n["blocked"],
             counsel=sum("legal_judgement" in c["causes"] for c in mine),
             react=sum(c["sev"] > 0 for c in mine), consent=sum(c["cls"] == "consent" for c in mine),
             notice=sum(c["cls"] == "notice" for c in mine), termination=sum(c["cls"] in ("termination", "prepayment") for c in mine),
@@ -1023,9 +1024,33 @@ def check(out: Path) -> None:
           + ", ".join(f"{k} {v / 1e6:.2f}" for k, v in sorted(size.items())) + f"; total {sum(size.values()) / 1e6:.2f}")
 
 
+SITE_FILES = ["index.html", "graphs.json", "results.html"]
+
+
+def site(src: Path, dst: Path):
+    """Copy what the hosted demo needs into `dst`: the page, the graph data it loads, the results page and the current
+    media. Nothing else (no schedules, caches, databases or old screenshots)."""
+    import shutil
+    missing = [f for f in SITE_FILES if not (src / f).exists()]
+    if missing:
+        raise SystemExit(f"build first (python -m twin.portfolio; python -m tests.evaluate): missing {missing}")
+    if dst.exists():
+        shutil.rmtree(dst)
+    (dst / "media").mkdir(parents=True)
+    for f in SITE_FILES:
+        shutil.copy2(src / f, dst / f)
+    for f in sorted((src / "media").glob("*")):
+        if f.suffix in (".png", ".mp4"):
+            shutil.copy2(f, dst / "media" / f.name)
+    files = sorted(p for p in dst.rglob("*") if p.is_file())
+    for p in files:
+        print(f"{p.stat().st_size / 1e6:6.2f} MB  {p.relative_to(dst).as_posix()}")
+    print(f"{sum(p.stat().st_size for p in files) / 1e6:.2f} MB in {len(files)} files -> {dst}")
+
+
 def main():
     ap = argparse.ArgumentParser(prog="python -m twin.portfolio")
-    ap.add_argument("cmd", nargs="?", default="run", choices=["run", "check", "measure", "simulate"])
+    ap.add_argument("cmd", nargs="?", default="run", choices=["run", "check", "measure", "simulate", "site"])
     ap.add_argument("--out", default="out/portfolio/")
     ap.add_argument("--atoms", default="compiled", choices=["compiled", "gold"])
     a = ap.parse_args()
@@ -1033,6 +1058,8 @@ def main():
     out = ROOT / a.out
     if a.cmd == "check":
         return check(out)
+    if a.cmd == "site":
+        return site(out, ROOT / "site")
     if a.cmd == "simulate":
         return print(simulate())
     if a.cmd == "measure":

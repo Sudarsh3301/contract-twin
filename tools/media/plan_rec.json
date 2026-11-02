@@ -1,0 +1,209 @@
+[
+ {
+  "name": "rec_play_firm_en",
+  "video": true,
+  "hash": "ev=sale_60|cuad:RaeSystems@review",
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "click": "#rg-0 [data-act=play]"
+   },
+   {
+    "wait": 6800,
+    "shot": "graph_play_firm_en.png"
+   },
+   {
+    "click": "#rg-0 [data-node='atom:threshold_pct']"
+   },
+   {
+    "wait": 1500,
+    "shot": "graph_clause_link_en.png"
+   }
+  ]
+ },
+ {
+  "name": "rec_flip_slider",
+  "video": true,
+  "hash": "ev=sale_60|cuad:RaeSystems@review",
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "click": "#rg-0 [data-act=flipseg][data-i='0']"
+   },
+   {
+    "wait": 1800,
+    "shot": "graph_flip_below.png"
+   },
+   {
+    "click": "#rg-0 [data-act=flipseg][data-i='1']"
+   },
+   {
+    "wait": 1800,
+    "shot": "graph_flip_above.png"
+   },
+   {
+    "click": "#rg-0 [data-act=flipseg][data-i='0']"
+   },
+   {
+    "wait": 1200
+   },
+   {
+    "click": "#rg-0 [data-act=flipseg][data-i='1']"
+   },
+   {
+    "wait": 1200
+   }
+  ]
+ },
+ {
+  "name": "rec_fork_share_exchange",
+  "video": true,
+  "hash": "ev=hold_exchange|cuad:Gopage",
+  "steps": [
+   {
+    "wait": 800
+   },
+   {
+    "eval": "document.getElementById('rg-1').scrollIntoView({block:'start'})"
+   },
+   {
+    "wait": 1500,
+    "shot": "graph_fork_open.png"
+   },
+   {
+    "click": "#rg-1 [data-act=branch][data-b='1']"
+   },
+   {
+    "wait": 2200,
+    "shot": "graph_fork_branch_consent.png"
+   },
+   {
+    "click": "#rg-1 [data-act=branch][data-b='0']"
+   },
+   {
+    "wait": 2000
+   },
+   {
+    "click": "#rg-1 [data-act=branch][data-b='-1']"
+   },
+   {
+    "wait": 1200
+   }
+  ]
+ },
+ {
+  "name": "rec_arabic",
+  "video": true,
+  "hash": "ev=sale_60|ar:twin_virtualscopics",
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "click": "#rg-0 [data-act=play]"
+   },
+   {
+    "wait": 8600
+   },
+   {
+    "eval": "(document.querySelector('#rg-0 .node.lb[data-node^=\"atom:\"]')||document.querySelector('#rg-0 [data-node^=\"atom:\"]')).dispatchEvent(new MouseEvent('click',{bubbles:true}))"
+   },
+   {
+    "wait": 1800,
+    "shot": "graph_arabic.png"
+   }
+  ]
+ },
+ {
+  "name": "rec_ripple",
+  "video": true,
+  "hash": "map",
+  "steps": [
+   {
+    "wait": 600
+   },
+   {
+    "click": "#nav-ripple"
+   },
+   {
+    "wait": 2600
+   },
+   {
+    "click": "[data-rip=sale_30]"
+   },
+   {
+    "wait": 2600
+   },
+   {
+    "click": "[data-rip=sale_60]"
+   },
+   {
+    "wait": 2600,
+    "shot": "ripple_sale_60.png"
+   },
+   {
+    "click": "[data-rip=ipo_200_60]"
+   },
+   {
+    "wait": 2600
+   }
+  ]
+ },
+ {
+  "name": "shot_diff",
+  "hash": "ev=sale_60|cuad:RaeSystems@review",
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "select": [
+     "#rg-0 [data-act=diff]",
+     "ipo_200_60"
+    ]
+   },
+   {
+    "wait": 800,
+    "shot": "graph_diff_sale_vs_ipo.png"
+   }
+  ]
+ },
+ {
+  "name": "shot_review",
+  "hash": "ev=sale_60|cuad:DynTek",
+  "steps": [
+   {
+    "wait": 900,
+    "shot": "graph_review_before.png"
+   },
+   {
+    "eval": "for(let i=0;i<8;i++){const x=document.querySelector('#rg-0 .pill:not(.done), #rg-0 .rg-bar [data-act=confirm]'); if(!x) break; x.dispatchEvent(new MouseEvent('click',{bubbles:true}));}"
+   },
+   {
+    "wait": 600,
+    "shot": "graph_review_after.png"
+   }
+  ]
+ },
+ {
+  "name": "shot_dark",
+  "dark": true,
+  "hash": "ev=sale_60|cuad:RaeSystems@review",
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "click": "#rg-0 [data-node='atom:threshold_pct']"
+   },
+   {
+    "wait": 600,
+    "shot": "graph_dark.png"
+   }
+  ]
+ }
+]

@@ -110,3 +110,19 @@ assert react("coc", fam, apply(State(), {"event": "share_sale", "buyer_pct": 50}
 assert react("coc", fam, apply(State(), {"event": "share_sale", "buyer_pct": 30}))[0].status == "NOT_TRIGGERED"
 assert react("coc", fam, apply(State(), {"event": "share_sale", "buyer_pct": 10, "buyer_is_competitor": True}))[0].status == "NEEDS_LAWYER"
 print("partial-number tests pass")
+
+# ownership measured two ways: a single acquirer vs the total change in ownership (an IPO spreads shares widely)
+from twin.rules import coc_reactions
+agg_clause = dict(whose="us", triggers=["ownership_threshold"], threshold_pct=50, threshold_op="gte",
+                  effect="termination_right", effect_holder="them")
+ipo_55 = apply(State(), {"event": "ipo", "gross_proceeds_usd": 100e6, "sponsor_pct_after": 45})
+assert coc_reactions(agg_clause, ipo_55)[0].status == "NEEDS_LAWYER"                                   # readings differ
+assert coc_reactions({**agg_clause, "threshold_measure": "aggregate"}, ipo_55)[0].status == "TRIGGERED"
+assert coc_reactions({**agg_clause, "threshold_measure": "single"}, ipo_55)[0].status == "NOT_TRIGGERED"
+assert coc_reactions(agg_clause, apply(State(), {"event": "share_sale", "buyer_pct": 60}))[0].status == "TRIGGERED"  # readings agree
+assert coc_reactions(agg_clause, apply(State(), {"event": "holding_insertion"}))[0].status == "NEEDS_LAWYER"      # new parent
+print("ownership-measure tests pass")
+reorg = dict(whose="us", triggers=["transaction_type"], transaction_types=["merger", "reorganization"], effect="consent", effect_holder="them")
+assert coc_reactions(reorg, apply(State(), {"event": "holding_insertion", "mechanism": "share_exchange"}))[0].status == "NEEDS_LAWYER"
+assert coc_reactions(reorg, apply(State(), {"event": "holding_insertion", "mechanism": "merger"}))[0].status == "TRIGGERED"
+print("share-exchange reading tests pass")

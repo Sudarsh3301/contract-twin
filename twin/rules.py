@@ -135,6 +135,11 @@ def coc_trigger(a: dict, s: State) -> tuple[K, str]:
     return out, why
 
 
+def aggregate_change(s: State) -> float:
+    """Share of the company changing hands in total: the larger of the biggest buyer and what the original holders gave up."""
+    return max(s.buyer_pct, 100 - min(s.retained_pct.values(), default=100))
+
+
 def _coc_trigger(a: dict, s: State, tr: Trace | None = None) -> tuple[K, str, dict]:
     """(truth, reason, {trigger kind: cause} for each limb that is unknown when the whole trigger is unknown).
     Steps go into `tr` when given."""
@@ -149,9 +154,22 @@ def _coc_trigger(a: dict, s: State, tr: Trace | None = None) -> tuple[K, str, di
     buyer = lambda: tr.fact("buyer_pct", f"buyer gets {s.buyer_pct}%", K.T, s.buyer_pct)
     for t in a.get("triggers", []):
         if t == "ownership_threshold":
-            v = k(cmp(s.buyer_pct, a.get("threshold_op", "gte"), a["threshold_pct"]))
-            ps = [ta, buyer(), tr.atom(a, "threshold_pct"), tr.atom(a, "threshold_op")]
-            label = f"buyer {s.buyer_pct}% vs {a.get('threshold_op','gte')} {a['threshold_pct']}%"
+            # "any person acquires X%" (single acquirer) and "a change in ownership of X%" (aggregate) differ when shares
+            # spread to many holders (an IPO); a new holding company acquires all direct shares while the ultimate owners
+            # stay the same. When the clause does not say which it means, both readings are tried.
+            op, thr, measure = a.get("threshold_op", "gte"), a["threshold_pct"], a.get("threshold_measure")
+            agg = aggregate_change(s)
+            single, whole = cmp(s.buyer_pct, op, thr), cmp(agg, op, thr)
+            v = k(single) if measure == "single" else k(whole) if measure == "aggregate" else k(single) if single == whole else K.U
+            if s.holding_position and measure != "aggregate" and not single:
+                v = K.U     # the new parent acquires 100% of the direct shares: a reading question
+            ps = [ta, buyer(), tr.fact("aggregate_change", f"ownership changing hands in total: {agg}%", K.T, agg),
+                  tr.atom(a, "threshold_pct"), tr.atom(a, "threshold_op")]
+            label = f"buyer {s.buyer_pct}% vs {op} {thr}%" + (
+                "" if v != K.U else " (single acquirer and total change in ownership read differently)" if not s.holding_position
+                else " (does a new parent company count as an acquirer?)")
+            if v == K.U:
+                open_[t] = "legal_judgement"
         elif t == "retained_stake":
             q = a.get("qualifying_ipo")
             qipo = bool(q) and s.listed and (q["test"] != "proceeds" or s.ipo_proceeds >= q["threshold"])
@@ -184,7 +202,11 @@ def _coc_trigger(a: dict, s: State, tr: Trace | None = None) -> tuple[K, str, di
             ps = [ta, tr.fact("management_changed", "management changes", k(s.management_changed), s.management_changed), mech()]
             label = f"management changed: {s.management_changed}"
         elif t == "transaction_type":
-            v = k(s.mechanism in a.get("transaction_types", []))
+            types = a.get("transaction_types", [])
+            v = k(s.mechanism in types)
+            if s.mechanism == "share_exchange" and "reorganization" in types and not v:
+                v = K.U     # is a share-for-share exchange with a new parent a "reorganization"? the same reading question as in assignment
+                open_[t] = "legal_judgement"
             ps = [ta, mech(), tr.atom(a, "transaction_types")]
             label = f"mechanism {s.mechanism or 'none'} vs {a.get('transaction_types')}"
         elif t == "open_textured":
@@ -194,9 +216,12 @@ def _coc_trigger(a: dict, s: State, tr: Trace | None = None) -> tuple[K, str, di
                 ps.append(mech())
                 label = "counterparty judgement standard"
             else:   # magnitude word: a majority change is significant/material on any reading
-                v = K.T if s.buyer_pct > 50 else (K.U if s.buyer_pct > 0 else K.F)
+                size = max(s.buyer_pct, aggregate_change(s))
+                v = K.T if size > 50 else (K.U if size > 0 or s.holding_position else K.F)
                 ps.append(buyer())
-                label = f"open-textured magnitude, buyer {s.buyer_pct}%"
+                label = f"open-textured magnitude, buyer {s.buyer_pct}%" + (
+                    f", {size}% changing hands in total" if size != s.buyer_pct else "") + (
+                    ", new parent company" if s.holding_position and size == 0 else "")
             open_[t] = "legal_judgement"
         elif t == "parent_direct_ownership":
             v = K.U if s.holding_position == "between_parent_and_borrower" else K.F
@@ -402,7 +427,7 @@ def _critical(key: str, s: State) -> list:
     """Values worth trying for an unknown number. Rules only compare such numbers with values in the state, so the
     outcome can change only at those values: trying each one, a point just above it, and the extremes covers every case."""
     if key in PCT:
-        pts = {s.buyer_pct, s.largest_other_pct, *s.retained_pct.values()}
+        pts = {s.buyer_pct, s.largest_other_pct, aggregate_change(s), *s.retained_pct.values()}
         return sorted({0.0, 100.0} | pts | {p + 1e-6 for p in pts})
     if key == "qipo_threshold":
         return [0.0, s.ipo_proceeds, s.ipo_proceeds + 1e-6, 1e15]
@@ -433,6 +458,10 @@ def _plan(template: str, family: dict, s: State):
         if k in POWER:
             return _subsets(POWER[k], k == "carve_outs")
         return _critical(k, s)
+    if template == "coc":
+        unreached = _effects_unreached(keys, blockers, base, s, domain)
+        if unreached:
+            return "direct", [unreached]
     if any(not domain(k) or b.endswith("refers_to_missing") for k, b in zip(keys, blockers)):
         missing = any(b.endswith("refers_to_missing") for b in blockers)
         tr = _fork_trace(keys, blockers)
@@ -453,6 +482,36 @@ def _plan(template: str, family: dict, s: State):
         return "direct", [traced("NEEDS_LAWYER", f"{template}: too many readings ({why})", cause="check_extraction",
                                  tr=_fork_trace(keys, blockers, {k: len(o) for k, o in zip(keys, options)}))]
     return "try", keys, options, base
+
+
+def _effects_unreached(keys, blockers, base: dict, s: State, domain) -> Reaction | None:
+    """Strong Kleene: false AND unknown is false. When every unresolved atom of a change-of-control clause is part of its
+    effects, and the trigger is false under every reading of the other unresolved atoms, the effects are never reached:
+    the outcome is no reaction, whatever the effects say. Returns that firm outcome, or None to keep the clause open."""
+    rest = [(k, b) for k, b in zip(keys, blockers) if ref(k) != "effects"]
+    if len(rest) == len(keys) or any(not domain(k) or b.endswith("refers_to_missing") for k, b in rest):
+        return None
+    from itertools import product
+    options = [[(k, v) for v in domain(k)] for k, _ in rest]
+    n = 1
+    for o in options:
+        n *= len(o)
+    if n > MAX_READINGS:
+        return None
+    with quiet():
+        for combo in product(*options):
+            try:
+                if _coc_trigger({**base, **dict(combo)}, s)[0] != K.F:
+                    return None
+            except (KeyError, TypeError, ValueError):      # a reading needs a value that is not known
+                return None
+    first = next(product(*options))
+    tr = Trace()
+    _coc_trigger({**base, **dict(first)}, s, tr)
+    eff = [k for k in keys if ref(k) == "effects"]
+    tr.limb("unreached", "the trigger is false under every reading, so the effects (" + ", ".join(eff) + ") are not reached",
+            K.F, [x for x in tr.steps if x.startswith(("limb:", "exc:"))])
+    return tr.done("NOT_TRIGGERED")
 
 
 def _try(template: str, base: dict, s: State, combo) -> list[Reaction]:

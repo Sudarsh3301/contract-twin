@@ -14,37 +14,37 @@ Proof of concept. Not legal advice. Nothing here is lawyer-reviewed. Every numbe
 | Atoms | Correct | Wrong firm | Firm where we abstain | Abstain | Grade |
 |---|---|---|---|---|---|
 | Hand-labelled (ceiling) | 37/37 | 0 | 0 | 0 | measured |
-| Compiled, no review | 26/37 | 0 | 0 | 11 | measured |
+| Compiled, no review | 28/37 | 0 | 0 | 9 | measured |
 | Compiled, after review walk | 37/37 | 0 | none | none | measured (hand labels play the reviewer) |
 
-Wrong firm means a firm answer that differs from a firm expectation. On the compiled atoms, 104 of 141 atoms (73.8%) equal the hand label, 7 are wrong and 30 are unknown [measured]. The cases that are not correct without review: R01, R02, R10, R12, R14, R15, R17, R18, R19, R20, R26.
+Wrong firm means a firm answer that differs from a firm expectation. On the compiled atoms, 104 of 141 atoms (73.8%) equal the hand label, 7 are wrong and 30 are unknown [measured]. The cases that are not correct without review: R01, R10, R12, R15, R17, R18, R19, R20, R26.
 
 ## Review effort
 
 | Walk | Blocking answers | Confirmations | Corrections | Steps | End | Wrong firm at any step |
 |---|---|---|---|---|---|---|
-| One atom per step | 15 | 66 | 9 | 90 | 37/37 | 0 |
-| One reasoning-path card per step | 15 | 30 cards (69 atoms) | 9 | 45 | 37/37 | 0 |
+| One atom per step | 15 | 66 | 8 | 89 | 37/37 | 0 |
+| One reasoning-path card per step | 15 | 29 cards (67 atoms) | 8 | 44 | 37/37 | 0 |
 
-Hidden error rate of load-bearing compiled atoms on the cases: 9 of 75 atoms a reviewer confirmed or corrected were wrong (12.0%) [measured]. Compile agreement and the support check did not separate the wrong atoms from the right ones. On the portfolio, the simulated review confirmed 110 atoms and corrected 8 (6.8%) [measured].
+Hidden error rate of load-bearing compiled atoms on the cases: 8 of 74 atoms a reviewer confirmed or corrected were wrong (10.8%) [measured]. Compile agreement and the support check did not separate the wrong atoms from the right ones. On the portfolio, the simulated review confirmed 110 atoms and corrected 8 (6.8%) [measured].
 
-Portfolio: 77 reasoning-path cards before review (2.03 per contract, 173 single-atom confirmations, 63 blocking questions); 48 cards after the simulated review (1.26 per contract) [measured]. Steps count reviewer actions, not reviewer time.
+Portfolio: 92 reasoning-path cards before review (2.42 per contract, 207 single-atom confirmations, 63 blocking questions); 57 cards after the simulated review (1.5 per contract) [measured]. Steps count reviewer actions, not reviewer time.
 
 ## Portfolio outcomes
 
 | State | Firm | Provisional (worst case) | Blocked | Of |
 |---|---|---|---|---|
-| Compiled, no review | 343 | 21 | 248 | 612 |
-| After review (simulated from hand labels) | 402 | 27 | 183 | 612 |
+| Compiled, no review | 367 | 39 | 206 | 612 |
+| After review (simulated from hand labels) | 394 | 55 | 163 | 612 |
 
 NEEDS_LAWYER reactions by main cause [measured]:
 
 | State | All | Check extraction | Missing document | Missing fact | Decision for counsel |
 |---|---|---|---|---|---|
-| Compiled, no review | 269 | 201 | 43 | 0 | 25 |
-| After review (simulated) | 210 | 134 | 46 | 0 | 30 |
+| Compiled, no review | 245 | 158 | 34 | 0 | 53 |
+| After review (simulated) | 218 | 113 | 40 | 0 | 65 |
 
-Decisions for counsel: 25 outcomes before review, 30 after. The count rises because settling the extraction shows the real legal forks behind it. Hand labels cover 41 clauses in 27 contracts; 11 contracts (67 clauses) stay as compiled.
+Decisions for counsel: 53 outcomes before review, 65 after. The count rises because settling the extraction shows the real legal forks behind it. Hand labels cover 41 clauses in 27 contracts; 11 contracts (67 clauses) stay as compiled.
 
 ## Direct read by a model, against the twin
 
@@ -56,7 +56,7 @@ Baseline: the same model (deepseek/deepseek-v4.1-flash) answers each case from t
 | Direct read, run 1 | 24 | 6 | 7 | 0 |
 | Direct read, run 2 | 23 | 4 | 9 | 1 |
 | Direct read, run 3 | 24 | 4 | 9 | 0 |
-| Twin, compiled, no review | 26 | 0 | 0 | 11 |
+| Twin, compiled, no review | 28 | 0 | 0 | 9 |
 
 Run-to-run agreement: the direct read keeps the same status in 30/37 cases and the same status, kind, holder and due date in 22/37. The twin gives the same answer every time for a given compiled snapshot, because the rules are code (it is the compile step that varies; see stability).
 
@@ -90,10 +90,10 @@ Recompile once with a fresh cache, same models and prompts, on the 10 contracts 
 |  | Differ between the two compiles | Of |
 |---|---|---|
 | Atoms | 15 | 153 (9.8%) |
-| Scenario outcomes, compiled only | 4 | 28 cases (14.3%) |
+| Scenario outcomes, compiled only | 2 | 28 cases (7.1%) |
 | Scenario outcomes, after the review walk | 0 | 28 cases (0.0%) |
 
-Compiled only, these cases: first compile 21 correct, 0 wrong firm, 7 abstain; second compile 17 correct, 0 wrong firm, 11 abstain. The review walk needed 90 actions on the first compile and 91 on the second (9 and 9 corrections), and reached 37 and 37 of 37 cases correct (all cases, not only these 28), with 0 wrong firm answers at every step.
+Compiled only, these cases: first compile 23 correct, 0 wrong firm, 5 abstain; second compile 21 correct, 0 wrong firm, 7 abstain. The review walk needed 89 actions on the first compile and 90 on the second (8 and 8 corrections), and reached 37 and 37 of 37 cases correct (all cases, not only these 28), with 0 wrong firm answers at every step.
 
 ## What failed, and why
 
@@ -106,7 +106,7 @@ Compiled only, these cases: first compile 21 correct, 0 wrong firm, 7 abstain; s
 ## Limits
 
 - No lawyer has reviewed the rules, the cases, the gold atoms or the adjudication. Outputs say a clause is potentially triggered under a reading; they are not legal conclusions.
-- The case set is small: 37 scenarios on 30 English contracts. A rate such as 70.3% correct has wide uncertainty.
+- The case set is small: 37 scenarios on 30 English contracts. A rate such as 75.7% correct has wide uncertainty.
 - One author wrote the cases, the gold atoms and the rules. The blind check is the only independent test, and it is a model, not a person.
 - Arabic is checked for consistency with the English source, not for accuracy. The reviewed state of the demo is simulated from hand labels, not from a reviewer.
 - Three clause types (change of control, assignment, term and renewal) and four event types. Direct reactions only, no cascades.
