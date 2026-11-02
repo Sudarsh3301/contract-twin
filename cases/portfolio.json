@@ -49,7 +49,8 @@
   },
   "zounds_hearing_inc_manufacturing_design_marketing_agreem": {
    "our_party": "the Manufacturer",
-   "src": "cuad:Zounds"
+   "src": "cuad:Zounds",
+   "note": "The Manufacturer is InnerScope Hearing Technologies; Zounds Hearing (file title) is the Subcontractor. Our party = the Manufacturer, as in the cases."
   },
   "tricitybanksharescorp_05_15_1998_ex_10_outsourcing_agreement": {
    "our_party": "Customer",
@@ -60,7 +61,7 @@
    "src": "cuad:JointCorp"
   },
   "amscan_2011_credit": {
-   "our_party": "Holdings and the Borrowers (Amscan group)",
+   "our_party": "Holdings (Amscan group, incl. the Borrowers)",
    "src": "edgar:Amscan"
   },
   "vertexenergyinc_20200113_8_k_ex_10_1_11943624_ex_10_1_market": {
@@ -76,53 +77,53 @@
    "src": "cuad:EuropeanMicro"
   },
   "kiromicbiopharma_inc_04_08_2020_ex_10_28_joint_venture_agree": {
-   "our_party": "Kiromic",
+   "our_party": "KIROMIC BIOPHARMA Inc. (JV partner of Molipharma)",
    "src": "cuad:Kiromic"
   },
   "agapeatpcorp_20191202_10_ka_ex_10_1_11911128_ex_10_1_supply": {
-   "our_party": "the filing company named in the file title",
+   "our_party": "the Customer (Agape ATP International Holding)",
    "src": null
   },
   "calpine_2017_revolver": {
-   "our_party": "the filing company named in the file title",
+   "our_party": "the Borrower (Calpine Corporation)",
    "src": null
   },
   "ehaveinc_20190515_20_f_ex_4_44_11678816_ex_4_44_license_agre": {
-   "our_party": "the filing company named in the file title",
+   "our_party": "Ehave",
    "src": null
   },
   "energouscorp_03_16_2017_ex_10_24_strategic_alliance_agreemen": {
-   "our_party": "the filing company named in the file title",
+   "our_party": "ENERGOUS",
    "src": null
   },
   "freezetaginc_20180411_8_k_ex_10_1_11139603_ex_10_1_sponsorsh": {
-   "our_party": "the filing company named in the file title",
+   "our_party": "Company (Freeze Tag, Inc.)",
    "src": null
   },
   "garrettmotioninc_20181001_8_k_ex_2_4_11364532_ex_2_4_intelle": {
-   "our_party": "the filing company named in the file title",
+   "our_party": "Garrett Motion Inc. (SpinCo)",
    "src": null
   },
   "healthgatedatacorp_11_24_1999_ex_10_1_hosting_and_management": {
-   "our_party": "the filing company named in the file title",
+   "our_party": "HealthGate",
    "src": null
   },
   "lantheus_2014_credit": {
-   "our_party": "the filing company named in the file title",
+   "our_party": "the Parent and the Borrower (Lantheus)",
    "src": null
   },
   "middlebrookpharmaceuticals_inc_03_18_2010_ex_10_1_promotion": {
-   "our_party": "the filing company named in the file title",
+   "our_party": "MBRK",
    "src": null
   },
   "sfgfinancialcorp_05_12_2009_ex_10_1_software_license_and_mai": {
-   "our_party": "the filing company named in the file title",
+   "our_party": "Licensor (SFG Financial Corp)",
    "src": null
   },
   "virtuososurgicalinc_20191227_1_a_ex1a_6_mat_ctrct_11933379_e": {
-   "our_party": "the filing company named in the file title",
+   "our_party": "Virtuoso Surgical, Inc. (licensee of JHU)",
    "src": null
   }
  },
- "_checked": "2026-11-02: role names checked against each contract's parties clause; 2 fixed (RaeSystems, VerticalNet)"
+ "_checked": "2026-11-02: every role checked against the parties clause; filer used as our party where the filer is a party"
 }

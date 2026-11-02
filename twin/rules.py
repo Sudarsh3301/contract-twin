@@ -91,7 +91,10 @@ def coc_reactions(a: dict, s: State) -> list[Reaction]:
         due = None
         if st == K.T and e["effect"] == "notice" and e.get("notice"):
             due = add_period(s.as_of, *e["notice"])
-        out.append(Reaction(STATUS[st], e["effect"] if st != K.F else "", e.get("effect_holder", ""), due, why2, ("coc",)))
+        holder = e.get("effect_holder", "")
+        if holder == "either":   # mutual clause: the party that changed control (us) gives notice; the other party holds rights
+            holder = "us" if e["effect"] == "notice" else "them"
+        out.append(Reaction(STATUS[st], e["effect"] if st != K.F else "", holder, due, why2, ("coc",)))
     return out
 
 
@@ -169,6 +172,18 @@ CHOICE = {"whose": ["us", "them", "either"], "threshold_op": ["gt", "gte"], "ope
           "restricted": [True, False], "consent_needed": [True, False],
           "mode": ["auto", "evergreen", "option", "mutual", "conditional", "none"]}
 MAX_READINGS = 5000
+PCT = {"threshold_pct", "competitor_threshold_pct", "retained_pct", "post_ipo_threshold_pct"}
+
+
+def _critical(key: str, s: State) -> list:
+    """Values worth trying for an unknown number. Rules only compare such numbers with values in the state, so the
+    outcome can change only at those values: trying each one, a point just above it, and the extremes covers every case."""
+    if key in PCT:
+        pts = {s.buyer_pct, s.largest_other_pct, *s.retained_pct.values()}
+        return sorted({0.0, 100.0} | pts | {p + 1e-6 for p in pts})
+    if key == "qipo_threshold":
+        return [0.0, s.ipo_proceeds, s.ipo_proceeds + 1e-6, 1e15]
+    return []
 
 
 def _subsets(items, allow_empty):
@@ -187,9 +202,15 @@ def react(template: str, family: dict, s: State) -> list[Reaction]:
         return [Reaction("NOT_TRIGGERED", reason="event changes no ownership")]
     keys = [b.split(" is ")[0] for b in blockers]
     why = "; ".join(blockers)
-    if any(k not in CHOICE and k not in POWER or b.endswith("refers_to_missing") for k, b in zip(keys, blockers)):
+    def domain(k):
+        if k in CHOICE:
+            return CHOICE[k]
+        if k in POWER:
+            return _subsets(POWER[k], k == "carve_outs")
+        return _critical(k, s)
+    if any(not domain(k) or b.endswith("refers_to_missing") for k, b in zip(keys, blockers)):
         return [Reaction("NEEDS_LAWYER", reason=f"{template}: {why}")]
-    options = [[(k, v) for v in (CHOICE[k] if k in CHOICE else _subsets(POWER[k], k == "carve_outs"))] for k in keys]
+    options = [[(k, v) for v in domain(k)] for k in keys]
     n = 1
     for o in options:
         n *= len(o)

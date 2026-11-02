@@ -101,3 +101,12 @@ with open("out/truth_coc_review.csv", "w", newline="") as f:
     for key in sorted(view, key=str):
         w.writerow([f"{c}={v}" for c, v in key])
 print(f"truth_coc_review.csv {len(view)} rows (for sign-off)")
+
+# partial atoms: an unknown number is tried at every value where the outcome could change
+from twin.rules import react
+fam = dict(whose="us", triggers=["ownership_threshold", "competitor_stake"], threshold_pct=50, threshold_op="gte",
+           effect="termination_right", effect_holder="them", _unknown=["competitor_threshold_pct is unknown"])
+assert react("coc", fam, apply(State(), {"event": "share_sale", "buyer_pct": 50}))[0].status == "TRIGGERED"
+assert react("coc", fam, apply(State(), {"event": "share_sale", "buyer_pct": 30}))[0].status == "NOT_TRIGGERED"
+assert react("coc", fam, apply(State(), {"event": "share_sale", "buyer_pct": 10, "buyer_is_competitor": True}))[0].status == "NEEDS_LAWYER"
+print("partial-number tests pass")

@@ -47,7 +47,9 @@ def check(case, st, rs):
         r = m[0]
         if "due" in want and str(r.due) != want["due"]:
             errs.append(f"{want['kind']} due {r.due} != {want['due']}")
-        if "holder" in want and r.holder and SAME.get(r.holder, r.holder) != SAME.get(want["holder"], want["holder"]) \
+        if "holder" in want and not r.holder:
+            errs.append(f"holder unknown (expected {want['holder']})")
+        elif "holder" in want and SAME.get(r.holder, r.holder) != SAME.get(want["holder"], want["holder"]) \
                 and not (want["holder"] == "counterparty" and r.holder == "them"):
             errs.append(f"holder {r.holder} != {want['holder']}")
     return errs
