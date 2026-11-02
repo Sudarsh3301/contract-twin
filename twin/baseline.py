@@ -164,7 +164,7 @@ def run(dry=False, workers=8):
                           "majority": {"answer": m, "outcome": gm[0], "errors": gm[1]}})
     ncalls = len(res)
     per_call = cost / ncalls
-    compile_pc = 1.187 / 30      # measured: tasks/reports/T03.md, fresh-cache compile of 30 contracts x 3 families
+    compile_pc = 1.187 / 30      # measured: fresh-cache compile cost of 30 contracts x 3 families
     out = {"model": llm.ANSWERER, "runs": K_RUNS, "temperature": TEMP,
            "per_run": [tally(r) for r in per_run], "majority": tally(maj),
            "agreement": {"same_status": f"{agree_status}/{len(jobs)}", "same_status_kind_holder_due": f"{agree_all}/{len(jobs)}"},
