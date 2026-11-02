@@ -1,6 +1,7 @@
-.env
+.env*
 __pycache__/
 *.pyc
 out/
 data/raw/
 *.sqlite
+.vercel
