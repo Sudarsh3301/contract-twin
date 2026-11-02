@@ -17,6 +17,14 @@ data/curated. Atoms are derived from the variants; rules are derived from the at
 | CT9 cross-reference to another instrument's CoC | Amscan (d) | -> gap (refers_to_missing) |
 | CT10 competitor takes a disclosable stake (5% under Rule 13d-1) | VirtualScopics (d) | buyer is competitor and % |
 | CT11 change in a named key leadership position | VirtualScopics (e) | management_changes flag |
+### Decomposition rule: qualifier scope
+A vague qualifier in front of a list governs every item in the list. "An unacceptable change in the control or
+management" (BlackBox) and "a significant change in the management or ownership" (mPhase) are ONE open-textured
+trigger, not a clean management-change trigger plus a vague one. Splitting them turns a judgement call into a firm
+answer. Record only `open_textured` (with judgement or magnitude) when the qualifier covers the whole list; record a
+clean trigger only when it stands in its own limb without the qualifier (iPayment: "a change in the power to direct
+the management").
+
 ### Carve-outs
 | Carve-out | Source |
 |---|---|

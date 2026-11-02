@@ -20,7 +20,7 @@ from pathlib import Path
 from . import llm
 from .ingest import DB, ROOT
 
-PROMPT_VERSION = "v2"
+PROMPT_VERSION = "v3"
 K_RUNS, TEMP, CAP, DEFS, MAXLEN = 3, 0.7, 40, 8, 1200
 STATUSES = ["known", "silent", "unknown", "refers_to_missing"]
 
@@ -163,6 +163,15 @@ def user_prompt(title, sents, party=None):
 
 # ---- retrieval -----------------------------------------------------------------------------------------------------
 
+PARTIES = re.compile(r"between|by\s+and\s+among|entered\s+into|hereinafter|\(the\s+[\"“]|collectively|بين|الطرف", re.I)
+
+
+def parties(con, cid, n=3):
+    """The first sentences of the contract that name the parties: they say who 'us' and 'them' are."""
+    rows = con.execute("SELECT sid, text FROM sentence WHERE contract_id=? ORDER BY sid LIMIT 15", (cid,)).fetchall()
+    return [(sid, t) for sid, t in rows if PARTIES.search(t)][:n]
+
+
 def retrieve(con, cid, template):
     rows = con.execute("SELECT sid, text FROM sentence WHERE contract_id=? ORDER BY sid", (cid,)).fetchall()
     kw = [(re.compile(p, re.I), w) for p, w in KEYWORDS[template].items()]
@@ -176,6 +185,8 @@ def retrieve(con, cid, template):
             if dsid not in chosen and len(term) >= 4 and term in text[sid]:
                 uses[dsid] += 1
     chosen |= {sid for sid, _ in uses.most_common(DEFS)}
+    if template in ("coc", "assign") and chosen:     # whose change of control, and who holds a right, depend on the parties clause
+        chosen |= {sid for sid, _ in parties(con, cid)}
     return [(sid, text[sid]) for sid in sorted(chosen)]
 
 
@@ -359,7 +370,7 @@ def vote(template, runs, text=None):
             continue
         cnt = Counter((r[key]["status"], canon(r[key]["value"])) for r in runs)
         (st, cv), n = cnt.most_common(1)[0]
-        if n < 2:
+        if n < 2 or (st == "silent" and n < len(runs)):     # silent needs every run; a split with silent is unknown
             st, cv, n = "unknown", "null", 0
         agree = [r[key] for r in runs if (r[key]["status"], canon(r[key]["value"])) == (st, cv)]
         out[key] = {"status": st, "value": json.loads(cv) if st == "known" else None, "k_agree": n,
@@ -368,9 +379,11 @@ def vote(template, runs, text=None):
 
 
 # ---- support check ---------------------------------------------------------------------------------------------------
-SUPPORT_SCHEMA = {"type": "object", "properties": {"checks": {"type": "array", "items": {
-    "type": "object", "properties": {"key": {"type": "string"}, "supported": {"type": "string", "enum": YN}},
-    "required": ["key", "supported"], "additionalProperties": False}}}, "required": ["checks"], "additionalProperties": False}
+def support_schema(keys):
+    """The checker may answer only for the keys it was asked about."""
+    return {"type": "object", "properties": {"checks": {"type": "array", "items": {
+        "type": "object", "properties": {"key": {"type": "string", "enum": list(keys)}, "supported": {"type": "string", "enum": YN}},
+        "required": ["key", "supported"], "additionalProperties": False}}}, "required": ["checks"], "additionalProperties": False}
 
 
 def claim(key, value):
@@ -380,17 +393,26 @@ def claim(key, value):
     return [{f: v for f, v in e.items() if v not in (None, False)} for e in value]
 
 
-def support_check(template, atoms, text, **kw):
+def support_check(template, atoms, text, party=None, parties_text=(), **kw):
+    """-> ({key: True / False / None}, calls). None = the checker gave no usable answer for that key (after one retry)."""
     items = [(k, a) for k, a in atoms.items() if a["status"] == "known"]
     if not items:
         return {}, []
-    blocks = "\n\n".join(f"Check {k}\nQuestion: {ATOMS[template][k][2]}\nClaimed answer: {json.dumps(claim(k, a['value']))}\n"
-                         f"Text:\n" + "\n".join(f"- {text[s][:MAXLEN]}" for s in a["sids"]) for k, a in items)
-    r = llm.ask(llm.CHECKER, "You verify claims against contract text. For each check, answer yes only if the given text itself "
-                "states the claimed answer to the question; otherwise no. Answer for every check, using its key.",
-                blocks, SUPPORT_SCHEMA, prompt_version=PROMPT_VERSION, **kw)
-    got = {c["key"]: c["supported"] == "yes" for c in r["data"]["checks"]}
-    return {k: got.get(k, False) for k, _ in items}, [r]
+    keys = [k for k, _ in items]
+    head = (f"'us' = {party or 'the company named in the contract title'}; 'them' = the other party.\n"
+            + ("Parties clause:\n" + "\n".join(f"- {t[:MAXLEN]}" for _, t in parties_text) + "\n\n" if parties_text else "\n"))
+    blocks = head + "\n\n".join(f"Check {k}\nQuestion: {ATOMS[template][k][2]}\nClaimed answer: {json.dumps(claim(k, a['value']))}\n"
+                                f"Text:\n" + "\n".join(f"- {text[s][:MAXLEN]}" for s in a["sids"]) for k, a in items)
+    system = ("You verify claims against contract text. For each check, answer yes only if the given text itself "
+              "states the claimed answer to the question; otherwise no. Answer for every check, using its key exactly.")
+    got, calls = {}, []
+    for seed in (0, 1):     # one retry when a key got no answer
+        r = llm.ask(llm.CHECKER, system, blocks, support_schema(keys), seed=seed, prompt_version=PROMPT_VERSION, **kw)
+        calls.append(r)
+        got = {c["key"]: c["supported"] == "yes" for c in r["data"]["checks"]}
+        if all(k in got for k in keys):
+            break
+    return {k: got.get(k) for k in keys}, calls
 
 
 # ---- assembling gold-shaped atoms --------------------------------------------------------------------------------
@@ -477,6 +499,11 @@ def assemble(template, atoms, guard_hit=False):
                 a[name] = [ok[n], ok[u]]
     if bad:
         a["_unknown"] = bad
+    # atoms the rules do not need but whose vote was unknown stay visible to the review queue
+    skip = {b.split(" is ")[0] for b in bad}
+    opt = [f"{k} is {x['status']}" for k, x in atoms.items() if x["status"] in ("unknown", "refers_to_missing") and k not in skip and k != "present"]
+    if opt:
+        a["_optional_unknown"] = opt
     return a
 
 
@@ -485,6 +512,7 @@ def assemble(template, atoms, guard_hit=False):
 def compile_one(con_path, cid, template, title, cache_dir, use_cache, party=None, budget=llm.BUDGET_USD):
     con = sqlite3.connect(con_path)
     sents = retrieve(con, cid, template)
+    pt = parties(con, cid)
     full = " ".join(t for _, t in con.execute("SELECT sid, text FROM sentence WHERE contract_id=?", (cid,)))
     con.close()
     guard_hit = bool(re.search(GUARD[template], full, re.I))
@@ -496,9 +524,9 @@ def compile_one(con_path, cid, template, title, cache_dir, use_cache, party=None
     sch, sysm, usr = schema(template), system_prompt(template), user_prompt(title, sents, party)
     calls = [llm.ask(llm.ANSWERER, sysm, usr, sch, seed=i, temperature=TEMP, prompt_version=PROMPT_VERSION, **kw) for i in range(K_RUNS)]
     atoms = vote(template, [clean_run(template, c["data"], cand) for c in calls], cand)
-    support, sc = support_check(template, atoms, cand, **kw)
+    support, sc = support_check(template, atoms, cand, party, pt, **kw)
     for k, ok in support.items():
-        if not ok:
+        if ok is not True:      # rejected (False) or no usable reply (None): unknown, never silent
             atoms[k].update(status="unknown", value=None)
     return dict(atoms=atoms, support=support, guard=guard_hit, cands=[s for s, _ in sents], calls=calls + sc)
 
@@ -561,7 +589,7 @@ def run(only="", run_name="main", dry=False, workers=6, extra_budget=3.0, lang="
         cost += sum(c["cost"] for c in r["calls"] if not c["cached"])
         con.executemany("INSERT INTO atom VALUES(?,?,?,?,?,?,?,?,?,?)", [
             (tag, cid, t, k, json.dumps(a["value"]), a["status"], json.dumps(a["sids"]), models, a["k_agree"],
-             int(r["support"].get(k, False))) for k, a in r["atoms"].items()])
+             int(r["support"].get(k) is True)) for k, a in r["atoms"].items()])
     con.commit()
     (ROOT / "out").mkdir(exist_ok=True)
     name = "compiled_atoms" + ("" if run_name == "main" else f"_{run_name}") + ("" if lang == "en" else f"_{lang}") + ".json"
@@ -587,9 +615,16 @@ def _check():
     assert clean_run("coc", raw, cand)["threshold_pct"]["status"] == "unknown"
     assert vote("coc", [r, r, {**r, "threshold_pct": {"status": "known", "value": 40, "sids": [1]}}])["threshold_pct"]["value"] == 50
     assert vote("coc", [r, {**r, "threshold_pct": {"status": "known", "value": 40, "sids": [1]}}, {**r, "threshold_pct": {"status": "silent", "value": None, "sids": []}}])["threshold_pct"]["status"] == "unknown"
+    sil = {"status": "silent", "value": None, "sids": []}
+    kn = {"status": "known", "value": ["consented"], "sids": [1]}
+    assert vote("coc", [{**r, "carve_outs": sil}, {**r, "carve_outs": sil}, {**r, "carve_outs": kn}])["carve_outs"]["status"] == "unknown"
+    assert vote("coc", [{**r, "carve_outs": sil}] * 3)["carve_outs"]["status"] == "silent"
+    assert support_schema(["a", "b"])["properties"]["checks"]["items"]["properties"]["key"]["enum"] == ["a", "b"]
     atoms = vote("coc", [r, r, r])
     atoms["present"] = {"status": "known", "value": "yes", "sids": [1], "k_agree": 3}
     assert assemble("coc", atoms)["_unknown"], "missing whose/triggers must block the rules"
+    fam = assemble("coc", {**atoms, "open_texture": {"status": "unknown", "value": None, "sids": [], "k_agree": 0}})
+    assert "open_texture is unknown" in fam["_optional_unknown"] and "open_texture is unknown" not in fam["_unknown"]
     assert assemble("coc", {**atoms, "present": {"status": "known", "value": "no", "sids": [1], "k_agree": 3}}) is None
     assert {(60.0, "days"), (3.0, "business_days"), (6.0, "months")} <= periods("within sixty (60) days, three (3) Business Days or 6 months")
     eff = lambda h, n, u, c=False: {"effect": "termination_right", "effect_holder": h, "notice_n": n, "notice_unit": u, "unless_consented": c}
