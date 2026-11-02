@@ -76,4 +76,4 @@ term_renewal
 - option_holder: us / them / either ; renewal_term: number + unit | redacted
 - notice_period: number + unit (days / months / business_days / missing_unit) ; notice_anchor: before_expiry / any_time
 - condition_outside_text: yes / no
-Silent / unknown / conflict / absent / refers_to_missing apply to every atom (spec section 10).
+Silent / unknown / conflict / absent / refers_to_missing apply to every atom: silent = the text says nothing; unknown = models disagree or evidence is weak; conflict = two readings; absent = clause not found after a second search; refers_to_missing = depends on a document not in the file.
