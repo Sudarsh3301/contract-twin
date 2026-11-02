@@ -41,6 +41,9 @@ def coc_trigger(a: dict, s: State) -> tuple[K, str]:
                 held = s.retained_pct.get(a["retained_holder"], 100)
                 v = k(held < a["retained_pct"])
                 why.append(f"{a['retained_holder']} keep {held}% vs required {a['retained_pct']}%")
+        elif t == "competitor_stake":
+            v = k(s.buyer_is_competitor and s.buyer_pct >= a.get("competitor_threshold_pct", 5))
+            why.append(f"competitor stake {s.buyer_pct if s.buyer_is_competitor else 0}% vs >= {a.get('competitor_threshold_pct', 5)}%")
         elif t == "management_change":
             v = k(s.management_changed and s.mechanism in ("share_sale", "ipo", "merger"))
             why.append(f"management changed: {s.management_changed}")
@@ -79,7 +82,9 @@ def coc_reactions(a: dict, s: State) -> list[Reaction]:
     out = []
     for e in effects:
         st = t
-        if t == K.T and e["effect"] == "elsewhere":
+        if t == K.T and e.get("unless_consented") and s.consented:
+            st, why2 = K.F, why + "; counterparty consented in advance"
+        elif t == K.T and e["effect"] == "elsewhere":
             st, why2 = K.U, why + "; effect defined outside the file"
         else:
             why2 = why
@@ -102,6 +107,10 @@ def assign_reactions(a: dict, s: State) -> list[Reaction]:
         if a.get("merger_exception") and a.get("unless_competitor") and s.buyer_is_competitor:
             return [Reaction("NEEDS_LAWYER", reason="competitor exception may apply, but a share sale may not be an assignment")]
         return [Reaction("NOT_TRIGGERED", reason="a share sale is not an assignment by the company")]
+    if s.mechanism == "share_exchange" and "reorganization" in a.get("deems", []):
+        # the company's shareholders swap shares with a new parent: whether that is a "reorganization involving"
+        # the company is a reading question, and the two readings give different answers
+        return [Reaction("NEEDS_LAWYER", reason="share exchange may or may not be a reorganization involving the company")]
     hit = s.mechanism in a.get("deems", [])
     if hit and not (a.get("merger_exception") and not (a.get("unless_competitor") and s.buyer_is_competitor)):
         return [Reaction("TRIGGERED", "consent", "them", reason=f"{s.mechanism} deemed assignment", atoms=("deems",))]

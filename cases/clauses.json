@@ -1,0 +1,1292 @@
+{
+ "cuad:RaeSystems": {
+  "contract_id": "raesystemsinc_20001114_10_q_ex_10_57_2631790_ex_10_57_co_bra",
+  "sentences": [
+   {
+    "sid": 1,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "This CO-BRANDING AGREEMENT (the \"Agreement\") is made and entered into as of Nov 5, 1999, (the \"Effective Date\") by and between NETTAXI Online Communities, Inc., a Delaware corporation with principal offices at 2165 S. Bascom Avenue, Campbell, California 95008 (\"NETTAXI\"), and Solutions Media, Inc., dba SpinRecords.com a Delaware Corporation, with offices at 11440 West Barnardo Ct., Suite 170, San Diego, CA 32127 (\"SpinRecords.com\" or \"Client\")."
+   },
+   {
+    "sid": 101,
+    "why": [
+     "CUAD label: Expiration Date",
+     "CUAD label: Renewal Term"
+    ],
+    "text": "This Agreement shall be effective upon the ------------------- Effective Date and shall remain in force for a period of one (1) year, and shall be automatically renewed for successive periods of one (1) year unless otherwise terminated as provided herein."
+   },
+   {
+    "sid": 114,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "In the event more that there is a change in ownership representing fifty percent (50%) or more of the equity ownership of either party, the other party may, at its option, terminate this Agreement upon written notice."
+   },
+   {
+    "sid": 145,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Neither NETTAXI or SpinRecords.com shall assign its ---------- respective rights or delegate its obligations hereunder, either in whole or in part, whether by operation of law or otherwise, without the prior written consent of the other party."
+   },
+   {
+    "sid": 146,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Any attempted assignment or delegation without the other party's written consent will be void."
+   }
+  ]
+ },
+ "cuad:VirtualScopics": {
+  "contract_id": "virtualscopics_inc_11_12_2010_ex_10_1_strategic_alliance_agr",
+  "sentences": [
+   {
+    "sid": 5,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "STRATEGIC ALLIANCE AGREEMENT THIS STRATEGIC ALLIANCE AGREEMENT (\"Agreement\"), entered into as of October 22, 2010 (the \"Effective Date\") by and between PPD Development, LP, a Texas limited partnership, with its principal executive offices located at 929 North Front Street, Wilmington, North Carolina 28401 (\"PPD\") and VirtualScopics, Inc., with an address of 500 Linden Oaks, Second Floor, Rochester, New York 14625 (\"VS\")."
+   },
+   {
+    "sid": 8,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "The term of this Agreement shall begin on the Effective Date and shall continue for a period of two (2) years (\"Initial Term\") unless terminated earlier in accordance with Section 11 of this Agreement."
+   },
+   {
+    "sid": 9,
+    "why": [
+     "CUAD label: Notice Period To Terminate Renewal",
+     "CUAD label: Renewal Term"
+    ],
+    "text": "Upon expiration of the Initial Term, unless written notice to the contrary is provided by one party to the other party at least 30 days prior to the expiration of the then-current term, this Agreement shall be renewed for additional, successive periods of one (1) year each (each a \"Renewal\" and together with the Initial Term, collectively, the \"Term\")."
+   },
+   {
+    "sid": 121,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "PPD shall further be permitted to terminate this Agreement or a relevant Work Order, immediately, for cause, upon the occurrence of any of the following: (a) VS's failure to meet the agreed upon timelines, provided that such failure is due to circumstances within VS's reasonable control; (b) VS's failure to provide pricing which is reasonably competitive; (c) a change of ownership equal to fifty percent (50%) or more in the outstanding voting securities of VS; (d) the acquisition of a number of VS's outstanding voting securities by a PPD Competitor that would require disclosure by such PPD Competitor pursuant to Rule 13d-1 of the Securities Exchange Act of 1934 (a \"Significant Ownership Position\"); (e) a change in any VS Key Leadership Position."
+   },
+   {
+    "sid": 154,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Neither party shall have the right to assign this Agreement or any Work Order or to assign any rights thereunder without the prior written consent of the other party."
+   },
+   {
+    "sid": 158,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Any unauthorized attempt to assign or delegate any portion of this Agreement or any Work Order shall be void."
+   }
+  ]
+ },
+ "cuad:DynTek": {
+  "contract_id": "dyntekinc_07_30_1999_ex_10_online_hosting_agreement",
+  "sentences": [
+   {
+    "sid": 2,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "This Online Hosting Agreement (this \"Agreement\") is being entered into effective as of the 1st day of June, 1999 and is entered into by and between Diplomat Direct Marketing Corporation, a Delaware corporation (\"Diplomat\"), and Tadeo E-Commerce Corp., a Delaware corporation (\"Tadeo\")."
+   },
+   {
+    "sid": 17,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "(a) The term of this Agreement shall begin on the date hereof (the \"Effective Date\") and shall continue for a period of 12 months thereafter (the \"Period\") in full force and effect until it is terminated in accordance with this Section 3."
+   },
+   {
+    "sid": 18,
+    "why": [
+     "CUAD label: Renewal Term"
+    ],
+    "text": "(b) Diplomat or Tadeo, if such party is not in default of the terms of this Agreement, may extend the term of this Agreement for an additional one year (\"Additional Period\"), provided the extending party gives the other party at least sixty (60) days advance written notice before the end of the Period."
+   },
+   {
+    "sid": 35,
+    "why": [
+     "CUAD label: Change Of Control",
+     "change-of-control clause continuation"
+    ],
+    "text": "(e) Tadeo will have the right (but not the obligation) to terminate this Agreement and the rights granted to Diplomat hereunder, upon 60 days written notice to Diplomat, following the acquisition of all or substantially all of the assets of Diplomat by any Permitted Assignee (as defined in Section 9(a) of this Agreement), or the acquisition of the beneficial ownership of at least 20% (the \"Threshold\") of the voting power represented by the voting securities of Diplomat, any successor thereto or any Permitted Assignee by any person or"
+   },
+   {
+    "sid": 36,
+    "why": [
+     "change-of-control clause continuation"
+    ],
+    "text": "- 4 -"
+   },
+   {
+    "sid": 37,
+    "why": [
+     "CUAD label: Change Of Control",
+     "change-of-control clause continuation"
+    ],
+    "text": "\"group\" within the meaning of Sections 13(d)(3) and 14(d)(2) of the Securities Exchange Act of 1934, as amended (the \"Exchange Act\"), or any successor provision to either of the foregoing, including any group acting for the purpose of acquiring, holding or disposing of securities within the meaning of Rule 13d-5(b)(1) under the Exchange Act or any successor provision thereof (a \"group\") other than The Rubin Family Irrevocable Stock Trust U/A dated April 30, 1997, organized under the laws of the State of New York (the \"Trust\"), Robert M. Rubin (\"Rubin\"), or any affiliate of Rubin or the Trust."
+   },
+   {
+    "sid": 38,
+    "why": [
+     "change-of-control clause continuation"
+    ],
+    "text": "For purposes of this Agreement, (i) the term \"beneficial ownership\" shall have the meaning set forth in Rule 13d-3 of the Exchange Act or any successor provisions thereof, (ii) the term \"voting securities' means the common Stock, par value $.0001 per share, of Diplomat and any other securities issued by Diplomat having the power to vote generally in the election of directors of Diplomat and (iii) the term \"affiliate\" means a person or entity directly or indirectly controlled by, controlling or under common control with another person."
+   },
+   {
+    "sid": 39,
+    "why": [
+     "change-of-control clause continuation"
+    ],
+    "text": "For purposes of this Section 3, an acquisition shall not include (A) the acquisition by a person of voting securities of Diplomat pursuant to an involuntary disposition through foreclosure or similar event, or (B) the acquisition by a person of voting securities of Diplomat pursuant to a dividend intended to be on a tax-free basis (a \"Tax-Free Spin-Off\") under the Internal Revenue Code of 1986, as amended from time to time, but shall include a subsequent acquisition of voting securities pursuant to a disposition by the person that acquired the voting securities in such involuntary disposition or such Tax-Free Spin-Off."
+   },
+   {
+    "sid": 40,
+    "why": [
+     "change-of-control clause continuation"
+    ],
+    "text": "In the event any person acquires beneficial ownership of voting power in excess of the Threshold as a result of a transaction described in the immediately preceding sentence, the Threshold with respect to such person shall be adjusted to an amount equal to the percentage of beneficial ownership held by such person immediately following such transaction."
+   },
+   {
+    "sid": 75,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(a) Neither party any assign this Agreement, or their respective rights and obligations hereunder, in whole or in part, without the other party's prior written consent; PROVIDED, HOWEVER, that Tadeo shall be entitled to assign all of its rights and obligations hereunder to any subsidiary or affiliated entity without the consent of Diplomat."
+   },
+   {
+    "sid": 76,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Any attempt to assign this Agreement without such consent (if required) shall be void and of no effect AB INITIO."
+   }
+  ]
+ },
+ "cuad:iPayment": {
+  "contract_id": "ipayment_inc_05_14_2007_ex_10_1_sponsorship_agreement",
+  "sentences": [
+   {
+    "sid": 3,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "dated January 29, 2007"
+   },
+   {
+    "sid": 10,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "This Sponsorship Agreement (this \"Agreement\") dated as of January 29, 2007 (the \"Effective Date\") is by and between iPayment, Inc. (\"ISO\"), First Data Merchant Services Corporation (\"FDMS\"), and Wells Fargo Bank, N.A."
+   },
+   {
+    "sid": 39,
+    "why": [
+     "\"Business Day\" definition"
+    ],
+    "text": "\"Business Day\" shall mean any day on which Bank is open for business, other than Saturdays, Sundays, or state or federal holidays."
+   },
+   {
+    "sid": 41,
+    "why": [
+     "\"Change of Control\" definition"
+    ],
+    "text": "\"Change of Control\" means a change in the power to direct the management or affairs of ISO or the beneficial ownership of more than 51% of the equity securities; provided, however, that becoming a public company with the same management team or changing the beneficial ownership of more than 51% of the equity securities while maintaining the same management team will not constitute a change in control."
+   },
+   {
+    "sid": 129,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(a) Except as expressly set forth herein, ISO shall not subcontract, assign, license or in any other manner extend or transfer to any third party any right or obligation ISO has with respect to SERVICERS' Program."
+   },
+   {
+    "sid": 373,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "The initial term of this Agreement shall be four (4) Processing Years commencing on the Effective Date of this Agreement and ending on June 30, 2010 unless"
+   },
+   {
+    "sid": 375,
+    "why": [
+     "CUAD label: Notice Period To Terminate Renewal",
+     "CUAD label: Renewal Term"
+    ],
+    "text": "terminated earlier as provided in this Section 10. Thereafter, this Agreement shall automatically continue in effect until either party gives the other at least six (6) months prior written notice of termination."
+   },
+   {
+    "sid": 377,
+    "why": [
+     "CUAD label: Anti-Assignment",
+     "CUAD label: Change Of Control"
+    ],
+    "text": "SERVICERS may terminate this Agreement prior to its expiration for cause upon prior written notice to ISO as follows:"
+   },
+   {
+    "sid": 384,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(g) Upon an assignment of this Agreement by ISO without SERVICERS' prior written consent;"
+   },
+   {
+    "sid": 390,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "(l) Upon a Change of Control of ISO with one hundred eighty (180) days prior written notice to ISO, unless the SERVICERS had previously consented to such change in control."
+   },
+   {
+    "sid": 392,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "ISO may terminate this Agreement prior to its expiration for cause upon prior written notice to SERVICERS as follows:"
+   },
+   {
+    "sid": 398,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(f) Upon an assignment of this Agreement by SERVICERS without ISO's prior written consent;"
+   },
+   {
+    "sid": 469,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Except as expressly set forth herein, ISO shall not assign or otherwise transfer this Agreement or any of its rights or obligations hereunder, by operation of law or otherwise, or contract with any third party (other than the third parties named herein) to perform any of its responsibilities or obligations relating to this Agreement without the prior written consent of SERVICERS, which consent will not be unreasonably withheld."
+   },
+   {
+    "sid": 470,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "In addition, ISO shall provide written notice to SERVICERS within three (3) Business Days of any Change of Control of ISO."
+   }
+  ]
+ },
+ "cuad:eLandia": {
+  "contract_id": "elandiainternationalinc_04_25_2007_ex_10_21_outsourcing_agre",
+  "sentences": [
+   {
+    "sid": 112,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "The commencement date for this contract will be 16th June 2004."
+   },
+   {
+    "sid": 113,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "The initial term of the contracted agreement is 5 years from the commencement date."
+   },
+   {
+    "sid": 114,
+    "why": [
+     "CUAD label: Renewal Term"
+    ],
+    "text": "The BSP then have the option to renew the agreement for another 5 years subject to any restructuring of the agreement as required by the parties."
+   },
+   {
+    "sid": 607,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "The BSP may after giving due consideration to all circumstances and not acting unreasonably, terminate this agreement by giving written notice to Datec if there is a change of control or major shareholding of Datec."
+   },
+   {
+    "sid": 611,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "If the BSP gives such a notice of termination, then:"
+   },
+   {
+    "sid": 612,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "(a) if the change of control:"
+   },
+   {
+    "sid": 613,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "(i) results in a competitor of the BSP controlling Datec or"
+   },
+   {
+    "sid": 614,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "(ii) is reasonably likely in the BSP's opinion, to have a detrimental effect on Datec's ability to provide the Services in accordance with the agreement,"
+   },
+   {
+    "sid": 615,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "then the BSP will pay Datec according to Section 14 - \"Termination\" of this agreement and the Termination Table in Schedule C."
+   },
+   {
+    "sid": 675,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Datec must not assign this agreement or any right under this agreement unless Datec"
+   },
+   {
+    "sid": 676,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(a) is not in breach of this agreement;"
+   },
+   {
+    "sid": 677,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(b) obtains the prior written consent of the BSP"
+   },
+   {
+    "sid": 678,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(c) ensures that the assignee agrees to be bound by all of the Datec's obligations under this agreement; and"
+   },
+   {
+    "sid": 679,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(d) acknowledges that it remains bound by this agreement"
+   },
+   {
+    "sid": 681,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "BSP may:"
+   },
+   {
+    "sid": 682,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(a) assign all or part of this agreement to any person as part of a restructure; and"
+   },
+   {
+    "sid": 683,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(b) assign or novate all or part of the rights and obligations under this agreement to any of the BSP's Related Company's as part of a re- organisation of its business."
+   }
+  ]
+ },
+ "cuad:BlackBox": {
+  "contract_id": "blackboxstocksinc_08_05_2014_ex_10_1_distributor_agreement",
+  "sentences": [
+   {
+    "sid": 1,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "THIS AGREEMENT is made this 1st day of August, 2013, (the \"Effective Date\"), by and between Snotarator LLC, a Texas limited liability company, with its principal place of business located at 2591 Dallas Parkway, Suite 102, Frisco, Texas 75034 (the \"Company\") and SMSA Ballinger Acquisition Corp., a Nevada corporation, with offices at 12890 Hilltop Road, Argyle, Texas 76226 (the \"Distributor\")."
+   },
+   {
+    "sid": 9,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Distributor shall not assign the rights granted in this Section 1.01 without the prior written consent of the Company."
+   },
+   {
+    "sid": 54,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "The term of this Agreement shall terminate on May 31, 2015, unless sooner terminated."
+   },
+   {
+    "sid": 56,
+    "why": [
+     "CUAD label: Renewal Term"
+    ],
+    "text": "The term of this Agreement may be extended for an additional two year period with the written consent of both parties."
+   },
+   {
+    "sid": 58,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "This Agreement may be terminated only:"
+   },
+   {
+    "sid": 60,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "(b) By the Company if: there is an unacceptable change in the control or management of the Distributor; if the Distributor makes an assignment for the benefit of creditors; if a petition in bankruptcy is filed by or against the Distributor, resulting in an adjudication of bankruptcy; or, if the Distributor fails to pay its debts as they become due and provided due notice has been given by the Company to the Distributor and the Distributor has not cured such breach within thirty (30) days thereof; or"
+   },
+   {
+    "sid": 107,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Distributor shall not assign this Agreement or any rights or obligations hereunder without the prior written consent of the Company."
+   }
+  ]
+ },
+ "cuad:mPhase": {
+  "contract_id": "mphasetechnologiesinc_20030911_10_k_ex_10_15_1560667_ex_10_1",
+  "sentences": [
+   {
+    "sid": 11,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "6. This Agreement shall terminate in the event of a significant change in the management or ownership of mPhase or in the event mPhase is the subject of any bankruptcy proceedings."
+   },
+   {
+    "sid": 19,
+    "why": [
+     "CUAD label: Expiration Date",
+     "CUAD label: Renewal Term"
+    ],
+    "text": "11. The Term of this Agreement will commence on the date above, and shall continue for a term of one (1) year. mPhase shall have the right to annually renew this agreement for a period of one year upon each annual expiration with the written consent of Lucent, which written consent shall not be unreasonably withheld."
+   },
+   {
+    "sid": 24,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "14. This Agreement shall not be assigned by mPhase without the prior written consent of Lucent."
+   }
+  ]
+ },
+ "cuad:VerticalNet": {
+  "contract_id": "verticalnetinc_04_01_2002_ex_10_19_maintenance_and_support_a",
+  "sentences": [
+   {
+    "sid": 2,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "This Maintenance and Support Agreement (this \"Agreement\") is entered on this 9th day of October, 2001 and is deemed effective as of October 1, 2001 (the \"Effective Date\"), by and between VerticalNet, Inc. (\"VNI\") and VerticalNet Enterprises LLC, formerly known as Tradeum, Inc. which d/b/a VerticalNet Solutions (\"VNE\"; collectively with VNI, \"Vert\"), on the one hand, and Converge, Inc. (\"Converge\") on the other hand."
+   },
+   {
+    "sid": 11,
+    "why": [
+     "\"Control\" definition"
+    ],
+    "text": "1.3 \"Control\" (including all derivations thereof) means, with respect to a party, the direct or indirect ownership of at least 50% of the outstanding voting securities of a party, or the right to control the policy decisions of such party."
+   },
+   {
+    "sid": 276,
+    "why": [
+     "CUAD label: Expiration Date",
+     "CUAD label: Renewal Term"
+    ],
+    "text": "The initial period of this Agreement (the \"Initial Term\") shall commence upon the Effective Date and continue until March 31, 2003. Thereafter, this Agreement shall renew only upon the mutual written agreement of the parties for up to three additional renewal terms of one year each (each, a \"Renewal Term\")."
+   },
+   {
+    "sid": 330,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Otherwise, neither party may assign this Agreement without the other party's prior written consent (not to be unreasonably withheld)."
+   },
+   {
+    "sid": 331,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "No transfer of this Agreement by operation of law or change in Control of a party, including, without limitation, by merger, consolidation or sale or other transfer of equity interests, shall be considered an assignment for purposes of this Section 11.9. This Agreement will bind and inure to the benefit of the parties and their respective successors and permitted assigns."
+   }
+  ]
+ },
+ "cuad:Gopage": {
+  "contract_id": "gopagecorp_20140221_10_k_ex_10_1_8432966_ex_10_1_content_lic",
+  "sentences": [
+   {
+    "sid": 1,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "PSiTECHCORPORATION WEBSITE CONTENT LICENSE AGREEMENT This Content License Agreement (\"Agreement\"), dated as of Feb 10, 2014 (the \"Effective Date\"), is by and between PSiTech Corporation, a BVI Corporation, with offices located at 303, 3rdFl, St. Georges Bldg, 2 Ice House St, Central, Hong Kong(\"Licensor\"), and Empirical Ventures, Inc., a Nevada corporation with offices located at 100, 40 Lake Bellevue Dr, Bellevue, WA(\"Licensee\")."
+   },
+   {
+    "sid": 113,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "The initial term of this Agreement commences as of the Effective Date and, unless terminated earlier pursuant to any express provision of this Agreement, shall continue until five (5) years following the Effective Date (the \"Initial Term\")."
+   },
+   {
+    "sid": 114,
+    "why": [
+     "CUAD label: Notice Period To Terminate Renewal",
+     "CUAD label: Renewal Term"
+    ],
+    "text": "Thereafter, this Agreement shall renew automatically for one (1) additional three (3) year period (the \"Renewal Term\" and collectively, together with the Initial Term, the \"Term\") unless either party provides the other with written notice of non-renewal at least ninety (90) days before the expiration of the Initial Term]."
+   },
+   {
+    "sid": 200,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Licensee shall not assign or otherwise transfer any of its rights, or delegate or otherwise transfer any of its obligations or performance, under this Agreement, in each case whether voluntarily, involuntarily, by operation of law or otherwise, without Licensor's prior written consent."
+   },
+   {
+    "sid": 201,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "For purposes of the preceding sentence, and without limiting its generality, any merger, consolidation or reorganization involving Licensee (regardless of whether Licensee is a surviving or disappearing entity) will be deemed to be a transfer of rights, obligations or performance under this Agreement for which Licensor's prior written consent is required."
+   },
+   {
+    "sid": 203,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Any purported assignment, delegation or transfer in violation of this Section 11.7 is void from the outset and shall be of no force or effect."
+   }
+  ]
+ },
+ "cuad:Corio": {
+  "contract_id": "corioinc_07_20_2000_ex_10_5_license_and_hosting_agreement",
+  "sentences": [
+   {
+    "sid": 2,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "This License and Hosting Agreement (the \"AGREEMENT\") is made and entered into as of October 29, 1999 (\"EFFECTIVE DATE\") by and between Corio Inc., a Delaware corporation, having its principal place of business at 700 Bay Road, Suite 210, Redwood City, CA 94063 (\"CORIO\") and Commerce One, Inc., a Delaware corporation having its principal place of business at 1600 Rivera Avenue, Walnut Creek, CA 94596 (\"COMMERCE ONE\")."
+   },
+   {
+    "sid": 199,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "The term of this Agreement shall commence on the Effective Date and shall continue in full force and effect for an initial period of five (5) years."
+   },
+   {
+    "sid": 200,
+    "why": [
+     "CUAD label: Notice Period To Terminate Renewal",
+     "CUAD label: Renewal Term"
+    ],
+    "text": "Thereafter, this Agreement shall automatically renew for subsequent one (1) year periods unless either party provides the other party with written notification at least thirty (30) days prior to the expiration of the initial five (5) year term or any one (1) year renewal thereof of its intention to terminate this Agreement."
+   },
+   {
+    "sid": 264,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Neither party may assign this Agreement or any rights or obligations hereunder, whether by operation of law or otherwise, without the prior written consent of the other party."
+   },
+   {
+    "sid": 265,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "Notwithstanding the foregoing, either party shall have the right to assign this Agreement in connection with the merger or acquisition of such party or the sale of all or substantially all of its assets related to this Agreement without such consent, except in the case where such transaction involves a direct competitor of the other party where consent of the other party will be required."
+   },
+   {
+    "sid": 267,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Any assignment in violation of this Section 14.1 shall be null and void."
+   }
+  ]
+ },
+ "cuad:eDiets": {
+  "contract_id": "edietscominc_20001030_10qsb_ex_10_4_2606646_ex_10_4_co_brand",
+  "sentences": [
+   {
+    "sid": 2,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "THIS CO-BRANDING AGREEMENT (the \"Agreement\") is made as of May 22, 2000 (the \"Effective Date\"), by and between WOMEN.COM NETWORKS, INC., a Delaware corporation having a place of business at 1820 Gateway Drive Suite 150, San Mateo, CA 94404 (\"Women.com\"), and EDIETS.COM, INC., a Delaware corporation, having its principal place of business at 3467 West Hillsboro Boulevard, Suite 2, Deerfield Beach, Florida 33442 (\"eDiets\")."
+   },
+   {
+    "sid": 120,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "This Agreement will become effective as of the Effective Date and, unless sooner terminated pursuant to Sections 3.1 [Advertising and Promotion] or 10.2 [Termination for Breach], shall remain effective for two (2) years from and after the Effective Date (the \"Initial Term\")."
+   },
+   {
+    "sid": 121,
+    "why": [
+     "CUAD label: Notice Period To Terminate Renewal",
+     "CUAD label: Renewal Term"
+    ],
+    "text": "This agreement shall automatically renew for additional successive terms of twelve (12) months each at the end of the Initial Term (\"Renewal Terms\"), unless either party notifies the other in writing at least sixty (60) days prior to the end of the Initial Term."
+   },
+   {
+    "sid": 202,
+    "why": [
+     "CUAD label: Anti-Assignment",
+     "assignment exception"
+    ],
+    "text": "Neither party may assign this Agreement, in whole or in part, without the other party's written consent (which will not be unreasonably delayed or withheld), except that no such consent will be required in connection with an assignment or transfer of this Agreement to (a) a party's successor in connection with a Change in Control of such party, provided that such successor is not a competitor of the other party, or (b) to any entity that is"
+   },
+   {
+    "sid": 204,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "controlled by, under common control with, or controls a party."
+   },
+   {
+    "sid": 206,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Any attempt to assign this Agreement other than as permitted above will be null and void."
+   },
+   {
+    "sid": 208,
+    "why": [
+     "CUAD label: Change Of Control",
+     "\"Change in Control\" definition"
+    ],
+    "text": "For purposes of this Agreement, \"Change in Control\" means a merger or consolidation of the party with, or any sale of all or substantially all of the assets of such party to, any other person, corporation or entity, unless as a result of such merger, consolidation or sale of assets the holders of such party's voting securities prior thereto hold at least fifty percent (50%) of the total voting power represented by the voting securities of the surviving or successor corporation after such transaction."
+   }
+  ]
+ },
+ "cuad:Zounds": {
+  "contract_id": "zounds_hearing_inc_manufacturing_design_marketing_agreem",
+  "sentences": [
+   {
+    "sid": 0,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "Exhibit 10.1 MANUFACTURING, DESIGN AND MARKETING AGREEMENT This MANUFACTURING, DESIGN AND MARKETING AGREEMENT (this \"Agreement\") is entered into by and between Zounds Hearing, Inc., a Delaware corporation (\"Subcontractor\") and InnerScope Hearing Technologies, Inc., a Nevada corporation, (the \"Manufacturer\") Manufacturer dated effective October 3, 2018 (the \"Effective Date\")."
+   },
+   {
+    "sid": 7,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "Subject to earlier termination as provided in this Agreement, the initial term of this Agreement shall be for a period beginning on the Effective Date and ending ten (10) years thereafter unless this Agreement is terminated earlier as provided herein."
+   },
+   {
+    "sid": 8,
+    "why": [
+     "CUAD label: Notice Period To Terminate Renewal",
+     "CUAD label: Renewal Term"
+    ],
+    "text": "This Agreement will renew automatically thereafter for successive one-year terms unless and until one Party gives notification of termination with at least sixty (60) days written notice."
+   },
+   {
+    "sid": 185,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Neither Party may assign or transfer this Agreement by operation of law or otherwise."
+   },
+   {
+    "sid": 186,
+    "why": [
+     "CUAD label: Anti-Assignment",
+     "section 15.7 text"
+    ],
+    "text": "Any assignment made by either Party in contravention of this Section 15.7 shall be null and void for all purposes."
+   },
+   {
+    "sid": 187,
+    "why": [
+     "CUAD label: Anti-Assignment",
+     "CUAD label: Change Of Control",
+     "effect of Change of Control"
+    ],
+    "text": "In the event of a Change of Control (as defined below) this Agreement shall immediately terminate."
+   },
+   {
+    "sid": 188,
+    "why": [
+     "CUAD label: Change Of Control",
+     "consent carve-out"
+    ],
+    "text": "A Change of Control shall occur with respect to the Manufacturer, unless Subcontractor shall have expressly consented to such Change of Control in writing."
+   },
+   {
+    "sid": 189,
+    "why": [
+     "\"Change of Control\" definition"
+    ],
+    "text": "A \"Change of Control\" shall mean any event or circumstance as a result of which (i) any \"Person\" or \"group\" (as such terms are defined in Sections 13(d) and 14(d) of The Securities Exchange Act of 1934 (the \"Exchange Act\"), as in effect on the date hereof), other than the Subcontractor, is or becomes the \"beneficial owner\" (as defined in Rules 13(d)-3 and 13(d)-5 under the Exchange Act), directly or indirectly, of 50% or more on a fully diluted basis of the then outstanding voting equity interest of the Company, (ii) the board of directors of the Manufacturer shall cease to consist of a majority of the Manufacturer's board of directors on the date hereof (or directors appointed by a majority of the board of directors in effect immediately prior to such appointment) or (iii) the Manufacturer or any of its affiliates merges or consolidates with, or sells all or substantially all of its assets to, any other person or entity; 15.8 Amendment."
+   }
+  ]
+ },
+ "cuad:TriCity": {
+  "contract_id": "tricitybanksharescorp_05_15_1998_ex_10_outsourcing_agreement",
+  "sentences": [
+   {
+    "sid": 135,
+    "why": [
+     "\"Change in Control\" definition"
+    ],
+    "text": "C. \"Change in Control\" shall mean any event or series of events by which (i) any person or entity or group of persons or entities shall acquire Control of another person or entity or (ii) in the case of a corporation, during any period of 12 consecutive months commencing before or after the date hereof, individuals who at the beginning of such 12-month period were directors of such corporation shall cease for any reason to constitute a majority of the board of directors of such corporation."
+   },
+   {
+    "sid": 139,
+    "why": [
+     "\"Control\" definition"
+    ],
+    "text": "F. \"Control\" shall mean the direct or indirect ownership of over 50% of the capital stock (or other ownership interest, if not a corporation) of any entity or the possession, directly or indirectly, of the power to direct the management and policies of such entity by ownership of voting securities, by contract or otherwise."
+   },
+   {
+    "sid": 146,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "L. \"Effective Date\" shall mean February 16, 1998."
+   },
+   {
+    "sid": 158,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "X. \"Term\" shall mean the period commencing on the Effective Date and terminating on the eighth anniversary of the Commencement Date, unless the Agreement is extended in accordance with its provisions."
+   },
+   {
+    "sid": 170,
+    "why": [
+     "CUAD label: Renewal Term"
+    ],
+    "text": "If M&I and Customer are unable to agree upon the terms for renewal of this Agreement at least six (6) months prior to the expiration of the Term, then Customer may, at its option, renew this Agreement for one (1) twelve month period at the then-current terms and conditions of this Agreement."
+   },
+   {
+    "sid": 675,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "If a Change in Control occurs with respect to Customer, M&I agrees to continue to provide Services under this Agreement; provided that (a) M&I's obligation to provide Services shall be limited to the entities comprising the Customer prior to such Change in Control and (b) M&I's obligation to provide Services shall be limited in any and all circumstances to the number of accounts and items processed in the 3-month period prior to such Change in Control occurring plus 25%."
+   },
+   {
+    "sid": 688,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "This Agreement may not be assigned by either party, by operation of law or otherwise, without the prior written consent of the other party, which consent shall not be unreasonably withheld, provided that (a) M&I's consent need not be obtained in connection with the assignment of this Agreement pursuant to a merger in which Customer is a party and as a result of which the surviving corporation becomes an Affiliate of another bank holding company, bank, savings and loan association or other financial institution having a capital and surplus of at least $100,000,000 so long as the provisions of Section 21.11 are complied with and (b) M&I may freely assign this Agreement (i) in connection with a merger, corporate reorganization or sale of all or substantially all of its assets, stock or securities, or (ii) to any entity which is a successor to the assets or the business of the M&I Data Services division of M&I."
+   }
+  ]
+ },
+ "cuad:JointCorp": {
+  "contract_id": "jointcorp_09_19_2014_ex_10_15_franchise_agreement",
+  "sentences": [
+   {
+    "sid": 101,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "THE JOINT CORP. FRANCHISE AGREEMENT This Franchise Agreement (this or the \"Agreement\") is being entered into effective as of the _____ day of _______________, 20__ (the \"Agreement Date\")."
+   },
+   {
+    "sid": 109,
+    "why": [
+     "\"Principal Owners\""
+    ],
+    "text": "Those individuals will be referred to in this Agreement as \"Principal Owners.\""
+   },
+   {
+    "sid": 127,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "You must operate the Franchise at a mutually agreeable site (the \"Premises\") to be identified after the signing of this Agreement, and to use the System and the Marks in the operation of that Franchise, for a term of 10 years (the \"Initial Term\")."
+   },
+   {
+    "sid": 128,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "The Initial Term will begin on the Agreement Date."
+   },
+   {
+    "sid": 172,
+    "why": [
+     "CUAD label: Renewal Term"
+    ],
+    "text": "Subject to the provisions of subparagraph 2.6(b) below, and if you have substantially complied with all provisions of this Agreement and all other agreements between us, on expiration of the Initial Term, if you refurbish and decorate the Premises, replace fixtures, furnishings, wall decor, furniture, equipment, and signs and otherwise modify the Franchise in compliance with specifications and standards then applicable under new or renewal franchises for The Joint Corp. Location franchises, you will have the right to renew the Franchise for one (1) additional term of ten (10) years (the \"Renewal Term\")."
+   },
+   {
+    "sid": 181,
+    "why": [
+     "CUAD label: Renewal Term"
+    ],
+    "text": "Should you choose to renew the Franchise, you must provide us with written notice of that intent no earlier than two (2) years and no later than one (1) year before the expiration of the Initial Term."
+   },
+   {
+    "sid": 602,
+    "why": [
+     "Interests and Exhibit 4"
+    ],
+    "text": "14.2 Interests in Franchise Owner; Reference to Exhibit 4. You and each Principal Owner represent, warrant and agree that all \"Interests\" in Franchise Owner are owned in the amount and manner described in Exhibit 4. No Interests in Franchise Owner will, during the term of this Agreement, be \"public\" securities (i.e., securities that require, for their issuance, registration with any state or federal authority)."
+   },
+   {
+    "sid": 604,
+    "why": [
+     "\"Interest\" definition"
+    ],
+    "text": "When referring to Franchise Owner's rights or assets, an \"Interest\" means this Agreement, Franchise Owner's rights under and interest in this Agreement, any The Joint Corp. franchise, or the revenues, profits or assets of any The Joint Corp. franchise.)"
+   },
+   {
+    "sid": 607,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "If you have transferred your Interests in violation of this Agreement you shall be considered in breach of this Agreement."
+   },
+   {
+    "sid": 614,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "Accordingly, neither this Agreement nor any part of your interest in it, nor any Interest (as defined in Paragraph 14.2) of Franchise Owner or a Principal Owner, may be transferred (see definition below) without our advance written approval if such transfer will result in the Principal Owner(s) set forth in Exhibit 4 holding less than a seventy-five percent (75%) Interest in Franchise Owner."
+   },
+   {
+    "sid": 615,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Any Transfer that is made without our approval will constitute a breach of this Agreement and convey no rights to or interests in this Agreement, you, the Franchise, or any other The Joint Corp. franchise."
+   },
+   {
+    "sid": 616,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "As used in this Agreement the term \"Transfer\" means any voluntary, involuntary, direct or indirect assignment, sale, gift, exchange, grant of a security interest, or occurrence of any other event which would or might change the ownership of any Interest, and includes, without limitation: (1) the Transfer of ownership of capital stock, partnership interest or other ownership interest (including the granting of options (such as stock options or any option which give anyone ownership rights now or in the future); (2) merger or consolidation, or issuance of additional securities representing an ownership interest in Franchise Owner; (3) sale of common stock of Franchise Owner sold pursuant to a private placement or registered public offering; (4) Transfer of an Interest in a divorce proceeding or otherwise by operation of law; or (5) Transfer of an Interest by will, declaration of or transfer in trust, or under the laws of intestate succession."
+   },
+   {
+    "sid": 617,
+    "why": [
+     "\"controlling Interest\""
+    ],
+    "text": "We will not unreasonably withhold consent to a Transfer of an Interest by a Principal Owner to a member of his or her immediate family or to your key employees, so long as all Principal Owners together retain a \"controlling Interest\" (i.e., the minimum ownership percentage listed in Exhibit 4), although we reserve the right to impose reasonable conditions on the Transfer as a requirement for our consent."
+   },
+   {
+    "sid": 618,
+    "why": [
+     "minority owner transfers"
+    ],
+    "text": "Interests owned by persons other than the Principal Owners (\"minority owners\") may be Transferred without our advance consent unless the Transfer would give that transferee and any person or group of persons affiliated or having a common interest with the transferee more than a collective twenty-five percent (25%) Interest in Franchise Owner, in which case our advance written approval for the Transfer must be obtained."
+   },
+   {
+    "sid": 623,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "If you propose to Transfer this Agreement, the Franchise or its assets, or any Interest, or if any of your Principal Owners proposes to Transfer a controlling Interest in you or make a Transfer that is one of a series of Transfers which taken together would constitute the Transfer of a controlling Interest in you, then all of the following conditions must be met before or at the time of the Transfer:"
+   },
+   {
+    "sid": 624,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(a) the Proposed New Owner must have sufficient business experience, aptitude, and financial resources to operate the Franchise;"
+   },
+   {
+    "sid": 625,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(b) you must pay any amounts owed for purchases from us and our affiliates, and any other amounts owed to us or our affiliates which are unpaid;"
+   },
+   {
+    "sid": 626,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(c) the Proposed New Owner's directors and such other personnel as we may designate must have successfully completed our Initial Training program, and shall be legally authorized and have all licenses necessary to perform the services offered by the Franchise."
+   },
+   {
+    "sid": 627,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "The Proposed New Owner shall be responsible for any wages and compensation owed to, and the travel and living expenses (including all transportation costs, room, board and meals) incurred by, the attendees who attend the Initial Training program;"
+   },
+   {
+    "sid": 628,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(d) if your lease for the Premises requires it, the lessor must have consented to the assignment of the lease of the Premises to the Proposed New Owner;"
+   },
+   {
+    "sid": 629,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(e) you (or the Proposed New Owner) must pay us a Transfer fee equal to seventy-five percent (75%) of the then current initial franchise fee we charge to new Start-up Location franchisees, and must reimburse us for any reasonable expenses incurred by us in investigating and processing any Proposed New Owner where the Transfer is not consummated for any reason;"
+   },
+   {
+    "sid": 630,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(f) you and your Principal Owners and your and their spouses must execute a general release (in a form satisfactory to us) of any and all claims you and/or they may have against us, our affiliates, and our and our affiliates' respective officers, directors, employees, and agents; THE JOINT…THE CHIROPRACTIC PLACE™ FRANCHISE AGREEMENT"
+   },
+   {
+    "sid": 632,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(g) we must approve the material terms and conditions of the proposed Transfer, including without limitation that the price and terms of payment are not so burdensome as to adversely affect the operation of the Franchise;"
+   },
+   {
+    "sid": 633,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(h) the Franchise and the Premises shall have been placed in an attractive, neat and sanitary condition;"
+   },
+   {
+    "sid": 634,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(i) you and your Principal Owners must enter into an agreement with us providing that all obligations of the Proposed New Owner to make installment payments of the purchase price (and any interest on it) to you or your Principal Owners will be subordinate to the obligations of the Proposed New Owner to pay any amounts payable under this Agreement or any new Franchise Agreement that we may require the Proposed New Owner to sign in connection with the Transfer;"
+   },
+   {
+    "sid": 635,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(j) you and your Principal Owners must enter into a non-competition agreement wherein you agree not to engage in a competitive business for a period of two (2) years after the Transfer and within twenty-five (25) miles of your Franchise Premises or any other The Joint Corp. Location franchise location;"
+   },
+   {
+    "sid": 636,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(k) the Franchise shall have been determined by us to contain all equipment and fixtures in good working condition, as were required at the initial opening of the Franchise."
+   },
+   {
+    "sid": 637,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "The Proposed New Owner shall have agreed, in writing, to make such reasonable capital expenditures to remodel, equip, modernize and redecorate the interior and exterior of the premises in accordance with our then existing plans and specifications for a The Joint Corp. Location franchise, and shall have agreed to pay our expenses for plan preparation or review, and site inspection;"
+   },
+   {
+    "sid": 638,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(l) upon receiving our consent for the Transfer or sale of the Franchise, the Proposed New Owner shall agree to assume all of your obligations under this Agreement in a form acceptable to us, or, at our option, shall agree to execute a new Franchise Agreement with us in the form then being used by us."
+   },
+   {
+    "sid": 639,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "We may, at our option, require that you guarantee the performance, and obligations of the Proposed New Owner; and"
+   },
+   {
+    "sid": 640,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(m) you must have properly offered us the opportunity to exercise our right of first refusal as described below, and we must have then declined to exercise it."
+   },
+   {
+    "sid": 815,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "Unless sooner terminated in accordance with the provisions of this Agreement, this Agreement will expire on _______________________________________."
+   },
+   {
+    "sid": 834,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "ADDENDUM TO LEASE AGREEMENT This Addendum to Lease Agreement (this \"Addendum\"), is entered into effective on this ______ day of _______________, 20___, (the \"Effective Date\") by and between __________________, a ________________________ (the \"Lessor\"), and __________________, a ________________________ (the \"Lessee\") (each a \"Party\" and collectively, the \"Parties\")."
+   },
+   {
+    "sid": 835,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "RECITALS WHEREAS, the Parties hereto have entered into a certain Lease Agreement, dated on the ______ day of _______________, 20___ (the \"Agreement\"), and pertaining to the premises located at _____________________________ (the \"Premises\"); WHEREAS, Lessor acknowledges that Lessee intends to operate The Joint franchise from the Premises pursuant to a Franchise Agreement (the \"Franchise Agreement\") with The Joint Corp. (\"Franchisor\") under the name The Joint or other name designated by Franchisor (\"Franchised Business\"); and WHEREAS, the Parties now desire to amend the Lease Agreement in accordance with the terms and conditions contained herein."
+   },
+   {
+    "sid": 840,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Lessee shall have the right to assign all of its right, title and interest in and to the Lease Agreement to Franchisor or its parent, subsidiary, or affiliate, (including another franchisee) at any time during the term of the Lease, including any extensions or renewals thereof, without first obtaining Lessor's consent, pursuant to the terms of the Collateral Assignment of Lease attached hereto as Exhibit A. However, no assignment shall be effective until such time as Franchisor or its designated affiliate gives Lessor written notice of its acceptance of the assignment, and nothing contained herein or in any other document shall constitute Franchisor or its designated subsidiary or affiliate a party to the Lease Agreement, or guarantor thereof, and shall not create any liability or obligation of Franchisor or its parent unless and until the Lease Agreement is assigned to, and accepted in writing by, Franchisor or its parent, subsidiary or affiliate."
+   }
+  ]
+ },
+ "edgar:Amscan ABL Amendment No.2 (2011)": {
+  "contract_id": "amscan_2011_credit",
+  "sentences": [
+   {
+    "sid": 4,
+    "why": [
+     "\"Qualifying IPO\" definition"
+    ],
+    "text": "(ii) “Qualifying IPO” means the issuance and sale by Holdings or any direct or indirect parent of Holdings of its common Capital Stock in an underwritten primary public offering (other than a public offering pursuant to a registration statement on Form S-4, S-8 or similar limited purpose form) pursuant to an effective registration statement filed with the SEC in accordance with the Securities Act (whether alone or in connection with a secondary public offering) for aggregate gross proceeds of $150,000,000 or more."
+   },
+   {
+    "sid": 6,
+    "why": [
+     "\"Change of Control\" definition"
+    ],
+    "text": "(i) The definition of “Change of Control” set forth in Section 1.01 of the Credit Agreement is hereby amended by deleting such definition in its entirety and replacing it with the following: “Change of Control” means the earliest to occur of (a) at any time prior to the consummation of a Qualifying IPO, the Sponsors ceasing to be “beneficial owners” (as defined in Rules 13(d)-3 and 13(d)-5 under the Exchange Act), in the aggregate, directly or indirectly, of at least fifty percent (50%) of the aggregate voting power represented by the issued and outstanding Capital Stock of Holdings, (b) at any time upon or after the consummation of a Qualifying IPO, (i) (A) any Person (other than one or more 2 Sponsors) or (B) Persons (other than one or more Sponsors) constituting a “group” (as such term is used in Sections 13(d) and 14(d) of the Exchange Act, but excluding any employee benefit plan of such person and its subsidiaries, and any person or entity acting in its capacity as trustee, agent or other fiduciary or administrator of any such plan), become the “beneficial owner”, directly or indirectly, of Capital Stock representing more than thirty-five percent (35%) of the aggregate voting power represented by the issued and outstanding Capital Stock of Holdings and the percentage of aggregate voting power so held is not less than the percentage of the aggregate voting power represented by the Capital Stock of Holdings beneficially owned, directly or indirectly, in the aggregate by the Sponsors or (ii) during any period of twelve (12) consecutive months, the majority of the board of directors of Holdings shall cease to be Persons who either (A) were members of the board of directors of Holdings on the Closing Date or (B) were elected or nominated for election by a majority of the board of directors of Holdings, who were either (1) directors on the Closing Date or (2) whose election or nomination for election was approved by a majority of such directors or by any Sponsor; (c) Holdings shall cease to own 100% of the Capital Stock of Amscan or (d) there shall occur any “change of control” or similar event under the Senior Subordinated Note Indenture (or any agreement or instrument evidencing or related to any Refinancing Indebtedness with respect thereto with an outstanding aggregate principal amount in excess of the Threshold Amount)."
+   },
+   {
+    "sid": 9,
+    "why": [
+     "\"Sponsors\" definition"
+    ],
+    "text": "(iv) The definition of “Sponsors” set forth in Section 1.01 of the Credit Agreement is hereby amended by deleting such definition in its entirety and replacing it with the following: ““Sponsors” means collectively Advent, Berkshire, Weston and any of their respective individual or joint Affiliates and funds or partnerships managed or advised by any of them or any of their 3 respective Affiliates, but not including any of their respective portfolio companies.”"
+   }
+  ]
+ },
+ "edgar:Amscan": {
+  "contract_id": "amscan_2011_credit",
+  "sentences": [
+   {
+    "sid": 4,
+    "why": [
+     "\"Qualifying IPO\" definition"
+    ],
+    "text": "(ii) “Qualifying IPO” means the issuance and sale by Holdings or any direct or indirect parent of Holdings of its common Capital Stock in an underwritten primary public offering (other than a public offering pursuant to a registration statement on Form S-4, S-8 or similar limited purpose form) pursuant to an effective registration statement filed with the SEC in accordance with the Securities Act (whether alone or in connection with a secondary public offering) for aggregate gross proceeds of $150,000,000 or more."
+   },
+   {
+    "sid": 6,
+    "why": [
+     "\"Change of Control\" definition"
+    ],
+    "text": "(i) The definition of “Change of Control” set forth in Section 1.01 of the Credit Agreement is hereby amended by deleting such definition in its entirety and replacing it with the following: “Change of Control” means the earliest to occur of (a) at any time prior to the consummation of a Qualifying IPO, the Sponsors ceasing to be “beneficial owners” (as defined in Rules 13(d)-3 and 13(d)-5 under the Exchange Act), in the aggregate, directly or indirectly, of at least fifty percent (50%) of the aggregate voting power represented by the issued and outstanding Capital Stock of Holdings, (b) at any time upon or after the consummation of a Qualifying IPO, (i) (A) any Person (other than one or more 2 Sponsors) or (B) Persons (other than one or more Sponsors) constituting a “group” (as such term is used in Sections 13(d) and 14(d) of the Exchange Act, but excluding any employee benefit plan of such person and its subsidiaries, and any person or entity acting in its capacity as trustee, agent or other fiduciary or administrator of any such plan), become the “beneficial owner”, directly or indirectly, of Capital Stock representing more than thirty-five percent (35%) of the aggregate voting power represented by the issued and outstanding Capital Stock of Holdings and the percentage of aggregate voting power so held is not less than the percentage of the aggregate voting power represented by the Capital Stock of Holdings beneficially owned, directly or indirectly, in the aggregate by the Sponsors or (ii) during any period of twelve (12) consecutive months, the majority of the board of directors of Holdings shall cease to be Persons who either (A) were members of the board of directors of Holdings on the Closing Date or (B) were elected or nominated for election by a majority of the board of directors of Holdings, who were either (1) directors on the Closing Date or (2) whose election or nomination for election was approved by a majority of such directors or by any Sponsor; (c) Holdings shall cease to own 100% of the Capital Stock of Amscan or (d) there shall occur any “change of control” or similar event under the Senior Subordinated Note Indenture (or any agreement or instrument evidencing or related to any Refinancing Indebtedness with respect thereto with an outstanding aggregate principal amount in excess of the Threshold Amount)."
+   },
+   {
+    "sid": 9,
+    "why": [
+     "\"Sponsors\" definition"
+    ],
+    "text": "(iv) The definition of “Sponsors” set forth in Section 1.01 of the Credit Agreement is hereby amended by deleting such definition in its entirety and replacing it with the following: ““Sponsors” means collectively Advent, Berkshire, Weston and any of their respective individual or joint Affiliates and funds or partnerships managed or advised by any of them or any of their 3 respective Affiliates, but not including any of their respective portfolio companies.”"
+   }
+  ]
+ },
+ "cuad:Vertex": {
+  "contract_id": "vertexenergyinc_20200113_8_k_ex_10_1_11943624_ex_10_1_market",
+  "sentences": [
+   {
+    "sid": 0,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "Vertex Energy, Inc. 8-K Exhibit 10.1 THE SYMBOL \"[****]\" DENOTES PLACES WHERE CERTAIN IDENTIFIED INFORMATION HAS BEEN EXCLUDED FROM THE EXHIBIT BECAUSE IT IS BOTH (i) NOT MATERIAL, AND (ii) WOULD LIKELY CAUSE COMPETITIVE HARM TO THE COMPANY IF PUBLICLY DISCLOSED JOINT SUPPLY AND MARKETING AGREEMENT This Joint Supply and Marketing Agreement (hereinafter referred to as the \"JSMA\") shall be effective as of May 1, 2020 \"the Commencement Date\" and is made and entered into this 10t h day of January, 2020 between Bunker One (USA) Inc., with principal offices located at 107 St. Francis Street, Mobile, AL 36602 (\"Bunker One\"), and Vertex Energy Operating, LLC, with principal offices located at 1331 Gemini Suite 250, Houston, TX 77058 (\"Vertex\")."
+   },
+   {
+    "sid": 16,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "\"JSMA Output\" has the meaning ascribed thereto in Section 2.1. \"Effective Date\" means the date as of which the last signature of a Party is affixed hereto."
+   },
+   {
+    "sid": 96,
+    "why": [
+     "CUAD label: Effective Date",
+     "CUAD label: Expiration Date",
+     "CUAD label: Notice Period To Terminate Renewal",
+     "CUAD label: Renewal Term"
+    ],
+    "text": "5. Term 5.1. The term of this JSMA shall commence on May 1, 2020 (the \"Commencement Date\") and ends at April 30, 2029 (the \"Term\"), with automatic renewals each for a period of five (5) years (a \"Renewal Term\") unless notice is given pursuant to 5.2. 5.2. This JSMA will be terminated as of the end of the Term or any Renewal Term, by either Party giving written notice of non-renewal to the other Party no less than 120 prior to the applicable expiry date (the \"Termination Period\")."
+   },
+   {
+    "sid": 102,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "5.6. A Party may terminate the JSMA immediately upon the delivery of written notice to the other Party if there has been a Change in Control."
+   },
+   {
+    "sid": 126,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "11.1. Neither Party shall assign or transfer any rights or obligations hereunder without the express prior written consent of the other Party, which may not be unreasonably withheld."
+   }
+  ]
+ },
+ "cuad:Gpaq": {
+  "contract_id": "gpaqacquisitionholdingsinc_20200123_s_4a_ex_10_6_11951677_ex",
+  "sentences": [
+   {
+    "sid": 0,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "Exhibit 10.6 EXECUTION COPY MEDIA LICENSE AGREEMENT THIS MEDIA LICENSE AGREEMENT (this \"Agreement\") is made and effective as of the date of the Closing (as defined in the Merger Agreement (as defined below)) (the \"Effective Date\"), between NATIONAL FOOTBALL MUSEUM, INC., an Ohio non-profit corporation, doing business as Pro Football Hall of Fame (\"PFHOF\"), HOF Village Media Group, LLC (the \"Village Media Company\"), a Delaware limited liability company that is a wholly-owned subsidiary of HOF Village, LLC, a Delaware limited liability company (\"HOFV\") and, solely for purposes of Section 4.5, HOFV; each a \"Party\" and collectively, the \"Parties\"."
+   },
+   {
+    "sid": 74,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "4. TERM AND TERMINATION 4.1 Unless otherwise terminated as provided herein, the term of this Agreement shall commence on the Effective Date and shall terminate on December 31, 2034 (such period, including as may be extended in accordance with the subsequent sentence, the \"Term\")."
+   },
+   {
+    "sid": 75,
+    "why": [
+     "CUAD label: Notice Period To Terminate Renewal",
+     "CUAD label: Renewal Term"
+    ],
+    "text": "Thereafter, the agreement shall automatically renew for successive five (5)-year terms, unless either Party gives written notice to the other Party of intent not to renew at least six (6) months prior to the expiration of the then-current Term."
+   },
+   {
+    "sid": 76,
+    "why": [
+     "CUAD label: Renewal Term"
+    ],
+    "text": "If either party elects not to renew the Agreement and the other party wishes to continue the Agreement, the Parties shall attempt in good faith to negotiate an amendment to the Agreement to renew the Term on such terms as may be negotiated by the Parties."
+   },
+   {
+    "sid": 82,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "4.4 In addition to and without limiting any other provision of this Agreement, if a Change of Control occurs at any time during the Term, PFHOF shall have the right to terminate this Agreement immediately upon giving notice of such termination to the Village Media Company."
+   },
+   {
+    "sid": 83,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "For purposes of this Section 4.4, a \"Change of Control\" shall mean any transaction or series of related transactions that results in (including by way of merger or consolidation), or that is in connection with, the Village Media Company no longer being controlled (as defined in Section 1.2) by or under common control (as defined in Section 1.2) with HOFV."
+   },
+   {
+    "sid": 125,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "The Village Media Company shall not, directly or indirectly, assign, sublicense or otherwise transfer any of its rights or obligations hereunder without the prior written consent of PFHOF."
+   }
+  ]
+ },
+ "cuad:EuropeanMicro": {
+  "contract_id": "europeanmicroholdingsinc_03_06_1998_ex_10_6_distributor_agre",
+  "sentences": [
+   {
+    "sid": 3,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "This Agreement is made and entered into effective as of November 5, 1997 (the \"effective Date), by and between WatchGuard Technologies, Inc., a Delaware corporation (\"WGT\"), and European Micro (\"Distributor\")."
+   },
+   {
+    "sid": 82,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "The Term will commence on the Effective Date of this Agreement and will remain in effect, unless sooner terminated under paragraphs 5.2, 5.3, or 5.4, until the termination date specified in Exhibit A."
+   },
+   {
+    "sid": 83,
+    "why": [
+     "CUAD label: Notice Period To Terminate Renewal",
+     "CUAD label: Renewal Term"
+    ],
+    "text": "The Term will automatically renew for successive additional periods of one (1) year each, provided that: (a) Distributor has made all Guaranteed Minimum Purchases and has complied with the marketing requirements under paragraph 4.1(b); (b) the parties have agreed in writing upon the Guaranteed Minimum Purchase amounts and Product price discounts for the next subsequent one (1) year renewal period; (c) neither party provided the other party with notice of such party's intention not to renew this Agreement at least thirty (30) days prior to any year's Expiration Date; and (d) neither party provided the other party with such notice as may be required pursuant to paragraphs 5.2, 5.3 or 5.4."
+   },
+   {
+    "sid": 85,
+    "why": [
+     "CUAD label: Anti-Assignment",
+     "CUAD label: Change Of Control"
+    ],
+    "text": "Upon the occurrence of any of the following, WGT may terminate the Term by giving Distributor written notice of such termination for:"
+   },
+   {
+    "sid": 87,
+    "why": [
+     "CUAD label: Change Of Control"
+    ],
+    "text": "(b) any material change in the general management, ownership or control of Distributor, including without limitation the sale, transfer or relinquishment by Distributor of any substantial interest in the ownership of the business to be carried on by Distributor under this Agreement, unless such change is approved in advance and in writing by an officer of WGT;"
+   },
+   {
+    "sid": 88,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "(c) any assignment or attempted assignment of this Agreement by Distributor without the prior written consent of WGT;"
+   },
+   {
+    "sid": 149,
+    "why": [
+     "CUAD label: Expiration Date"
+    ],
+    "text": "TERMINATION DATE: September 30, 1997 TRADEMARKS:"
+   },
+   {
+    "sid": 289,
+    "why": [
+     "CUAD label: Anti-Assignment"
+    ],
+    "text": "Distributor will not assign all or any part of this Agreement or any of its rights under this Agreement without the prior written consent of WGT."
+   }
+  ]
+ },
+ "cuad:Kiromic": {
+  "contract_id": "kiromicbiopharma_inc_04_08_2020_ex_10_28_joint_venture_agree",
+  "sentences": [
+   {
+    "sid": 68,
+    "why": [
+     "CUAD label: Effective Date",
+     "CUAD label: Expiration Date",
+     "CUAD label: Notice Period To Terminate Renewal",
+     "CUAD label: Renewal Term"
+    ],
+    "text": "This JV Agreement shall become effective on the signing date and shall have a duration of * years, extendable for a further * years, unless notice of non- renewal is sent one year before the natural expiry date."
+   },
+   {
+    "sid": 100,
+    "why": [
+     "CUAD label: Anti-Assignment",
+     "CUAD label: Change Of Control"
+    ],
+    "text": "This JV Agreement cannot be assigned by a Party, also as a result of the transfer of a business as a going concern, of a merger, of a de-merger or of a spin-off, without the prior written consent of the other Party."
+   },
+   {
+    "sid": 141,
+    "why": [
+     "CUAD label: Effective Date"
+    ],
+    "text": "Rome/Houston, 2 April 2020 Kiromic Biopharma Inc. Molipharma s.r.l."
+   }
+  ]
+ }
+}

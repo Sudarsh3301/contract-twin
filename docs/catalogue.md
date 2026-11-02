@@ -15,6 +15,8 @@ data/curated. Atoms are derived from the variants; rules are derived from the at
 | T7 undefined "control" | Vertex*, HealthGate* (defined elsewhere / not located) | -> resolve definition, else NEEDS_LAWYER |
 | T8 parent ceases to own 100% of borrower (direct) | Amscan (c) | holding insertion position |
 | T9 cross-reference to another instrument's CoC | Amscan (d) | -> gap (refers_to_missing) |
+| T10 competitor takes a disclosable stake (5% under Rule 13d-1) | VirtualScopics (d) | buyer is competitor and % |
+| T11 change in a named key leadership position | VirtualScopics (e) | management_changes flag |
 ### Carve-outs
 | Carve-out | Source |
 |---|---|
@@ -38,6 +40,7 @@ us / them / either party. Many CUAD clauses are mutual ("either party").
 | A3 CoC expressly NOT an assignment | VerticalNet |
 | A4 assignment allowed without consent on merger/acquisition (except competitor) | Corio |
 Key point (all variants): a sale of shares in a party is not an assignment by that party unless the clause deems it.
+A holding company inserted by MERGER is caught by 'merger ... involving' language; inserted by SHARE EXCHANGE it is a reading question (NEEDS_LAWYER).
 
 ## C. Term and renewal
 | Variant | Source |
@@ -54,7 +57,8 @@ Key point (all variants): a sale of shares in a party is not an assignment by th
 change_of_control
 - present: yes / no
 - whose: us / them / either
-- trigger_kinds: set of {ownership_threshold, retained_stake, management_change, transaction_type, open_textured, parent_direct_ownership, cross_reference}
+- trigger_kinds: set of {ownership_threshold, retained_stake, competitor_stake, management_change, transaction_type, open_textured, parent_direct_ownership, cross_reference}
+- competitor_threshold_pct: number (default 5)
 - threshold_pct: number | silent ; threshold_op: gt / gte
 - retained_holder: sponsors / original_owners / principal_owners / none ; retained_pct: number
 - transaction_types: set of {merger, consolidation, asset_sale, reorganization, share_sale}
@@ -64,6 +68,7 @@ change_of_control
 - open_texture_term: text | none
 - effect: termination_right / automatic_termination / consent / notice / prepayment / service_limitation / elsewhere
 - effect_holder: us / them / either ; notice_period: number + unit (days / business_days / months) | none
+- unless_consented (per effect): yes / no — prior consent removes this effect only (iPayment: termination right goes, notice duty stays)
 - definition_location: in_clause / elsewhere_in_contract / other_document
 assignment
 - restricted: yes / no ; consent_needed: yes / no

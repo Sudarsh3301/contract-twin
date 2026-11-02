@@ -1,0 +1,2037 @@
+{
+ "model": "z-ai/glm-5.3",
+ "k": 3,
+ "temperature": 0.7,
+ "cost_usd": 0.0765,
+ "agree_status": 26,
+ "n": 34,
+ "cases": [
+  {
+   "id": "R01",
+   "src": "cuad:RaeSystems",
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "termination_right",
+    "holder": "counterparty"
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": null,
+      "holder": "counterparty",
+      "kind": "termination_right",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "A single buyer now holds 60% of the sold party's equity, which is a change in ownership of 50% or more, so [114] gives the other party (the counterparty, since 'us' is the party sold) an option to terminate upon written notice. [145]-[146] concern assignment/delegation of rights under the agreement, not a share purchase, so they are not triggered. No fixed dates in the scenario are met ([101] auto-renews).",
+    "status": "TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "counterparty",
+       "kind": "termination_right",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "A single buyer now holds 60% of the sold party's equity, which is a change in ownership of 50% or more, so [114] gives the other party (the counterparty, since 'us' is the party sold) an option to terminate upon written notice. [145]-[146] concern assignment/delegation of rights under the agreement, not a share purchase, so they are not triggered. No fixed dates in the scenario are met ([101] auto-renews).",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "counterparty",
+       "kind": "termination_right",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [114] states that upon a change in ownership representing 50% or more of either party's equity, the other party may terminate at its option upon written notice. The buyer now holds 60% of our equity, triggering this clause. The other party (the counterparty) holds a termination right, exercisable upon written notice [114]. Sentences [101] on renewal and [145]-[146] on assignment consent are not implicated by this share purchase (no assignment or delegation occurred).",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "counterparty",
+       "kind": "termination_right",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The buyer now holds 60% of the equity of one party, which is a change in ownership of 50% or more of that party's equity. Sentence [114] expressly gives the other party the option to terminate the Agreement upon written notice. The reaction is a termination_right held by the counterparty (the party not sold). Sentences [145]-[146] concern assignment of rights/delegation, not a share purchase, so they are not the operative basis. The holder cannot be named more precisely because the sold party is not specified, so I denote it as 'counterparty'.",
+     "status": "TRIGGERED"
+    }
+   ],
+   "status_agree": true,
+   "kind_agree": true
+  },
+  {
+   "id": "R02",
+   "src": "cuad:RaeSystems",
+   "expected": {
+    "status": "NOT_TRIGGERED",
+    "why": "30% < 50%"
+   },
+   "vote": "NOT_TRIGGERED",
+   "samples": [
+    "NOT_TRIGGERED",
+    "NOT_TRIGGERED",
+    "NOT_TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [],
+    "reasoning": "Sentence [114] gives a termination right only for an ownership change of 50% or more; the buyer holds 30%, below the threshold. Sentences [145]/[146] concern assignment/delegation of rights, not a share purchase, and are in any case subject to consent, which is not implicated. No reaction follows.",
+    "status": "NOT_TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [],
+     "reasoning": "Sentence [114] gives a termination right only for an ownership change of 50% or more; the buyer holds 30%, below the threshold. Sentences [145]/[146] concern assignment/delegation of rights, not a share purchase, and are in any case subject to consent, which is not implicated. No reaction follows.",
+     "status": "NOT_TRIGGERED"
+    },
+    {
+     "reactions": [],
+     "reasoning": "The buyer acquires only 30% of party sold's equity (s1), below the 50% threshold in [114], so no termination option arises. The buyer is not a party and no assignment of rights or delegation of obligations under the agreement has occurred, so [145]/[146] (consent for assignment) do not apply. No other reaction-giving clause is implicated.",
+     "status": "NOT_TRIGGERED"
+    },
+    {
+     "reactions": [],
+     "reasoning": "Sentence [114] requires a change of ownership of 50% or more of equity to give a termination right; the buyer acquired only 30% (scenario 1), well below the threshold. Sentence [145]/[146] concern assignment or delegation of rights/obligations, not a passive share purchase, and no assignment occurred. No clause is triggered by these facts.",
+     "status": "NOT_TRIGGERED"
+    }
+   ],
+   "status_agree": true
+  },
+  {
+   "id": "R03",
+   "src": "cuad:VirtualScopics",
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "termination_right",
+    "holder": "counterparty",
+    "why": "boundary: 'equal to 50% or more'"
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": "",
+      "holder": "counterparty",
+      "kind": "termination_right",
+      "notice_days": 0
+     }
+    ],
+    "reasoning": "Sentence [121](c) gives PPD an immediate for-cause termination right upon a change of ownership equal to fifty percent or more of VS's outstanding voting securities; the scenario states the buyer now holds 50%, so the threshold is met exactly and the right is TRIGGERED for PPD ('counterparty' = PPD, holder of the termination right). Sentence [154]'s consent requirement concerns assignment of the Agreement by a party, not a third party purchasing VS shares, and no assignment/delegation by VS occurred, so [154]/[158] are NOT_TRIGGERED. The term clauses [8]/[9] are unaffected by this event.",
+    "status": "TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": "",
+       "holder": "counterparty",
+       "kind": "termination_right",
+       "notice_days": 0
+      }
+     ],
+     "reasoning": "Sentence [121](c) gives PPD an immediate for-cause termination right upon a change of ownership equal to fifty percent or more of VS's outstanding voting securities; the scenario states the buyer now holds 50%, so the threshold is met exactly and the right is TRIGGERED for PPD ('counterparty' = PPD, holder of the termination right). Sentence [154]'s consent requirement concerns assignment of the Agreement by a party, not a third party purchasing VS shares, and no assignment/delegation by VS occurred, so [154]/[158] are NOT_TRIGGERED. The term clauses [8]/[9] are unaffected by this event.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "counterparty",
+       "kind": "termination_right",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The buyer acquires 50% of VS's outstanding voting securities (scenario states 50% after the sale), which is a 'change of ownership equal to fifty percent (50%) or more in the outstanding voting securities of VS' under sentence [121](c). Sentence [121] grants PPD the right to terminate the Agreement (or a relevant Work Order) immediately for cause, so this is a termination right held by PPD (the counterparty), TRIGGERED. Sentence [154]'s consent requirement concerns assignment of the Agreement, not share purchases, so it is not implicated. The 30-day non-renewal notice in [9] is not at issue; no notice was sent and no renewal deadline is framed by the scenario.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": "",
+       "holder": "none",
+       "kind": "termination_right",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [121](c) gives PPD an immediate termination right upon a change of ownership equal to 50% or more in VS's outstanding voting securities. The buyer now holds exactly 50% of VS's voting securities, satisfying the trigger. This is a share purchase, not an assignment of the Agreement, so [154]/[158] do not apply. Triggered: PPD holds a termination right (immediate, for cause) under [121](c); VS holds none. No notice deadline is specified for exercising it, so no due date is stated.",
+     "status": "TRIGGERED"
+    }
+   ],
+   "status_agree": true,
+   "kind_agree": true
+  },
+  {
+   "id": "R04",
+   "src": "cuad:DynTek",
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "termination_right",
+    "holder": "counterparty",
+    "notice_days": 60
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "status": "TRIGGERED",
+    "reactions": [
+     {
+      "kind": "termination_right",
+      "holder": "counterparty",
+      "due": null,
+      "notice_days": 60
+     }
+    ],
+    "reasoning": "The buyer is a single person (not a 'group' under [37]) and is not the Trust, Rubin, or an affiliate of either, so the carve-out in [37] does not apply. The buyer acquired beneficial ownership of 30% of Diplomat's voting securities, exceeding the 20% Threshold in [35]. The event is an ordinary purchase, not an involuntary disposition or Tax-Free Spin-Off, so the exclusions in [39] do not apply. Therefore Tadeo (the counterparty) gains the right, but not the obligation, to terminate the Agreement upon 60 days written notice to Diplomat per [35]. No notice has been sent, so no termination date exists yet; the right requires 60 days written notice to exercise."
+   },
+   "all_answers": [
+    {
+     "status": "TRIGGERED",
+     "reactions": [
+      {
+       "kind": "termination_right",
+       "holder": "counterparty",
+       "due": null,
+       "notice_days": 60
+      }
+     ],
+     "reasoning": "The buyer is a single person (not a 'group' under [37]) and is not the Trust, Rubin, or an affiliate of either, so the carve-out in [37] does not apply. The buyer acquired beneficial ownership of 30% of Diplomat's voting securities, exceeding the 20% Threshold in [35]. The event is an ordinary purchase, not an involuntary disposition or Tax-Free Spin-Off, so the exclusions in [39] do not apply. Therefore Tadeo (the counterparty) gains the right, but not the obligation, to terminate the Agreement upon 60 days written notice to Diplomat per [35]. No notice has been sent, so no termination date exists yet; the right requires 60 days written notice to exercise."
+    },
+    {
+     "status": "TRIGGERED",
+     "reactions": [
+      {
+       "kind": "termination_right",
+       "holder": "counterparty",
+       "due": "",
+       "notice_days": 60
+      }
+     ],
+     "reasoning": "The buyer, a single person not affiliated with the Rubin Trust carve-out (s37), acquired beneficial ownership of 30% of Diplomat's voting securities, exceeding the 20% Threshold (s35). The acquisition is not excluded under s39 (no foreclosure or tax-free spin-off). Thus Tadeo (the counterparty) has the right, but not the obligation, to terminate the Agreement and Diplomat's rights upon 60 days' written notice to Diplomat."
+    },
+    {
+     "status": "TRIGGERED",
+     "reactions": [
+      {
+       "kind": "termination_right",
+       "holder": "none",
+       "due": null,
+       "notice_days": 60
+      }
+     ],
+     "reasoning": "Sentence [35] gives Tadeo the right (not obligation) to terminate upon 60 days written notice following an acquisition of beneficial ownership of at least 20% of Diplomat's voting securities by any person. The buyer is a single person, not the Rubin family trust or affiliates excluded in [37], and the carve-outs in [39] (foreclosure/tax-free spin-off) do not apply. 30% exceeds the threshold, so Tadeo holds a termination right, exercisable upon 60 days written notice [35]. Note the agreement runs to June 1, 2000 per [17], and [18] permits either party to extend with 60 days notice before the end of the Period, but no extension notice is stated to have been sent."
+    }
+   ],
+   "status_agree": true,
+   "kind_agree": true
+  },
+  {
+   "id": "R05",
+   "src": "cuad:iPayment",
+   "expected": {
+    "status": "TRIGGERED",
+    "reactions": [
+     {
+      "kind": "notice",
+      "holder": "us",
+      "due_business_days": 3,
+      "due": "2027-03-09",
+      "why": "Thu 4 Mar 2027 + 3 business days (Sat/Sun excluded, no holiday assumed)"
+     },
+     {
+      "kind": "termination_right",
+      "holder": "counterparty",
+      "notice_days": 180
+     }
+    ]
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": "2027-03-09",
+      "holder": "us",
+      "kind": "notice",
+      "notice_days": 3
+     },
+     {
+      "due": null,
+      "holder": "counterparty",
+      "kind": "termination_right",
+      "notice_days": 180
+     }
+    ],
+    "reasoning": "The buyer acquires 60% of ISO's equity and the management team changes, so the carve-out in sentence [41] does not apply: this is a Change of Control of ISO. Sentence [470] obligates ISO to give written notice to SERVICERS within 3 Business Days, so a notice is due by 2027-03-09 (2027-03-04 is a Thursday; business days are Mar 5, 8, 9). Sentence [390] gives SERVICERS a termination right upon a Change of Control with 180 days prior written notice, unless previously consented (no consent assumed). Sentence [384]/[469] concern assignment of the Agreement, which did not occur. Status: TRIGGERED.",
+    "status": "TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": "2027-03-09",
+       "holder": "us",
+       "kind": "notice",
+       "notice_days": 3
+      },
+      {
+       "due": null,
+       "holder": "counterparty",
+       "kind": "termination_right",
+       "notice_days": 180
+      }
+     ],
+     "reasoning": "The buyer acquires 60% of ISO's equity and the management team changes, so the carve-out in sentence [41] does not apply: this is a Change of Control of ISO. Sentence [470] obligates ISO to give written notice to SERVICERS within 3 Business Days, so a notice is due by 2027-03-09 (2027-03-04 is a Thursday; business days are Mar 5, 8, 9). Sentence [390] gives SERVICERS a termination right upon a Change of Control with 180 days prior written notice, unless previously consented (no consent assumed). Sentence [384]/[469] concern assignment of the Agreement, which did not occur. Status: TRIGGERED.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": "2027-03-09",
+       "holder": "us",
+       "kind": "notice",
+       "notice_days": 3
+      },
+      {
+       "due": "2027-03-04",
+       "holder": "counterparty",
+       "kind": "termination_right",
+       "notice_days": 180
+      }
+     ],
+     "reasoning": "The buyer acquires 60% beneficial ownership and the management team changes, so this is a Change of Control under [41] (the same-management carve-outs do not apply). Under [470], ISO (us) must give written notice to SERVICERS within 3 Business Days of the Change of Control; closing is Thursday 2027-03-04, so the notice deadline is Tuesday 2027-03-09 (Fri 03-05, Mon 03-08, Tue 03-09). Additionally, under [390], a Change of Control of ISO gives SERVICERS a for-cause termination right exercisable on 180 days prior written notice, absent prior consent (none given). Both reactions are clearly triggered by the text; the event date is 2027-03-04.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": "2027-03-09",
+       "holder": "us",
+       "kind": "notice",
+       "notice_days": 3
+      },
+      {
+       "due": "2027-08-31",
+       "holder": "counterparty",
+       "kind": "termination_right",
+       "notice_days": 180
+      }
+     ],
+     "reasoning": "The buyer acquiring 60% of ISO's equity with a management team change satisfies the definition of Change of Control in [41] (the carve-outs—public company or same management team—do not apply). This clearly triggers [470]: ISO must give SERVICERS written notice within 3 Business Days of the Change of Control. Closing is 2027-03-04 (a Thursday), so the 3 Business Days run Fri 2027-03-05, Mon 2027-03-08, Tue 2027-03-09; [39] excludes weekends. It also triggers [390]: SERVICERS may terminate upon 180 days prior written notice to ISO, absent prior consent (none given). Notice sent today would make the earliest exit 2027-03-04 + 180 days = 2027-08-31. [384]/[469] concern assignment of the Agreement, not a share purchase, so no consent requirement arises from them.",
+     "status": "TRIGGERED"
+    }
+   ],
+   "status_agree": true,
+   "kind_agree": true,
+   "due_agree": true
+  },
+  {
+   "id": "R06",
+   "src": "cuad:iPayment",
+   "expected": {
+    "status": "NOT_TRIGGERED",
+    "why": "same-management carve-out"
+   },
+   "vote": "NOT_TRIGGERED",
+   "samples": [
+    "NOT_TRIGGERED",
+    "NOT_TRIGGERED",
+    "NOT_TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [],
+    "reasoning": "Sentence [41] defines Change of Control as >51% beneficial ownership change, but expressly carves out a >51% ownership change while maintaining the same management team. Here the buyer acquired 60% but the management team stayed the same, so no Change of Control occurred. The notice obligation in [470] and the termination right in [390] therefore do not apply, and no assignment or consent issue arises ([129], [384], [469]). No reaction is triggered.",
+    "status": "NOT_TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [],
+     "reasoning": "Sentence [41] defines Change of Control as >51% beneficial ownership change, but expressly carves out a >51% ownership change while maintaining the same management team. Here the buyer acquired 60% but the management team stayed the same, so no Change of Control occurred. The notice obligation in [470] and the termination right in [390] therefore do not apply, and no assignment or consent issue arises ([129], [384], [469]). No reaction is triggered.",
+     "status": "NOT_TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "other",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence 41 defines Change of Control as a change in beneficial ownership of more than 51% of equity securities, but expressly carves out a change in beneficial ownership of more than 51% while maintaining the same management team. Here the buyer acquires 60% of ISO's equity/voting securities but the management team stays the same, so per the proviso this is NOT a Change of Control. Therefore sentence 470 (notice within 3 Business Days of a Change of Control) does not apply, and sentence 390 (termination by SERVICERS upon Change of Control with 180 days notice) does not apply either. The scenario involves no assignment of the Agreement, so sentences 384, 398, and 469 are not triggered. The event clearly produces no reaction.",
+     "status": "NOT_TRIGGERED"
+    },
+    {
+     "reactions": [],
+     "reasoning": "Under [41], a change of beneficial ownership of more than 51% of equity securities does NOT constitute a Change of Control if the same management team is maintained. The buyer acquired 60% but the management team stayed the same, so no Change of Control occurred. Therefore [390]'s termination right (which requires a Change of Control) and [470]'s 3-Business-Day notice obligation (also keyed to a Change of Control) are not triggered. No assignment or subcontracting occurred, so [129] and [469] are inapplicable.",
+     "status": "NOT_TRIGGERED"
+    }
+   ],
+   "status_agree": true
+  },
+  {
+   "id": "R07",
+   "src": "cuad:iPayment",
+   "expected": {
+    "status": "NOT_TRIGGERED",
+    "why": "becoming a public company with the same management is carved out"
+   },
+   "vote": "NOT_TRIGGERED",
+   "samples": [
+    "NOT_TRIGGERED",
+    "NOT_TRIGGERED",
+    "NOT_TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [],
+    "reasoning": "The IPO does not meet the Change of Control definition: [41] carves out becoming a public company with the same management team, and the 30% public float does not exceed 51% beneficial ownership. Therefore [470]'s 3-business-day notice duty and [390]'s 180-day termination right for SERVICERS never activate, and no assignment under [129]/[469] occurred.",
+    "status": "NOT_TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [],
+     "reasoning": "The IPO does not meet the Change of Control definition: [41] carves out becoming a public company with the same management team, and the 30% public float does not exceed 51% beneficial ownership. Therefore [470]'s 3-business-day notice duty and [390]'s 180-day termination right for SERVICERS never activate, and no assignment under [129]/[469] occurred.",
+     "status": "NOT_TRIGGERED"
+    },
+    {
+     "reactions": [],
+     "reasoning": "The IPO leaves management unchanged and no investor acquires >51% beneficial ownership; under [41], becoming a public company with the same management team is expressly excluded from the definition of Change of Control. There is no assignment or subcontracting triggering [129], [384], [398], or [469], and no ISO Change of Control triggering notice under [470] or termination under [390]. No clause reacts to this event.",
+     "status": "NOT_TRIGGERED"
+    },
+    {
+     "reactions": [],
+     "reasoning": "Sentence [41] expressly excludes from the definition of Change of Control 'becoming a public company with the same management team,' and the scenario states the management team stays the same. Therefore the IPO does not constitute a Change of Control, so the notice obligation in [470] and the termination right in [390] are not triggered.",
+     "status": "NOT_TRIGGERED"
+    }
+   ],
+   "status_agree": true
+  },
+  {
+   "id": "R08",
+   "src": "cuad:eLandia",
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "'major shareholding' and 'control' undefined; reasonableness standard"
+   },
+   "vote": "NEEDS_LAWYER",
+   "samples": [
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": null,
+      "holder": "us",
+      "kind": "other",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "The buyer acquires 30% of Datec's equity and voting securities [event 1]. Clause [607] gives BSP a termination right on 'a change of control or major shareholding of Datec', but the agreement never defines either term. Whether a single 30% stake constitutes a 'change of control' or a 'major shareholding' is genuinely open-ended, so this is NEEDS_LAWYER. On the most likely reading, a 30% block is at least a 'major shareholding', so BSP would hold a termination right via written notice [607]. The conditionality in [612]-[614] only affects payment under Section 14, not the existence of the right. The assignment clause [675]-[679] is NOT_TRIGGERED: a share purchase by a third party is not an assignment of the agreement or Datec's rights under it, so no BSP consent is required. No fixed dates in this scenario are implicated by the event.",
+    "status": "NEEDS_LAWYER"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "other",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The buyer acquires 30% of Datec's equity and voting securities [event 1]. Clause [607] gives BSP a termination right on 'a change of control or major shareholding of Datec', but the agreement never defines either term. Whether a single 30% stake constitutes a 'change of control' or a 'major shareholding' is genuinely open-ended, so this is NEEDS_LAWYER. On the most likely reading, a 30% block is at least a 'major shareholding', so BSP would hold a termination right via written notice [607]. The conditionality in [612]-[614] only affects payment under Section 14, not the existence of the right. The assignment clause [675]-[679] is NOT_TRIGGERED: a share purchase by a third party is not an assignment of the agreement or Datec's rights under it, so no BSP consent is required. No fixed dates in this scenario are implicated by the event.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "termination_right",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The 30% acquisition may qualify as a 'change of control or major shareholding' (607), but both terms are undefined and open-textured: 30% need not amount to control, and 'major shareholding' has no threshold. Even if triggered, 607 subjects BSP's right to terminate to BSP acting 'not unreasonably after due consideration', a discretion-dependent condition, and 612-614 leave open whether the buyer is a BSP competitor or the change is detrimental. Additionally, 675-679 require BSP's prior written consent for any assignment by Datec, but a share purchase is not an assignment of the agreement. On the most likely reading (a 30% sole block is a major shareholding), BSP (not us) holds a termination right (607), with compensation consequences under 615 if 613/614 apply. Real legal uncertainty remains, so NEEDS_LAWYER with termination_right held by the other party.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "other",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The event is a single buyer acquiring 30% of Datec's equity and voting securities. Sentence [607] gives BSP a termination right on a 'change of control or major shareholding' of Datec, but 'change of control' and 'major shareholding' are undefined open-textured terms, and whether a 30% single-holder stake qualifies is a real legal question the contract does not resolve. [611]-[615] then turn on further open judgments (competitor control, 'reasonably likely' detrimental effect in BSP's opinion). No assignment occurs, so [675]-[683] do not apply. On the most likely reading (a 30% block is a major shareholding), BSP would hold a termination_right under [607], exercisable by written notice to Datec (acting reasonably); if [612]-[614] conditions were met, payments would follow under [615].",
+     "status": "NEEDS_LAWYER"
+    }
+   ],
+   "status_agree": true
+  },
+  {
+   "id": "R09",
+   "src": "cuad:BlackBox",
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "'unacceptable' is the counterparty's judgement"
+   },
+   "vote": "NEEDS_LAWYER",
+   "samples": [
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": null,
+      "holder": "none",
+      "kind": "other",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "Sentence [60](b) gives the Company a termination right on 'an unacceptable change in the control or management of the Distributor.' The buyer acquired 60% of Distributor's equity and voting securities, which is a change in control. However, the clause turns on whether that change is 'unacceptable,' an undefined, open-textured standard left to the Company's judgment. No facts state whether the Company regards this change as unacceptable or that it meets any criteria, so whether the termination right arises is a real legal question. On the most likely reading (a 60% shift to a new controlling person is a change of control the Company could deem unacceptable), the Company would hold a termination_right under [58]/[60]. Note the anti-assignment clauses [9] and [107] are not triggered, as this is a share transfer, not an assignment of the agreement or Section 1.01 rights.",
+    "status": "NEEDS_LAWYER"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "none",
+       "kind": "other",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [60](b) gives the Company a termination right on 'an unacceptable change in the control or management of the Distributor.' The buyer acquired 60% of Distributor's equity and voting securities, which is a change in control. However, the clause turns on whether that change is 'unacceptable,' an undefined, open-textured standard left to the Company's judgment. No facts state whether the Company regards this change as unacceptable or that it meets any criteria, so whether the termination right arises is a real legal question. On the most likely reading (a 60% shift to a new controlling person is a change of control the Company could deem unacceptable), the Company would hold a termination_right under [58]/[60]. Note the anti-assignment clauses [9] and [107] are not triggered, as this is a share transfer, not an assignment of the agreement or Section 1.01 rights.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "termination_right",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The buyer now holds 60% of Distributor's equity and voting securities, which is a change in control of the Distributor. Sentence [60](b) gives the Company a termination right on 'an unacceptable change in the control or management of the Distributor.' Whether this change is 'unacceptable' is open-textured and left undefined, so the clause cannot clearly be marked triggered or not triggered without interpretation; on the most likely reading a change in control of this size would qualify, giving the Company a termination right (NEEDS_LAWYER).",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "termination_right",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The buyer now holds 60% of Distributor's equity and voting securities, which is a change in control of the Distributor. Sentence [60](b) gives the Company a right to terminate on 'an unacceptable change in the control or management of the Distributor.' The word 'unacceptable' is open-textured and leaves the assessment to the Company's discretion, so the clause's application to this single-buyer acquisition is not clearly determined by the text; hence NEEDS_LAWYER. On the most likely reading (a 60% acquisition by an outsider is a change of control that the Company could deem unacceptable), the Company (not us) would hold a termination_right. Sentences [9] and [107] concern assignment of the agreement and are not implicated by a share purchase.",
+     "status": "NEEDS_LAWYER"
+    }
+   ],
+   "status_agree": true
+  },
+  {
+   "id": "R10",
+   "src": "cuad:mPhase",
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "automatic_termination",
+    "why": "a majority sale is significant on any reading"
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": null,
+      "holder": "both",
+      "kind": "automatic_termination",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "Sentence 11 provides the Agreement 'shall terminate in the event of a significant change in the management or ownership of mPhase.' A single buyer acquiring 60% of mPhase's equity and voting securities is a significant change in ownership, so the agreement terminates automatically (automatic_termination, no action needed). Sentence 24 concerns assignment by mPhase; a share purchase is not an assignment, so it is not triggered. Sentence 19 concerns renewal, not applicable to this event.",
+    "status": "TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "both",
+       "kind": "automatic_termination",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence 11 provides the Agreement 'shall terminate in the event of a significant change in the management or ownership of mPhase.' A single buyer acquiring 60% of mPhase's equity and voting securities is a significant change in ownership, so the agreement terminates automatically (automatic_termination, no action needed). Sentence 24 concerns assignment by mPhase; a share purchase is not an assignment, so it is not triggered. Sentence 19 concerns renewal, not applicable to this event.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "both",
+       "kind": "automatic_termination",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [11] states the Agreement shall terminate on 'a significant change in the management or ownership of mPhase.' A single buyer acquiring 60% of mPhase's equity and voting securities is clearly a significant change in ownership, so the agreement terminates automatically with no action required by either party. Sentence [24] (assignment requires Lucent's prior written consent) is NOT_TRIGGERED: a share purchase is not an assignment of the agreement by mPhase, and no assignment occurred. Sentence [19] concerns renewal mechanics, not triggered by this event.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "both",
+       "kind": "other",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The single event is a 60% acquisition of mPhase's equity and voting securities by one buyer. Sentence [11] provides the Agreement 'shall terminate in the event of a significant change in the management or ownership of mPhase'; a 60% swing in equity and voting control is clearly a significant change in ownership, so this is an automatic termination (no one needs to act; kind 'other' used as no automatic_termination kind applies beyond listed ones, but the closest listed kind is automatic termination of the whole agreement). Sentence [24] is NOT_TRIGGERED: this is a change of ownership of mPhase shares, not an assignment of the Agreement by mPhase. Sentence [19] is NOT_TRIGGERED: the annual renewal/consent mechanism only operates at expiration, and no renewal date has arrived.",
+     "status": "TRIGGERED"
+    }
+   ],
+   "status_agree": true,
+   "kind_agree": true
+  },
+  {
+   "id": "R11",
+   "src": "cuad:mPhase",
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "'significant' is open-textured at 15%"
+   },
+   "vote": "NEEDS_LAWYER",
+   "samples": [
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER"
+   ],
+   "answer": {
+    "status": "NEEDS_LAWYER",
+    "reactions": [
+     {
+      "kind": "automatic_termination",
+      "holder": "both",
+      "due": null,
+      "notice_days": null
+     }
+    ],
+    "reasoning": "Sentence [11] provides automatic termination on 'a significant change in the management or ownership of mPhase.' A single outside buyer acquiring 15% of equity and voting securities may or may not qualify as 'significant' — the term is undefined and open-textured, so whether the Agreement terminates automatically by [11] is a real legal question. On the most likely reading (15% by one buyer is a material change), the agreement would terminate automatically under [11] as of the sale. Sentence [24] (assignment consent) is not triggered: a share purchase is not an assignment by mPhase of the agreement itself. Sentence [19] renewal consent is not implicated by this event."
+   },
+   "all_answers": [
+    {
+     "status": "NEEDS_LAWYER",
+     "reactions": [
+      {
+       "kind": "automatic_termination",
+       "holder": "both",
+       "due": null,
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [11] provides automatic termination on 'a significant change in the management or ownership of mPhase.' A single outside buyer acquiring 15% of equity and voting securities may or may not qualify as 'significant' — the term is undefined and open-textured, so whether the Agreement terminates automatically by [11] is a real legal question. On the most likely reading (15% by one buyer is a material change), the agreement would terminate automatically under [11] as of the sale. Sentence [24] (assignment consent) is not triggered: a share purchase is not an assignment by mPhase of the agreement itself. Sentence [19] renewal consent is not implicated by this event."
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "other",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence 11 says the Agreement terminates upon 'a significant change in the management or ownership of mPhase.' A single outside buyer acquiring 15% of equity and voting securities may or may not be a 'significant change' — the phrase is open-textured and undefined, so its application is unclear (NEEDS_LAWYER). If it qualifies, the agreement terminates automatically (automatic_termination) by operation of sentence 11. Sentence 19 (renewal consent) and sentence 24 (assignment consent) are not implicated by a share purchase by a third party. Reactions listed reflect the most likely reading: automatic termination under sentence 11.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "status": "NEEDS_LAWYER",
+     "reactions": [
+      {
+       "kind": "automatic_termination",
+       "holder": "both",
+       "due": null,
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [11] provides automatic termination upon 'a significant change in the management or ownership of mPhase.' The scenario states a single buyer acquired 15% of mPhase's equity and voting securities. Whether a 15% acquisition by one person constitutes a 'significant change' in ownership is an open-textured question the clause does not define; it could also be argued that a 15% stake is not a significant change, giving no reaction at all. On the most likely reading (any notable ownership shift triggers the clause), the agreement terminates automatically, held by neither party (due = null). Sentences [19] and [24] concern renewal and assignment, not share acquisitions, and do not apply to this event."
+    }
+   ],
+   "status_agree": true
+  },
+  {
+   "id": "R12",
+   "src": "cuad:VerticalNet",
+   "expected": {
+    "status": "NOT_TRIGGERED",
+    "why": "CoC expressly not an assignment"
+   },
+   "vote": "NOT_TRIGGERED",
+   "samples": [
+    "NOT_TRIGGERED",
+    "NOT_TRIGGERED",
+    "NOT_TRIGGERED"
+   ],
+   "answer": {
+    "status": "NOT_TRIGGERED",
+    "reactions": [],
+    "reasoning": "A buyer acquired 60% of a party's voting securities, which is a change in Control per [11]. However, [331] expressly provides that a change in Control of a party is not considered an assignment for purposes of the assignment section, so the consent requirement in [330] is not triggered. No consent, notice, or termination right arises from this event under the cited clauses."
+   },
+   "all_answers": [
+    {
+     "status": "NOT_TRIGGERED",
+     "reactions": [],
+     "reasoning": "A buyer acquired 60% of a party's voting securities, which is a change in Control per [11]. However, [331] expressly provides that a change in Control of a party is not considered an assignment for purposes of the assignment section, so the consent requirement in [330] is not triggered. No consent, notice, or termination right arises from this event under the cited clauses."
+    },
+    {
+     "status": "NOT_TRIGGERED",
+     "reactions": [],
+     "reasoning": "The buyer acquires 60% of a party's voting securities, which is a change in Control under [11]. But [331] expressly states that a change in Control is not an assignment for purposes of Section 11.9, so the prior written consent requirement in [330] does not apply. The agreement simply binds successors. No reaction is triggered."
+    },
+    {
+     "status": "NOT_TRIGGERED",
+     "reactions": [],
+     "reasoning": "The buyer acquires 60% of a party's voting securities, which is a change in Control per [11]. However, [331] expressly states that a change in Control of a party is not considered an assignment for purposes of Section 11.9, so the consent requirement in [330] is not triggered. No right, obligation, or deadline arises from this event under the cited clauses."
+    }
+   ],
+   "status_agree": true
+  },
+  {
+   "id": "R13",
+   "src": "cuad:Gopage",
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "consent",
+    "holder": "counterparty"
+   },
+   "vote": "NEEDS_LAWYER",
+   "samples": [
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": null,
+      "holder": "us",
+      "kind": "consent",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "Sentence [201] deems any \"merger, consolidation or reorganization involving Licensee\" a transfer requiring Licensor's prior written consent, and [203] voids transfers made without it. Here a new holding company is placed above Licensee via a share exchange in which Licensee's shareholders swap their shares for the new company's shares; Licensee survives as a wholly owned subsidiary and remains the contracting party. It is genuinely open whether this shareholder-level reorganization is a \"reorganization involving Licensee\" (rather than merely involving its shareholders) given the breadth of [201]'s deeming language (\"regardless of whether Licensee is a surviving or disappearing entity\"), so legal judgment is required; on the most likely reading that the clause's broad anti-avoidance language captures this, Licensor's prior written consent is needed.",
+    "status": "NEEDS_LAWYER"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "consent",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [201] deems any \"merger, consolidation or reorganization involving Licensee\" a transfer requiring Licensor's prior written consent, and [203] voids transfers made without it. Here a new holding company is placed above Licensee via a share exchange in which Licensee's shareholders swap their shares for the new company's shares; Licensee survives as a wholly owned subsidiary and remains the contracting party. It is genuinely open whether this shareholder-level reorganization is a \"reorganization involving Licensee\" (rather than merely involving its shareholders) given the breadth of [201]'s deeming language (\"regardless of whether Licensee is a surviving or disappearing entity\"), so legal judgment is required; on the most likely reading that the clause's broad anti-avoidance language captures this, Licensor's prior written consent is needed.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "other",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentences [201]-[202... rather [200] and [201]]: [201] deems any reorganization involving Licensee (regardless of surviving or disappearing entity) a transfer requiring Licensor's prior written consent, and [203] makes a transfer in violation void. The share exchange placing a new holding company above Licensee is a reorganization involving Licensee, so under the plain text of [201] it is deemed a transfer requiring Licensor's prior written consent. However, Licensee continues to exist as the contracting party, and only a holding company was inserted above it without any change to rights/obligations under the Agreement; whether this 'reorganization' triggers the deeming clause is a genuine open legal question (unusual for such transactions to require consent, but clause is broad: 'regardless of whether Licensee is a surviving or disappearing entity'). Weighing the breadth of [201], the most likely reading is that prior written consent of Licensor is required.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "other",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [201] deems any merger, consolidation or reorganization involving Licensee (regardless of whether Licensee is a surviving or disappearing entity) to be a transfer requiring Licensor's prior written consent; sentence [200] states the general rule. The share exchange placed a new holding company above Licensee by reorganization, so on its face this involves Licensee and triggers the consent requirement (which has not been given, and per [203] a violation would void the transfer). Holder is Licensor, who must consent; our side (Licensee) must seek that consent.",
+     "status": "TRIGGERED"
+    }
+   ],
+   "status_agree": false,
+   "kind_agree": true
+  },
+  {
+   "id": "R14",
+   "src": "cuad:Gopage",
+   "expected": {
+    "status": "NOT_TRIGGERED",
+    "why": "a share sale is not a merger, consolidation or reorganization involving Licensee"
+   },
+   "vote": "NOT_TRIGGERED",
+   "samples": [
+    "NEEDS_LAWYER",
+    "NOT_TRIGGERED",
+    "NOT_TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [],
+    "reasoning": "The buyer's purchase of 60% of Licensee's equity/voting securities is a stock sale; Licensee itself does not assign, delegate, or transfer any rights or obligations under the Agreement. Sentences [200]-[201] require Licensor consent only for assignments, delegations, or transfers by Licensee, and [201] deems only mergers, consolidations, or reorganizations involving Licensee to be such transfers — none of which occurred. Sentences [113]-[114] concern term/renewal only. Therefore no clause reacts to this event.",
+    "status": "NOT_TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "consent",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [200] requires Licensor's prior written consent for any assignment/transfer by Licensee, and [201] deems mergers, consolidations, or reorganizations involving Licensee a transfer requiring consent. Here a third party simply purchases 60% of Licensee's equity/voting securities; Licensee itself does not appear to assign or transfer any rights or obligations. Whether a passive change in shareholder ownership, not effected by Licensee, constitutes a transfer 'by operation of law or otherwise' under [200] is an open-textured question the clause does not resolve. On the most likely reading (change of control at the shareholder level treated as a deemed transfer requiring consent), Licensor's prior written consent would be needed; holder listed as Licensor for consent, but since 'us' cannot be holder of Licensor's consent, most likely the consent of Licensor is required for the transaction (reaction attributed to Licensor). However, no consent has been given and the transaction has already occurred, so Licensor's consent would be required and its absence could make the transfer void under [203].",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [],
+     "reasoning": "The buyer's purchase of 60% of Licensee's equity/voting securities is a stock sale; Licensee itself does not assign, delegate, or transfer any rights or obligations under the Agreement. Sentences [200]-[201] require Licensor consent only for assignments, delegations, or transfers by Licensee, and [201] deems only mergers, consolidations, or reorganizations involving Licensee to be such transfers — none of which occurred. Sentences [113]-[114] concern term/renewal only. Therefore no clause reacts to this event.",
+     "status": "NOT_TRIGGERED"
+    },
+    {
+     "reactions": [],
+     "reasoning": "The scenario is a third-party share purchase: a buyer acquires 60% of Licensee's equity and voting securities. Sentences [200]-[201] require Licensor's prior written consent only for an assignment, delegation, or transfer of Licensee's rights or obligations under the Agreement (including deemed transfers via merger, consolidation, or reorganization involving Licensee). A mere acquisition of Licensee's shares by an outside buyer does not transfer any rights, obligations, or performance under the Agreement, so sentences [200]-[203] do not apply. The term provisions [113]-[114] are unrelated to this event. Therefore the clause is not triggered.",
+     "status": "NOT_TRIGGERED"
+    }
+   ],
+   "status_agree": true
+  },
+  {
+   "id": "R15",
+   "src": "cuad:Corio",
+   "expected": {
+    "status": "NOT_TRIGGERED"
+   },
+   "vote": "NEEDS_LAWYER",
+   "samples": [
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": null,
+      "holder": "us",
+      "kind": "other",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "The buyer acquired 60% of a party's equity, but there is no assignment of the Agreement itself; the question is whether this change-of-control counts as an 'assignment ... by operation of law' under [264]-[265]. The clause covers assignment 'by operation of law or otherwise' [264], but does not define whether a share purchase triggers it, and [265]'s exception for mergers/acquisitions does not clearly cover a stock purchase by a non-competitor. This leaves a genuine legal question. On the most likely reading, a share acquisition is an assignment by operation of law requiring prior written consent, except the [265] carve-out applies if it qualifies as an acquisition, and the buyer is not a competitor so consent would not be required under [265]. The tension between [264] and [265] on a stock purchase is unresolved by the text.",
+    "status": "NEEDS_LAWYER"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "other",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The buyer acquired 60% of a party's equity, but there is no assignment of the Agreement itself; the question is whether this change-of-control counts as an 'assignment ... by operation of law' under [264]-[265]. The clause covers assignment 'by operation of law or otherwise' [264], but does not define whether a share purchase triggers it, and [265]'s exception for mergers/acquisitions does not clearly cover a stock purchase by a non-competitor. This leaves a genuine legal question. On the most likely reading, a share acquisition is an assignment by operation of law requiring prior written consent, except the [265] carve-out applies if it qualifies as an acquisition, and the buyer is not a competitor so consent would not be required under [265]. The tension between [264] and [265] on a stock purchase is unresolved by the text.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [],
+     "reasoning": "A 60% share purchase by a single buyer changes control of a party but is not a merger, acquisition of assets, or any assignment of the Agreement itself. Sentences [264]-[265] restrict 'assignment... by operation of law or otherwise'; whether a change of control via share purchase counts as an assignment 'by operation of law' is an open-textured question the text does not resolve. On the most likely reading, a share acquisition effects no assignment of the Agreement, so no consent would be required (and the buyer is not a competitor, so even [265]'s exception would not apply). NEEDS_LAWYER, with no reaction on the most likely reading.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [
+      {
+       "due": "",
+       "holder": "us",
+       "kind": "consent",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "A third party buying 60% of a party's shares may effect a change of control / assignment by operation of law, which [264] says requires the other party's prior written consent. However, [265] allows assignment without consent in connection with a merger, acquisition, or sale of substantially all assets unless the buyer is a direct competitor of the other party, and here the buyer is stated not to be a competitor. Whether a 60% share purchase constitutes an 'acquisition' under [265] or an assignment 'by operation of law' under [264] is undefined and depends on facts not available (e.g., whether the agreement transfers by operation of law, governing-law treatment of change of control), so a lawyer must resolve it. On the most likely reading, the carve-out applies and no consent is needed (holder of any consent right would be the other party).",
+     "status": "NEEDS_LAWYER"
+    }
+   ],
+   "status_agree": false
+  },
+  {
+   "id": "R16",
+   "src": "cuad:Corio",
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "competitor exception applies to assignment 'in connection with' an acquisition; a share sale may not be an assignment at all"
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": null,
+      "holder": "us",
+      "kind": "consent",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "The buyer's purchase of 60% of a party's equity is an acquisition of that party. Under [265], either party may assign without consent in connection with a merger or acquisition, but the carve-out requires the other party's consent where the transaction involves a direct competitor of the other party; here the buyer IS a direct competitor. Also, under [264], even an assignment by operation of law needs the other party's prior written consent, and no consent has been given per the conventions. Thus the event requires prior written consent of the other party (which, depending on which party was acquired, is 'us'). Sentences [199]-[2000] and [267] do not add other reactions here.",
+    "status": "TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "consent",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The buyer's purchase of 60% of a party's equity is an acquisition of that party. Under [265], either party may assign without consent in connection with a merger or acquisition, but the carve-out requires the other party's consent where the transaction involves a direct competitor of the other party; here the buyer IS a direct competitor. Also, under [264], even an assignment by operation of law needs the other party's prior written consent, and no consent has been given per the conventions. Thus the event requires prior written consent of the other party (which, depending on which party was acquired, is 'us'). Sentences [199]-[2000] and [267] do not add other reactions here.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "none",
+       "kind": "other",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [265] permits assignment without consent only 'in connection with the merger or acquisition of such party' or a sale of substantially all assets, and carves out transactions involving 'a direct competitor of the other party,' where consent of the other party is required. Here a single buyer acquired 60% of a party's equity and voting securities and IS a direct competitor of the other party. On the most likely reading, a 60% share acquisition is an 'acquisition of such party,' so the competitor carve-out applies and the other party's prior written consent is required before any assignment (per [264]/[265]); absent consent, any assignment would be null and void per [267]. This is consent_required because the trigger event (the acquisition by a direct competitor) activates the consent requirement. There is some textual ambiguity (share purchase vs. 'merger or acquisition' of the entity), but the most natural reading of 'acquisition of such party' covers a change-of-control share purchase, especially given [264]'s reference to assignment 'by operation of law.' Holder of the consent right is the non-event party (the party whose competitor is the buyer).",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "counterparty",
+       "kind": "consent",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [264] generally bars assignment without prior written consent, and sentence [265] carves out assignments in connection with a merger or acquisition of a party (or sale of substantially all assets) — the buyer's acquisition of a 60% controlling stake counts as an acquisition of that party. But the carve-out expressly fails where the transaction involves a direct competitor of the other party, in which case 'consent of the other party will be required.' Since the buyer IS a direct competitor of the other party, the non-selling party's prior written consent is required for the assignment. Sentence [267] confirms a violating assignment would be null and void, underscoring the consent requirement.",
+     "status": "TRIGGERED"
+    }
+   ],
+   "status_agree": false
+  },
+  {
+   "id": "R17",
+   "src": "cuad:eDiets",
+   "expected": {
+    "status": "NOT_TRIGGERED",
+    "why": "definition covers mergers and asset sales, not share sales"
+   },
+   "vote": "NOT_TRIGGERED",
+   "samples": [
+    "NOT_TRIGGERED",
+    "NOT_TRIGGERED",
+    "NOT_TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [],
+    "reasoning": "The event is a share purchase: a buyer acquires 60% of a party's equity and voting securities. [202] only restricts assignment of the Agreement itself; no assignment or transfer of the Agreement occurred, so its consent requirement is not triggered. The Change in Control carve-out in [202](a) is irrelevant because there is no assignment. Also, per [208], a Change in Control requires a merger, consolidation, or sale of substantially all assets, none of which occurred here (mere share acquisition), and even if it had, the prior holders would hold at most 40% post-transaction, meaning the 50% exception does not apply—but since no assignment took place, [202] imposes no consent need. No clause [120], [121], or [206] reaction is implicated by this event.",
+    "status": "NOT_TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [],
+     "reasoning": "The event is a share purchase: a buyer acquires 60% of a party's equity and voting securities. [202] only restricts assignment of the Agreement itself; no assignment or transfer of the Agreement occurred, so its consent requirement is not triggered. The Change in Control carve-out in [202](a) is irrelevant because there is no assignment. Also, per [208], a Change in Control requires a merger, consolidation, or sale of substantially all assets, none of which occurred here (mere share acquisition), and even if it had, the prior holders would hold at most 40% post-transaction, meaning the 50% exception does not apply—but since no assignment took place, [202] imposes no consent need. No clause [120], [121], or [206] reaction is implicated by this event.",
+     "status": "NOT_TRIGGERED"
+    },
+    {
+     "reactions": [],
+     "reasoning": "The buyer purchases 60% of a party's equity and voting securities, so pre-transaction holders retain only 40% of voting power, which means a 'Change in Control' has occurred under [208] (the 50% continuation exception fails). However, the operative restriction in [202] only requires consent for an assignment of the Agreement; the scenario describes a share purchase, not an assignment of the Agreement to any successor. No assignment or transfer of the Agreement occurred, so no consent requirement, and [206]'s nullity rule is not engaged. Therefore no clause gives a triggered reaction here.",
+     "status": "NOT_TRIGGERED"
+    },
+    {
+     "reactions": [],
+     "reasoning": "The only event is a buyer acquiring 60% of a party's equity/voting securities. The consent requirement in [202] applies only to an assignment of the Agreement; no assignment occurred here. Moreover, under [208], a Change in Control requires a merger, consolidation, or sale of all/substantially all assets; a share purchase is not one of those triggers (and regardless, [202]/[206] concern assignment, not mere stock acquisitions). The term provisions [120]/[121] are unaffected. No right, obligation, deadline, or termination arises.",
+     "status": "NOT_TRIGGERED"
+    }
+   ],
+   "status_agree": true
+  },
+  {
+   "id": "R18",
+   "src": "cuad:Zounds",
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "automatic_termination",
+    "why": "50% meets '50% or more'; no consent assumed"
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "status": "TRIGGERED",
+    "reactions": [
+     {
+      "kind": "consent",
+      "holder": "counterparty",
+      "due": null,
+      "notice_days": null
+     },
+     {
+      "kind": "automatic_termination",
+      "holder": "both",
+      "due": null,
+      "notice_days": null
+     }
+    ],
+    "reasoning": "Sentence [189](i) defines a Change of Control as any person other than Subcontractor becoming beneficial owner of 50% or more of Manufacturer's voting equity. The buyer now holds exactly 50%, which satisfies '50% or more', so a Change of Control with respect to Manufacturer has occurred (no consent given per assumptions). Sentence [188] provides that a Change of Control occurs unless Subcontractor expressly consented in writing — i.e., Subcontractor's prior written consent is required (holder = counterparty). Since no consent was given, sentence [187] provides the Agreement shall immediately terminate automatically, with no action required by either party."
+   },
+   "all_answers": [
+    {
+     "status": "TRIGGERED",
+     "reactions": [
+      {
+       "kind": "consent",
+       "holder": "counterparty",
+       "due": null,
+       "notice_days": null
+      },
+      {
+       "kind": "automatic_termination",
+       "holder": "both",
+       "due": null,
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [189](i) defines a Change of Control as any person other than Subcontractor becoming beneficial owner of 50% or more of Manufacturer's voting equity. The buyer now holds exactly 50%, which satisfies '50% or more', so a Change of Control with respect to Manufacturer has occurred (no consent given per assumptions). Sentence [188] provides that a Change of Control occurs unless Subcontractor expressly consented in writing — i.e., Subcontractor's prior written consent is required (holder = counterparty). Since no consent was given, sentence [187] provides the Agreement shall immediately terminate automatically, with no action required by either party."
+    },
+    {
+     "status": "TRIGGERED",
+     "reactions": [
+      {
+       "kind": "consent",
+       "holder": "us",
+       "due": null,
+       "notice_days": null
+      },
+      {
+       "kind": "automatic_termination",
+       "holder": "both",
+       "due": null,
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [189](i) defines Change of Control as any person other than the Subcontractor becoming beneficial owner of '50% or more' of Manufacturer's voting equity; the buyer now holds exactly 50%, which satisfies the threshold. Sentence [188] provides such a Change of Control occurs with respect to Manufacturer unless Subcontractor expressly consented in writing, and per the conventions no consent was given. Sentence [187] then states the Agreement 'shall immediately terminate' upon such a Change of Control, so the agreement ends automatically without any party needing to act. Additionally, sentence [188] shows the event required Subcontractor's prior written consent, which Manufacturer failed to obtain (a consent need held by Manufacturer, i.e., 'us' as the party needing it)."
+    },
+    {
+     "status": "TRIGGERED",
+     "reactions": [
+      {
+       "kind": "automatic_termination",
+       "holder": "both",
+       "due": null,
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The buyer becomes the beneficial owner of exactly 50% of Manufacturer's voting equity, which satisfies '50% or more' in clause [189](i). This constitutes a Change of Control, and clause [187] provides the Agreement 'shall immediately terminate' upon a Change of Control. Clause [188] allows the change only with Subcontractor's express written consent, which per the assumptions has not been given. Termination is automatic; no party must act, so the reaction is automatic_termination with no due date."
+    }
+   ],
+   "status_agree": true,
+   "kind_agree": true
+  },
+  {
+   "id": "R19",
+   "src": "cuad:TriCity",
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "'Change in Control' defined elsewhere in the agreement; effect is a service limitation, not termination"
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": null,
+      "holder": "us",
+      "kind": "other",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "The buyer alone acquires over 50% of Customer's equity and voting securities, so under [135](i) and the >50% ownership test in [139], a Change in Control of Customer occurs. [675] is TRIGGERED: M&I (the counterparty) must continue to provide Services, but its obligation is limited (a) to the entities comprising Customer before the Change in Control and (b) to the number of accounts/items processed in the 3-month period before the Change in Control plus 25%. This is a continuing obligation with scope limits on M&I, best classified as kind 'other' (not a termination, consent, notice, or deadline); the holder of the duty is M&I, the other party ('us' = Customer is the beneficiary, not the actor). [688] is NOT_TRIGGERED: the scenario is a share purchase by a third party, not an assignment of the Agreement by Customer (the consent carve-outs in [688](a) concern mergers Customer is a party to), and no assignment by operation of law or otherwise is stated. [170] is NOT_TRIGGERED: no failure to agree renewal terms is stated, and no renewal/notice event arises. [135], [139], [146], and [158] are definitions; they do not themselves create rights or duties in this scenario (the Term in [158] has no pending expiry event here).",
+    "status": "TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "other",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The buyer alone acquires over 50% of Customer's equity and voting securities, so under [135](i) and the >50% ownership test in [139], a Change in Control of Customer occurs. [675] is TRIGGERED: M&I (the counterparty) must continue to provide Services, but its obligation is limited (a) to the entities comprising Customer before the Change in Control and (b) to the number of accounts/items processed in the 3-month period before the Change in Control plus 25%. This is a continuing obligation with scope limits on M&I, best classified as kind 'other' (not a termination, consent, notice, or deadline); the holder of the duty is M&I, the other party ('us' = Customer is the beneficiary, not the actor). [688] is NOT_TRIGGERED: the scenario is a share purchase by a third party, not an assignment of the Agreement by Customer (the consent carve-outs in [688](a) concern mergers Customer is a party to), and no assignment by operation of law or otherwise is stated. [170] is NOT_TRIGGERED: no failure to agree renewal terms is stated, and no renewal/notice event arises. [135], [139], [146], and [158] are definitions; they do not themselves create rights or duties in this scenario (the Term in [158] has no pending expiry event here).",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": "",
+       "holder": "us",
+       "kind": "other",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "A single buyer acquiring 60% of Customer's equity and voting securities constitutes 'Control' under [139] (over 50% ownership / power to direct), so a 'Change in Control' with respect to Customer has occurred under [135]. Therefore [675] is TRIGGERED: M&I must continue providing Services, but its obligation is limited to the entities comprising Customer prior to the Change in Control and to a volume cap (accounts/items processed in the 3-month period prior plus 25%). This is neither termination, consent, notice, nor a deadline; the reaction is an obligation to continue services subject to limits, so kind is 'other', holder M&I. [688] is NOT_TRIGGERED: a third-party share purchase is not an assignment of the Agreement by Customer, so no prior written consent is required. [170] and [158] are not implicated because the scenario concerns no renewal or expiry event.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "other",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "A single buyer acquires 60% of Customer's equity and voting securities, so 'Control' (over 50% ownership, [139]) is acquired and a 'Change in Control' occurs ([135](i)). Clause [675] directly addresses this: M&I agrees to continue providing Services, but its obligation is limited (a) to the entities comprising Customer before the Change in Control and (b) to the number of accounts/items processed in the prior 3-month period plus 25%. This is a definite consequence on the stated facts—M&I's continuing obligation narrows—which harms/burdens Customer ('us'). Kind is 'other' (a scope limitation on continuing services, not termination/consent/notice). Clause [170] is not implicated: no facts about failure to agree renewal terms or the timing relative to Term expiry (Term runs 8 years from Effective Date Feb 16, 1998, [146],[158]). Clause [688] concerns assignment of the Agreement; a share purchase is not an assignment by Customer, so no consent is triggered.",
+     "status": "TRIGGERED"
+    }
+   ],
+   "status_agree": false
+  },
+  {
+   "id": "R20",
+   "src": "cuad:JointCorp",
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "consent",
+    "holder": "counterparty",
+    "why": "principal owners fall to 70% < 75%"
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": null,
+      "holder": "counterparty",
+      "kind": "consent",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "The sellers are the Principal Owners listed in Exhibit 4, so post-sale they hold 70% of Franchise Owner's Interests. Under sentence [614], any Transfer that would result in the Exhibit 4 Principal Owners holding less than 75% requires the franchisor's advance written approval; that threshold is crossed (70% < 75%). Independently, sentence [618] also requires advance written approval for a minority-owner Transfer where the transferee acquires more than a collective 25% Interest (30% > 25%). No approval is stated to have been given, so the reaction is a consent requirement held by the franchisor (The Joint Corp.), and per [615]/[607] the unconsented Transfer constitutes a breach and conveys no rights, but the operative triggered reaction is the needed consent.",
+    "status": "TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "counterparty",
+       "kind": "consent",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The sellers are the Principal Owners listed in Exhibit 4, so post-sale they hold 70% of Franchise Owner's Interests. Under sentence [614], any Transfer that would result in the Exhibit 4 Principal Owners holding less than 75% requires the franchisor's advance written approval; that threshold is crossed (70% < 75%). Independently, sentence [618] also requires advance written approval for a minority-owner Transfer where the transferee acquires more than a collective 25% Interest (30% > 25%). No approval is stated to have been given, so the reaction is a consent requirement held by the franchisor (The Joint Corp.), and per [615]/[607] the unconsented Transfer constitutes a breach and conveys no rights, but the operative triggered reaction is the needed consent.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "consent",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The sale of stock is a 'Transfer' under sentence [616]. Because the Principal Owners (sellers) go from 100% to 70%, the transfer results in them holding less than 75%, so sentence [614] requires our (Franchisor's — i.e., the non-Franchise-Owner party's) advance written approval. Additionally, the buyer is a minority owner acquiring more than 25% (30%), which independently requires advance consent under sentence [618]. No consent was given, so the approval requirement is clearly triggered (and sentence [615] would make the transfer a breach conveying no rights, but the operative reaction is the consent requirement). The approval must be obtained from the Franchisor (the counterparty), since 'us' is Franchise Owner.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "consent",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The buyer is not a Principal Owner, so this is a minority-owner Transfer under [618]. The buyer is a single unaffiliated person holding 30%, which exceeds the 25% collective threshold in [618], so our (the franchisor's) advance written approval for the Transfer must be obtained. Additionally, Principal Owners' holdings drop from 100% to 70%, below the 75% threshold in [614], which independently requires our advance written approval. Either way the Transfer required our prior written consent, which was not obtained, so the event triggers a consent requirement (and per [607]/[615] the Transfer is a breach conveying no rights).",
+     "status": "TRIGGERED"
+    }
+   ],
+   "status_agree": true,
+   "kind_agree": true
+  },
+  {
+   "id": "R21",
+   "src": "edgar:Amscan ABL Amendment No.2 (2011)",
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "Qualifying IPO; post-QIPO test not met; BUT limb (d) cross-defaults to the indenture CoC, which is not in the file",
+    "revised": "2026-11-02 on re-reading the clause, before any rule was run"
+   },
+   "vote": "NOT_TRIGGERED",
+   "samples": [
+    "NOT_TRIGGERED",
+    "NOT_TRIGGERED",
+    "NOT_TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [],
+    "reasoning": "The $200M Form S-1 underwritten primary offering meets the 'Qualifying IPO' definition in sentence 4, so the post-IPO limbs of 'Change of Control' in sentence 6 apply. Under limb (b)(i), CoC would require a non-Sponsor person or group to hold more than 35% of voting power; after the IPO the Sponsors hold 60% and the largest other person only 5%, so no one crosses 35%. Limbs (b)(ii), (c), and (d) are not implicated by the stated facts, and limb (a) applies only before a Qualifying IPO. No Change of Control occurs, and these sentences are definitions that confer no independent right, obligation, or deadline. Therefore nothing is triggered.",
+    "status": "NOT_TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [],
+     "reasoning": "The $200M Form S-1 underwritten primary offering meets the 'Qualifying IPO' definition in sentence 4, so the post-IPO limbs of 'Change of Control' in sentence 6 apply. Under limb (b)(i), CoC would require a non-Sponsor person or group to hold more than 35% of voting power; after the IPO the Sponsors hold 60% and the largest other person only 5%, so no one crosses 35%. Limbs (b)(ii), (c), and (d) are not implicated by the stated facts, and limb (a) applies only before a Qualifying IPO. No Change of Control occurs, and these sentences are definitions that confer no independent right, obligation, or deadline. Therefore nothing is triggered.",
+     "status": "NOT_TRIGGERED"
+    },
+    {
+     "reactions": [],
+     "reasoning": "The IPO satisfies the 'Qualifying IPO' definition in [4] (underwritten primary public offering, Form S-1, gross proceeds of $200,000,000 ≥ $150,000,000). Post-IPO, prong (a) of the amended 'Change of Control' definition in [6] no longer applies (it operates only prior to consummation of a Qualifying IPO). Under prong (b)(i), a Change of Control would require a non-Sponsor person to acquire more than 35% of voting power; the largest other holder has only 5%, and the Sponsors retain 60%, so (b)(i)(A) is not met. No board turnover, loss of ownership of Amscan, or Senior Subordinated Note change of control is described, so (b)(ii), (c), and (d) are also not met. The definitional provisions in [6] and [9] therefore produce no reaction in this scenario.",
+     "status": "NOT_TRIGGERED"
+    },
+    {
+     "reactions": [],
+     "reasoning": "The $200M underwritten primary offering on Form S-1 satisfies the 'Qualifying IPO' definition in sentence [4]. In the amended 'Change of Control' (sentence [6]), prong (a) applies only 'prior to the consummation of a Qualifying IPO', so the Sponsors holding 60% now does not trigger it. Prong (b) applies 'upon or after' the Qualifying IPO: (b)(i) requires a non-Sponsor person or group to beneficially own more than 35% of voting power, but the largest other person holds only 5%; (b)(ii) board turnover is not stated; (c) Holdings still owns 100% of Amscan; (d) no change of control under the Senior Subordinated Note Indenture is stated. No Change of Control occurs, so no reaction follows.",
+     "status": "NOT_TRIGGERED"
+    }
+   ],
+   "status_agree": false
+  },
+  {
+   "id": "R22",
+   "src": "edgar:Amscan",
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "not a Qualifying IPO (< $150M) so pre-QIPO test applies: Sponsors 45% < 50% -> CoC occurs; its effect is in the original agreement, not in the file"
+   },
+   "vote": "NEEDS_LAWYER",
+   "samples": [
+    "NOT_TRIGGERED",
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER"
+   ],
+   "answer": {
+    "reactions": [],
+    "reasoning": "Sentence [4] requires $150,000,000 or more gross proceeds for a Qualifying IPO; the offering raised only $100,000,000, so no Qualifying IPO occurred. Under sentence [6], absent a Qualifying IPO, clause (a) applies: a Change of Control occurs if the Sponsors cease to beneficially own at least 50% of Holdings' voting power. The Sponsors now hold 45%, so the Change of Control definition in [6](a) appears satisfied. However, these sentences only supply definitions; the actual rights, obligations, or remedies triggered by a 'Change of Control' (e.g., prepayment, default, acceleration under the Credit Agreement) are set out in text not provided. NEEDS_LAWYER.",
+    "status": "NEEDS_LAWYER"
+   },
+   "all_answers": [
+    {
+     "reactions": [],
+     "reasoning": "All cited sentences ([4], [6], [9]) are purely definitional. In the scenario, the IPO yields $100M gross proceeds, below the $150M threshold in [4], so it is not a 'Qualifying IPO'; the Sponsors' 45% stake would therefore be assessed under limb (a) of the 'Change of Control' definition in [6]. However, none of the sentences provided states any consequence, right, obligation, or remedy tied to a Change of Control or Qualifying IPO; those consequences would lie in other provisions of the Credit Agreement that are not before us. The definitions themselves give no reaction in this scenario, so the clauses as shown are NOT_TRIGGERED.",
+     "status": "NOT_TRIGGERED"
+    },
+    {
+     "reactions": [],
+     "reasoning": "Sentence [4] requires $150,000,000 or more gross proceeds for a Qualifying IPO; the offering raised only $100,000,000, so no Qualifying IPO occurred. Under sentence [6], absent a Qualifying IPO, clause (a) applies: a Change of Control occurs if the Sponsors cease to beneficially own at least 50% of Holdings' voting power. The Sponsors now hold 45%, so the Change of Control definition in [6](a) appears satisfied. However, these sentences only supply definitions; the actual rights, obligations, or remedies triggered by a 'Change of Control' (e.g., prepayment, default, acceleration under the Credit Agreement) are set out in text not provided. NEEDS_LAWYER.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [],
+     "reasoning": "The $100M IPO does not meet the $150M gross proceeds threshold in sentence [4], so it is not a 'Qualifying IPO'. Under sentence [6](a), prior to a Qualifying IPO, a Change of Control occurs if the Sponsors cease to beneficially own at least 50% of Holdings' voting power — after the offering they hold 45%, so the Change of Control definition is satisfied. However, sentences [4], [6] and [9] are only definitions/amendments of defined terms; they state no remedy, right, notice or termination consequence themselves. What happens upon a 'Change of Control' (e.g., default, termination, prepayment) depends on the operative provisions of the Credit Agreement and the Senior Subordinated Note Indenture, which are not provided. This is therefore an open legal question rather than a clearly triggered or clearly inert reaction on the text given.",
+     "status": "NEEDS_LAWYER"
+    }
+   ],
+   "status_agree": true
+  },
+  {
+   "id": "R23",
+   "src": "edgar:Amscan",
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "after a Qualifying IPO, a person holds 40% > 35% and > Sponsors 30% -> CoC; effect in original agreement"
+   },
+   "vote": "NEEDS_LAWYER",
+   "samples": [
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": null,
+      "holder": "us",
+      "kind": "other",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "Sentence 4: the Form S-1 underwritten primary offering for $200,000,000 satisfies the definition of a Qualifying IPO (proceeds >= $150,000,000, not an S-4/S-8 form). Sentence 6 then makes the post-IPO test in clause (b) applicable: after event 2, a non-Sponsor person holds 40% of voting power, which exceeds 35% and is not less than the Sponsors' 30%, so a 'Change of Control' occurs under limb (b)(i)(A). However, the reviewed sentences only *define* 'Change of Control'; the consequence of a Change of Control (e.g. mandatory prepayment, default, or termination rights) lives in the unquoted body of the Credit Agreement, which is not available. So the application turns on text and facts not before us: NEEDS_LAWYER. On the most likely reading, the occurrence of a Change of Control gives the lenders (not us) contractual rights (typically a termination/prepayment right) under the Credit Agreement; 'us' (Holdings group) would be the party exposed to that right rather than its holder, but the exact right and its timing cannot be determined from the given text.",
+    "status": "NEEDS_LAWYER"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "us",
+       "kind": "other",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence 4: the Form S-1 underwritten primary offering for $200,000,000 satisfies the definition of a Qualifying IPO (proceeds >= $150,000,000, not an S-4/S-8 form). Sentence 6 then makes the post-IPO test in clause (b) applicable: after event 2, a non-Sponsor person holds 40% of voting power, which exceeds 35% and is not less than the Sponsors' 30%, so a 'Change of Control' occurs under limb (b)(i)(A). However, the reviewed sentences only *define* 'Change of Control'; the consequence of a Change of Control (e.g. mandatory prepayment, default, or termination rights) lives in the unquoted body of the Credit Agreement, which is not available. So the application turns on text and facts not before us: NEEDS_LAWYER. On the most likely reading, the occurrence of a Change of Control gives the lenders (not us) contractual rights (typically a termination/prepayment right) under the Credit Agreement; 'us' (Holdings group) would be the party exposed to that right rather than its holder, but the exact right and its timing cannot be determined from the given text.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [],
+     "reasoning": "Event 1 is a 'Qualifying IPO' under sentence [4] (Form S-1, $200M ≥ $150M). Under the amended 'Change of Control' in sentence [6], post-IPO prong (b)(i) is not met at event 1 (no non-Sponsor person holds >35%; Sponsors hold 60%). At event 2, a non-Sponsor person holds 40% (>35%) and this is not less than the Sponsors' 30%, so prong (b)(i)(A) is satisfied and a 'Change of Control' occurs. However, these sentences are purely definitional: the clause text provided does not state any consequence of a Change of Control (e.g. an event of default or prepayment right would be elsewhere in the Credit Agreement, which is not available). The legal effect therefore depends on missing text, so the result is NEEDS_LAWYER with 'other' reaction.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [],
+     "reasoning": "Sentence [4] is satisfied by the IPO ($200M gross proceeds, S-1 underwritten primary offering), so a Qualifying IPO has occurred. Sentence [9] identifies the Sponsors. Under sentence [6], post-IPO limb (b)(i)(A) applies: after the sponsors' sale, the largest other person holds 40% of voting power, which exceeds 35%, and that percentage (40%) is not less than the Sponsors' percentage (30%). So on its face a 'Change of Control' as defined in [6] occurs. However, the given sentences only amend definitions; the actual legal consequence of a Change of Control under the Credit Agreement (e.g., mandatory prepayment, event of default, or termination) is set out in operative provisions that are not provided. Whether the scenario's consequences follow therefore depends on unavailable text, so the matter needs a lawyer. On the most likely reading, a Change of Control has occurred and whatever remedy or obligation the Credit Agreement attaches to it (cited sentences [4], [6], [9]) would be held by or bind the lenders against the Holdings group ('us').",
+     "status": "NEEDS_LAWYER"
+    }
+   ],
+   "status_agree": true
+  },
+  {
+   "id": "R24",
+   "src": "edgar:Amscan",
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "Sponsors keep their % through the new parent (assumed); Holdings still owns 100% of Amscan; BUT limb (d) cross-defaults to the indenture CoC, which is not in the file",
+    "revised": "2026-11-02 on re-reading the clause, before any rule was run"
+   },
+   "vote": "NOT_TRIGGERED",
+   "samples": [
+    "NOT_TRIGGERED",
+    "NEEDS_LAWYER",
+    "NOT_TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [],
+    "reasoning": "Sentence [6] merely defines \"Change of Control\". In the scenario, Sponsors retain the same proportion of voting power in the new parent, so before any Qualifying IPO limb (a) is not met, and Holdings still owns 100% of Amscan's Capital Stock, so limb (c) fails; no Qualifying IPO has occurred, so limb (b) does not apply and no board turnover occurred. Sentences [4] and [9] are pure definitions with no operative reaction in any event. No clause grants a right, obligation, deadline, or consent requirement on these facts.",
+    "status": "NOT_TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [],
+     "reasoning": "Sentence [6] merely defines \"Change of Control\". In the scenario, Sponsors retain the same proportion of voting power in the new parent, so before any Qualifying IPO limb (a) is not met, and Holdings still owns 100% of Amscan's Capital Stock, so limb (c) fails; no Qualifying IPO has occurred, so limb (b) does not apply and no board turnover occurred. Sentences [4] and [9] are pure definitions with no operative reaction in any event. No clause grants a right, obligation, deadline, or consent requirement on these facts.",
+     "status": "NOT_TRIGGERED"
+    },
+    {
+     "reactions": [],
+     "reasoning": "Sentence 6 replaces the Credit Agreement's 'Change of Control' definition. Under limb (a) (pre-Qualifying IPO, sentence 4), the test is whether the Sponsors cease to be direct or indirect beneficial owners of at least 50% of Holdings' voting power; because the same shareholders exchanged Holdings shares for shares of a new parent and the Sponsors hold the same proportion of the new parent, they remain indirect beneficial owners (Rules 13d-3/13d-5) of the same percentage of Holdings, so (a) is not triggered. Limb (b) applies only upon/after a Qualifying IPO, which has not occurred. Limb (c) is not triggered because Holdings still owns 100% of Amscan's Capital Stock after the reorganization. However, limb (d) turns on whether a 'change of control' or similar event occurs under the Senior Subordinated Note Indenture, whose text is not available; whether that definition captures an upstream holding-company reorganization (many such definitions exclude share-exchange reorganizations with unchanged shareholders) cannot be determined. If (d) were triggered, a Change of Control would occur under the Credit Agreement with its attendant (unshown) consequences for the lenders; on the most likely reading, the indenture's definition would exclude this same-shareholder reorganization and no reaction follows. The open dependence on unavailable external text makes this NEEDS_LAWYER, with no reaction listed on the most likely reading.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [],
+     "reasoning": "The sentences are definitions within a credit agreement amendment. Sentence [4] defines Qualifying IPO; sentence [6] defines Change of Control; sentence [9] defines Sponsors. In the scenario, a new holding company is inserted above Holdings, with shareholders exchanging shares so Holdings becomes a wholly owned subsidiary of the new parent, and the Sponsors hold the same proportion of the new parent as before. Under [6](a) (pre-Qualifying IPO), the trigger is the Sponsors ceasing to be beneficial owners of at least 50% of Holdings' voting power; beneficial ownership is defined 'directly or indirectly', so holding the same proportion through the new parent means they remain beneficial owners at the same percentage — not triggered. [6](b) is inapplicable absent a Qualifying IPO per [4]. [6](c) requires Holdings ceasing to own 100% of Amscan, which does not occur. [6](d) depends on the Senior Subordinated Note Indenture's 'change of control' definition, which is not available, but there is no event stated suggesting such a default. No clause grants a right, obligation, deadline or consent requirement in this scenario; they merely define terms, and none of the defined triggers occur.",
+     "status": "NOT_TRIGGERED"
+    }
+   ],
+   "status_agree": false
+  },
+  {
+   "id": "R25",
+   "src": "edgar:Amscan",
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "Holdings ceases to own 100% of Amscan directly -> limb (c) CoC (direct vs indirect ownership is a reading question); effect in original agreement"
+   },
+   "vote": "NOT_TRIGGERED",
+   "samples": [
+    "NEEDS_LAWYER",
+    "NOT_TRIGGERED",
+    "NOT_TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [],
+    "reasoning": "Sentence [6](c) triggers a Change of Control only if Holdings ceases to own 100% of the Capital Stock of Amscan. After the restructuring, Holdings owns 100% of the new intermediate company, which owns 100% of Amscan, so Holdings still owns 100% of Amscan (indirectly). No prong of the Change of Control definition in [6] is met, and no other clause ([4], [9]) provides any reaction to this event. There is a minor textual question whether 'own' includes indirect ownership since [6] elsewhere says 'directly or indirectly' explicitly, but the natural reading is that indirect ownership suffices, so no Change of Control occurs and no reaction follows.",
+    "status": "NOT_TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [],
+     "reasoning": "Sentence [6](c) defines a Change of Control prong as 'Holdings shall[ ] cease to own 100% of the Capital Stock of Amscan.' After the event, Holdings owns Amscan only indirectly (100% of an intermediate company that owns 100% of Amscan). The clause does not say 'directly,' and other prongs in sentence [6] expressly use 'directly or indirectly,' creating a genuine open question whether indirect ownership satisfies the 100% ownership requirement. On the most likely reading, indirect ownership is credited (economic ownership remains 100%), so no Change of Control occurs under [6](c) and no reaction follows from these definitional sentences.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [],
+     "reasoning": "Sentence [6](c) triggers a Change of Control only if Holdings ceases to own 100% of the Capital Stock of Amscan. After the restructuring, Holdings owns 100% of the new intermediate company, which owns 100% of Amscan, so Holdings still owns 100% of Amscan (indirectly). No prong of the Change of Control definition in [6] is met, and no other clause ([4], [9]) provides any reaction to this event. There is a minor textual question whether 'own' includes indirect ownership since [6] elsewhere says 'directly or indirectly' explicitly, but the natural reading is that indirect ownership suffices, so no Change of Control occurs and no reaction follows.",
+     "status": "NOT_TRIGGERED"
+    },
+    {
+     "reactions": [],
+     "reasoning": "Clause [6](c) triggers a Change of Control only if Holdings ceases to own 100% of the Capital Stock of Amscan. After inserting the intermediate holding company, Holdings still owns 100% of Amscan (indirectly, via the wholly-owned intermediate company), so Holdings has not ceased to own 100%. No limb of the amended Change of Control definition in [6] is satisfied, and [4]/[9] are definitional only. No reaction arises.",
+     "status": "NOT_TRIGGERED"
+    }
+   ],
+   "status_agree": false
+  },
+  {
+   "id": "N01",
+   "src": "cuad:VirtualScopics",
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "deadline",
+    "due": "2012-09-21",
+    "holder": "both",
+    "why": "expiry 2012-10-21"
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": "2012-09-21",
+      "holder": "none",
+      "kind": "deadline",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "The Initial Term (2 years from 2012-10-22) ends 2012-10-21 [8]. Per [9], renewal is automatic unless written notice to the contrary is given at least 30 days before expiration; the last day to give such notice is 2012-09-21, which is still ahead. Either party may send the non-renewal notice by then; no deadline has lapsed and the agreement has not yet renewed.",
+    "status": "TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": "2012-09-21",
+       "holder": "none",
+       "kind": "deadline",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "The Initial Term (2 years from 2012-10-22) ends 2012-10-21 [8]. Per [9], renewal is automatic unless written notice to the contrary is given at least 30 days before expiration; the last day to give such notice is 2012-09-21, which is still ahead. Either party may send the non-renewal notice by then; no deadline has lapsed and the agreement has not yet renewed.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": "2012-09-21",
+       "holder": "both",
+       "kind": "deadline",
+       "notice_days": 30
+      }
+     ],
+     "reasoning": "Sentence [8] fixes the Initial Term as two years from the Effective Date (Oct 22, 2010), ending Oct 21, 2012. Sentence [9] auto-renews for successive one-year periods unless written notice to the contrary is given at least 30 days before expiration of the then-current term. Today (2012-08-01) is within the Initial Term; the last day to give non-renewal notice is expiry minus 30 days = Sep 21, 2012, which is still ahead. Either party (PPD or VS) may send the notice, so the deadline is triggered with the notice deadline on 2012-09-21.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": "2012-09-21",
+       "holder": "both",
+       "kind": "deadline",
+       "notice_days": 30
+      }
+     ],
+     "reasoning": "The Initial Term runs two years from 2010-10-22, so it expires 2012-10-21 ([8]). Renewal is automatic for successive one-year terms unless a party gives written notice at least 30 days before expiry ([9]). As of 2012-08-01 the last day to give non-renewal notice is 2012-09-21, which is still ahead, so either party can still prevent renewal; absent notice the agreement renews. Sentence 9 gives no fixed renewal cap; any question about how many renewals are permitted is not resolved by the text, but the operative current position is the pending notice deadline held by either party.",
+     "status": "TRIGGERED"
+    }
+   ],
+   "status_agree": true,
+   "kind_agree": true,
+   "due_agree": true
+  },
+  {
+   "id": "N02",
+   "src": "cuad:VirtualScopics",
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "deadline_lapsed",
+    "due": "2012-09-21",
+    "why": "renews to 2013-10-21"
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": "2012-09-22",
+      "holder": "none",
+      "kind": "deadline_lapsed",
+      "notice_days": 0
+     }
+    ],
+    "reasoning": "The Initial Term of two years from October 22, 2010 ends on October 22, 2012 (sentence 8). Sentence 9 requires written notice of non-renewal at least 30 days before expiration of the then-current term, making the last day to give such notice September 22, 2012. As of October 1, 2012 no notice has been sent by either party, so that deadline has lapsed and the Agreement automatically renews for an additional one-year period through October 22, 2013. Holder is 'none' because no party must act once the notice window has closed; renewal follows by default under sentence 9.",
+    "status": "TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": "2012-09-22",
+       "holder": "none",
+       "kind": "deadline_lapsed",
+       "notice_days": 0
+      }
+     ],
+     "reasoning": "The Initial Term of two years from October 22, 2010 ends on October 22, 2012 (sentence 8). Sentence 9 requires written notice of non-renewal at least 30 days before expiration of the then-current term, making the last day to give such notice September 22, 2012. As of October 1, 2012 no notice has been sent by either party, so that deadline has lapsed and the Agreement automatically renews for an additional one-year period through October 22, 2013. Holder is 'none' because no party must act once the notice window has closed; renewal follows by default under sentence 9.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": "2012-09-22",
+       "holder": "none",
+       "kind": "deadline_lapsed",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "[8] sets the Initial Term as two years from the Effective Date (2010-10-22), so it expires 2012-10-22. [9] renews automatically for successive 1-year terms unless written notice is given at least 30 days prior to expiry, i.e., by 2012-09-22. Today is 2012-10-01, so that last day has passed with no notice; the Agreement therefore renews for a further 1-year period (through 2013-10-21/22).",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": "2012-09-21",
+       "holder": "none",
+       "kind": "deadline_lapsed",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence 8: Initial Term is two years from the Effective Date (2010-10-22), so it runs through 2012-10-21. Sentence 9: non-renewal notice was due at least 30 days before expiry, i.e., by 2012-09-21 (or at the latest 2012-09-22 counting 30 days back). Since no notice was sent and that day has passed (today is 2012-10-01), the Agreement automatically renews for a successive one-year period.",
+     "status": "TRIGGERED"
+    }
+   ],
+   "status_agree": true,
+   "kind_agree": true,
+   "due_agree": false
+  },
+  {
+   "id": "N03",
+   "src": "cuad:Vertex",
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "notice unit missing in the text"
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": "2028-12-31",
+      "holder": "both",
+      "kind": "deadline",
+      "notice_days": 120
+     }
+    ],
+    "reasoning": "Under s[96], the Term runs from 2020-05-01 to 2029-04-30 with automatic 5-year renewals unless either party gives non-renewal notice at least 120 days before the applicable expiry date. As of 2028-11-01 no notice has been given, so the last day to give non-renewal notice is 2029-04-30 minus 120 days = 2028-12-31, which is still ahead; that deadline (held by either party per s[96] 5.2) is TRIGGERED. s[102] (Change in Control) and s[126] (assignment) are NOT_TRIGGERED as no such events occurred. Status: TRIGGERED.",
+    "status": "TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": "2028-12-31",
+       "holder": "both",
+       "kind": "deadline",
+       "notice_days": 120
+      }
+     ],
+     "reasoning": "Under s[96], the Term runs from 2020-05-01 to 2029-04-30 with automatic 5-year renewals unless either party gives non-renewal notice at least 120 days before the applicable expiry date. As of 2028-11-01 no notice has been given, so the last day to give non-renewal notice is 2029-04-30 minus 120 days = 2028-12-31, which is still ahead; that deadline (held by either party per s[96] 5.2) is TRIGGERED. s[102] (Change in Control) and s[126] (assignment) are NOT_TRIGGERED as no such events occurred. Status: TRIGGERED.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": "2029-01-01",
+       "holder": "both",
+       "kind": "deadline",
+       "notice_days": 120
+      }
+     ],
+     "reasoning": "Sentence [96] fixes the Term to end 2029-04-30 with automatic 5-year renewals unless a party gives written notice of non-renewal at least 120 days before the applicable expiry date. No notice has been sent as of 2028-11-01, so the agreement will renew automatically unless notice is given by the last day, 120 days before 2029-04-30, i.e. 2029-01-01. That last day to give non-renewal notice is still ahead, so this is a deadline held by either party.",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": "2028-12-01",
+       "holder": "both",
+       "kind": "deadline",
+       "notice_days": 120
+      }
+     ],
+     "reasoning": "Term ends 2029-04-30; s[96] s[96/5.2] non-renewal notice required ≥120 days before expiry, so last day is 2028-12-01, still ahead as of 2028-11-01. No notice sent, so automatic renewal would follow if deadline lapses.",
+     "status": "TRIGGERED"
+    }
+   ],
+   "status_agree": false
+  },
+  {
+   "id": "N04",
+   "src": "cuad:Gpaq",
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "deadline",
+    "due": "2034-06-30",
+    "holder": "both"
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "status": "TRIGGERED",
+    "reactions": [
+     {
+      "kind": "deadline",
+      "holder": "both",
+      "due": "2034-06-30",
+      "notice_days": 0
+     }
+    ],
+    "reasoning": "Sentences [74]-[75]: the current Term runs to 2034-12-31 and automatically renews for successive 5-year terms unless either party gives written non-renewal notice at least six months before expiration. Six months before 2034-12-31 is 2034-06-30, so as of 2034-05-01 the non-renewal notice deadline is still ahead for either PFHOF or the Village Media Company. No change of control occurred, so [82]-[83] is not triggered, and no assignment is contemplated, so [125] is not triggered."
+   },
+   "all_answers": [
+    {
+     "status": "TRIGGERED",
+     "reactions": [
+      {
+       "kind": "deadline",
+       "holder": "both",
+       "due": "2034-06-30",
+       "notice_days": 0
+      }
+     ],
+     "reasoning": "Sentences [74]-[75]: the current Term runs to 2034-12-31 and automatically renews for successive 5-year terms unless either party gives written non-renewal notice at least six months before expiration. Six months before 2034-12-31 is 2034-06-30, so as of 2034-05-01 the non-renewal notice deadline is still ahead for either PFHOF or the Village Media Company. No change of control occurred, so [82]-[83] is not triggered, and no assignment is contemplated, so [125] is not triggered."
+    },
+    {
+     "status": "TRIGGERED",
+     "reactions": [
+      {
+       "kind": "deadline",
+       "holder": "both",
+       "due": "2034-06-30",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Per [74], the current Term runs until 2034-12-31. Per [75], the Agreement automatically renews for successive 5-year terms unless either Party gives written notice of intent not to renew at least six months prior to expiration of the then-current Term. Six months prior to 2034-12-31 is 2034-06-30, which is still ahead of today (2034-05-01). So the last day to give a non-renewal notice is 2034-06-30; absent such notice, the Agreement will automatically renew for a five-year term beginning 2035-01-01. Both parties each hold this notice right individually, so the deadline applies to each of them. No termination or other reaction under [82] or [125] is implicated on these facts."
+    },
+    {
+     "status": "TRIGGERED",
+     "reactions": [
+      {
+       "kind": "deadline",
+       "holder": "both",
+       "due": "2034-06-30",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentences [74]-[75]: Term ends 2034-12-31 and automatically renews for successive 5-year terms unless either party gives non-renewal notice at least 6 months prior to expiration. The last day to give that notice is 2034-06-30, which is still ahead as of 2034-05-01; no notice has been sent, so as of today the agreement is on track to auto-renew on 2035-01-01 unless notice is given by 2034-06-30."
+    }
+   ],
+   "status_agree": true,
+   "kind_agree": true,
+   "due_agree": true
+  },
+  {
+   "id": "N05",
+   "src": "cuad:iPayment",
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "earliest_exit",
+    "due": "2011-07-01",
+    "why": "evergreen: notice today ends it 6 months later"
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": "2011-07-01",
+      "holder": "none",
+      "kind": "earliest_exit",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "Sentence [373] initial term ended June 30, 2010; sentence [375] provides automatic continuation until either party gives at least six months' written notice. No notice was given, so as of 2011-01-01 the Agreement is in effect with no fixed end date. Either party can terminate on notice, so the earliest exit if notice is sent today (2011-01-01) is 2011-07-01 (six months later). Holder is either party (listed as 'none' as neither specifically).",
+    "status": "TRIGGERED"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": "2011-07-01",
+       "holder": "none",
+       "kind": "earliest_exit",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [373] initial term ended June 30, 2010; sentence [375] provides automatic continuation until either party gives at least six months' written notice. No notice was given, so as of 2011-01-01 the Agreement is in effect with no fixed end date. Either party can terminate on notice, so the earliest exit if notice is sent today (2011-01-01) is 2011-07-01 (six months later). Holder is either party (listed as 'none' as neither specifically).",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": "2011-07-01",
+       "holder": "both",
+       "kind": "earliest_exit",
+       "notice_days": 180
+      }
+     ],
+     "reasoning": "Sentence [373] gives an initial term ending June 30, 2010; sentence [375] provides automatic continuation until either party gives at least six months' written notice of termination. No notice has been sent, so as of 2011-01-01 the agreement is in its evergreen continuation. Notice given today yields termination effective 2011-07-01, so the earliest exit is 2011-07-01 for either party (ISO or SERVICERS).",
+     "status": "TRIGGERED"
+    },
+    {
+     "reactions": [
+      {
+       "due": "2011-07-01",
+       "holder": "both",
+       "kind": "earliest_exit",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentences [373] and [375]: the initial term ran four Processing Years from the January 29, 2007 Effective Date and ended June 30, 2010; thereafter the Agreement automatically continues until either party gives at least six (6) months prior written notice of termination. As of 2011-01-01 no such notice has been sent and no other agreement exists, so the Agreement is in automatic renewal with no fixed end date. Either party (ISO or SERVICERS) can end it by sending at least six months' written notice; if notice were sent today (2011-01-01), the earliest end date would be six months later, 2011-07-01.",
+     "status": "TRIGGERED"
+    }
+   ],
+   "status_agree": true,
+   "kind_agree": true,
+   "due_agree": true
+  },
+  {
+   "id": "N06",
+   "src": "cuad:DynTek",
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "option_deadline",
+    "due": "2000-04-01",
+    "holder": "both",
+    "why": "expiry 2000-05-31; assume no default"
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "NOT_TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "status": "TRIGGERED",
+    "reactions": [
+     {
+      "kind": "expiry",
+      "holder": "both",
+      "due": "2000-05-31",
+      "notice_days": null
+     },
+     {
+      "kind": "option_deadline",
+      "holder": "both",
+      "due": "2000-04-01",
+      "notice_days": 60
+     }
+    ],
+    "reasoning": "The term began on the Effective Date, 1999-06-01, and runs for 12 months, so the Period ends 2000-05-31 under the stated convention (sentence 17). Sentence 18 gives either Diplomat or Tadeo (neither in default, which the scenario confirms) an option to extend for an Additional Period of one year by giving at least 60 days advance written notice before the end of the Period. Sixty days before 2000-05-31 is 2000-04-01, so as of 2000-03-01 the extension option is still open but the last day to exercise it is 2000-04-01. No extension notice has been sent, so absent notice by that date the Agreement expires at the end of the Period on 2000-05-31."
+   },
+   "all_answers": [
+    {
+     "status": "TRIGGERED",
+     "reactions": [
+      {
+       "kind": "expiry",
+       "holder": "both",
+       "due": "2000-05-31",
+       "notice_days": null
+      },
+      {
+       "kind": "option_deadline",
+       "holder": "both",
+       "due": "2000-04-01",
+       "notice_days": 60
+      }
+     ],
+     "reasoning": "The term began on the Effective Date, 1999-06-01, and runs for 12 months, so the Period ends 2000-05-31 under the stated convention (sentence 17). Sentence 18 gives either Diplomat or Tadeo (neither in default, which the scenario confirms) an option to extend for an Additional Period of one year by giving at least 60 days advance written notice before the end of the Period. Sixty days before 2000-05-31 is 2000-04-01, so as of 2000-03-01 the extension option is still open but the last day to exercise it is 2000-04-01. No extension notice has been sent, so absent notice by that date the Agreement expires at the end of the Period on 2000-05-31."
+    },
+    {
+     "status": "NOT_TRIGGERED",
+     "reactions": [
+      {
+       "kind": "option_deadline",
+       "holder": "both",
+       "due": "2000-04-01",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Per [17], the initial 12-month Period runs from 1999-06-01 and ends 2000-05-31. Per [18], either Diplomat or Tadeo (neither in default) may extend for an additional year by giving at least 60 days' advance written notice before the end of the Period. The last day to send that notice is 60 days before 2000-05-31, i.e. 2000-04-01, which is still ahead of today (2000-03-01). No extension notice has been sent, so the extension option is simply still open — an unexercised option deadline, not a triggered consequence. Neither [35] (acquisition-based termination) nor [75] (assignment consent) applies, as no acquisition or assignment occurred. If no notice is given by 2000-04-01, the Agreement would expire at the end of the Period on 2000-05-31."
+    },
+    {
+     "status": "TRIGGERED",
+     "reactions": [
+      {
+       "kind": "option_deadline",
+       "holder": "both",
+       "due": "2000-04-01",
+       "notice_days": 60
+      },
+      {
+       "kind": "expiry",
+       "holder": "both",
+       "due": "2000-05-31",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [17] fixes a 12-month Period starting the Effective Date (June 1, 1999, per [2]), so the Period runs through May 31, 2000. Sentence [18] gives either non-defaulting party an option to extend for one Additional Year, provided written notice is given at least 60 days before the end of the Period. Sixty days before May 31, 2000 is April 1, 2000, so as of today (2000-03-01) the extension option deadline is still ahead. If no extension notice is sent, the Agreement expires at the end of the Period on May 31, 2000. Neither party is in default, so both hold the extension option."
+    }
+   ],
+   "status_agree": true,
+   "kind_agree": true,
+   "due_agree": true
+  },
+  {
+   "id": "N07",
+   "src": "cuad:VerticalNet",
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "expiry",
+    "due": "2003-03-31"
+   },
+   "vote": "TRIGGERED",
+   "samples": [
+    "TRIGGERED",
+    "TRIGGERED",
+    "TRIGGERED"
+   ],
+   "answer": {
+    "status": "TRIGGERED",
+    "reactions": [
+     {
+      "kind": "expiry",
+      "holder": "none",
+      "due": "2003-03-31",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "Sentence [276] sets the Initial Term from the Effective Date (2001-10-01) until March 31, 2003, and provides that renewal occurs only upon mutual written agreement of the parties for up to three one-year Renewal Terms. As of 2003-01-01, no mutual written agreement to renew has been made, so the Agreement will expire on 2003-03-31 with no renewal. There is no notice deadline for non-renewal since renewal requires affirmative mutual agreement rather than notice; the fixed end date is 2003-03-31."
+   },
+   "all_answers": [
+    {
+     "status": "TRIGGERED",
+     "reactions": [
+      {
+       "kind": "expiry",
+       "holder": "none",
+       "due": "2003-03-31",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [276] sets the Initial Term from the Effective Date (2001-10-01) until March 31, 2003, and provides that renewal occurs only upon mutual written agreement of the parties for up to three one-year Renewal Terms. As of 2003-01-01, no mutual written agreement to renew has been made, so the Agreement will expire on 2003-03-31 with no renewal. There is no notice deadline for non-renewal since renewal requires affirmative mutual agreement rather than notice; the fixed end date is 2003-03-31."
+    },
+    {
+     "status": "TRIGGERED",
+     "reactions": [
+      {
+       "kind": "expiry",
+       "holder": "both",
+       "due": "2003-03-31",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [276] fixes the Initial Term from the Effective Date (October 1, 2001) until March 31, 2003, and provides that renewal occurs ONLY upon the mutual written agreement of the parties. Since no such agreement exists and no notices have been sent, the Agreement will expire on 2003-03-31 unless the parties mutually agree in writing to a Renewal Term before then. There is no notice deadline to lapse or exercise; the agreement simply ends on the fixed date absent mutual agreement."
+    },
+    {
+     "status": "TRIGGERED",
+     "reactions": [
+      {
+       "kind": "expiry",
+       "holder": "both",
+       "due": "2003-03-31",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence 276 fixes the Initial Term until March 31, 2003, and renewal occurs only upon mutual written agreement (no automatic renewal and no notice deadline). Since no other agreement exists, the Agreement will expire on 2003-03-31."
+    }
+   ],
+   "status_agree": true,
+   "kind_agree": true,
+   "due_agree": true
+  },
+  {
+   "id": "N08",
+   "src": "cuad:EuropeanMicro",
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "renewal depends on facts outside the text (purchase minimums met?)"
+   },
+   "vote": "NEEDS_LAWYER",
+   "samples": [
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER"
+   ],
+   "answer": {
+    "status": "NEEDS_LAWYER",
+    "reactions": [
+     {
+      "kind": "expiry",
+      "holder": "none",
+      "due": "1998-09-30",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "Sentence [82] sets the Term until the termination date in Exhibit A, and [149] gives that date as September 30, 1997 — before the Effective Date of November 5, 1997 in [3], so the fixed end date is internally contradictory and open. Sentence [83] provides automatic renewal only if all conditions (a)-(d) hold. Condition (b) is not met (the parties made no written agreement on new Guaranteed Minimum Purchases and discounts), which on its face prevents renewal, pointing to expiry on the 1998 Expiration Date (1998-09-30, with the 30-day non-renewal notice window under (c) having lapsed on 1998-08-31). However, the actual Expiration Date depends on resolving the contradictory Exhibit A date, and condition (a) depends on purchase/marketing facts not available, so a lawyer must confirm the term position; the most likely reading is that the agreement expired 1998-09-30."
+   },
+   "all_answers": [
+    {
+     "status": "NEEDS_LAWYER",
+     "reactions": [
+      {
+       "kind": "expiry",
+       "holder": "none",
+       "due": "1998-09-30",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [82] sets the Term until the termination date in Exhibit A, and [149] gives that date as September 30, 1997 — before the Effective Date of November 5, 1997 in [3], so the fixed end date is internally contradictory and open. Sentence [83] provides automatic renewal only if all conditions (a)-(d) hold. Condition (b) is not met (the parties made no written agreement on new Guaranteed Minimum Purchases and discounts), which on its face prevents renewal, pointing to expiry on the 1998 Expiration Date (1998-09-30, with the 30-day non-renewal notice window under (c) having lapsed on 1998-08-31). However, the actual Expiration Date depends on resolving the contradictory Exhibit A date, and condition (a) depends on purchase/marketing facts not available, so a lawyer must confirm the term position; the most likely reading is that the agreement expired 1998-09-30."
+    },
+    {
+     "status": "NEEDS_LAWYER",
+     "reactions": [
+      {
+       "kind": "expiry",
+       "holder": "both",
+       "due": "1997-09-30",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [82] fixes the Term until the Exhibit A termination date, which [149] sets at September 30, 1997 — already past. Sentence [83] makes automatic renewal conditional on four provisos; (b) requires the parties to have agreed in writing on Guaranteed Minimum Purchase amounts and price discounts for the next renewal year, and the scenario says no such agreement exists, so the renewal condition is not satisfied. On the most likely reading, the Agreement therefore simply expired on 1997-09-30 and is not in force as of 1998-10-01. However, the clause does not expressly state what happens when a renewal proviso fails (e.g., whether the agreement continues month-to-month, or whether WGT may terminate), and sentences [85], [87], [88] and [289] speak to termination/assignment rights rather than lapse of term — so a lawyer should confirm the consequence of unmet renewal conditions."
+    },
+    {
+     "status": "NEEDS_LAWYER",
+     "reactions": [
+      {
+       "kind": "expiry",
+       "holder": "both",
+       "due": "1997-09-30",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Per [82], the Term runs until the termination date in Exhibit A, which [149] gives as September 30, 1997. Auto-renewal under [83] is conditional on four requirements, including (b) that the parties agreed in writing on Guaranteed Minimum Purchase amounts and price discounts for the next renewal period. The scenario states no such agreement was ever made and no notices were sent. On the most likely reading, condition (b) was not satisfied, so the Agreement did not renew and expired on 1997-09-30; as of 1998-10-01 the agreement is at an end. However, whether the parties' silence and continued dealings (if any, which are not stated) could be treated as the required 'written agreement' under [83](b), or as waiver/extension, is an open legal question, so NEEDS_LAWYER. [87], [88] and [289] are assignment/ownership triggers and do not apply since nothing has happened."
+    }
+   ],
+   "status_agree": true
+  },
+  {
+   "id": "N09",
+   "src": "cuad:Kiromic",
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "term redacted"
+   },
+   "vote": "NEEDS_LAWYER",
+   "samples": [
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER",
+    "NEEDS_LAWYER"
+   ],
+   "answer": {
+    "reactions": [
+     {
+      "due": null,
+      "holder": "both",
+      "kind": "expiry",
+      "notice_days": null
+     }
+    ],
+    "reasoning": "Sentence [68] sets a duration of '*' years — the actual term length is blank/redacted, so the natural expiry date and the deadline for non-renewal notice (one year before expiry) cannot be computed. Since the agreement has a fixed duration with extension absent non-renewal notice, the agreement will expire on some unknown date unless renewed [68]. Whether a non-renewal deadline is still ahead or has lapsed as of 2021-01-01 cannot be determined without the missing term length; this is a real gap requiring lawyer review. On the most likely reading, the agreement ends by expiry on an unknown date (expiry reaction), but the due date cannot be fixed.",
+    "status": "NEEDS_LAWYER"
+   },
+   "all_answers": [
+    {
+     "reactions": [
+      {
+       "due": null,
+       "holder": "both",
+       "kind": "expiry",
+       "notice_days": null
+      }
+     ],
+     "reasoning": "Sentence [68] sets a duration of '*' years — the actual term length is blank/redacted, so the natural expiry date and the deadline for non-renewal notice (one year before expiry) cannot be computed. Since the agreement has a fixed duration with extension absent non-renewal notice, the agreement will expire on some unknown date unless renewed [68]. Whether a non-renewal deadline is still ahead or has lapsed as of 2021-01-01 cannot be determined without the missing term length; this is a real gap requiring lawyer review. On the most likely reading, the agreement ends by expiry on an unknown date (expiry reaction), but the due date cannot be fixed.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [],
+     "reasoning": "Sentence [68] leaves the initial duration and extension period literally blank (* years), so the natural expiry date and the one-year non-renewal notice deadline cannot be computed. It is also unclear whether the extension is automatic upon expiry absent a non-renewal notice or requires some affirmative act. Sentence [100] concerns assignment/merger consent, which is not triggered by this scenario. A lawyer must determine the actual term dates from the executed agreement; on the most likely reading the agreement remains in effect with a non-renewal notice deadline one year before the (unknown) natural expiry date.",
+     "status": "NEEDS_LAWYER"
+    },
+    {
+     "reactions": [],
+     "reasoning": "Sentence [68] states a duration of '* years' — the term length is blank/unspecified in the text, so the natural expiry date and the one-year non-renewal notice deadline (sent one year before expiry) cannot be determined from the available text. Sentence [100] is not triggered (no assignment/merger event). Because the term is undefined, the current renewal position as of 2021-01-01 (whether the agreement is near expiry, whether the non-renewal deadline has passed, or when the earliest exit lies) is a genuine open legal question requiring clarification of the missing term.",
+     "status": "NEEDS_LAWYER"
+    }
+   ],
+   "status_agree": true
+  }
+ ]
+}

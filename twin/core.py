@@ -51,7 +51,8 @@ def apply(s: State, ev: dict) -> State:
         return replace(s, as_of=d, buyer_pct=buyer, retained_pct=ret,
                        largest_other_pct=ev.get("largest_other_pct_after", buyer),
                        management_changed=ev.get("management_changes", True),
-                       mechanism="share_sale", buyer_is_competitor=ev.get("buyer_is_competitor", False), prev=s)
+                       mechanism="share_sale", buyer_is_competitor=ev.get("buyer_is_competitor", False),
+                       consented=ev.get("consented", False), prev=s)
     if e == "ipo":
         ret = dict(s.retained_pct)
         if "sponsor_pct_after" in ev:

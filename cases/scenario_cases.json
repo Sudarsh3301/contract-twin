@@ -220,14 +220,37 @@
    "scenario": [
     {
      "event": "holding_insertion",
-     "mechanism": "reorganization"
+     "mechanism": "share_exchange"
+    }
+   ],
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "a share-for-share exchange with a new parent may or may not be a 'reorganization involving Licensee'; readings differ",
+    "revised": "2026-11-02 adjudication: blind check flagged it; by our own rule (outcome differs across readings) it is open"
+   },
+   "expected_v0": {
+    "status": "TRIGGERED",
+    "kind": "consent",
+    "holder": "counterparty"
+   }
+  },
+  {
+   "id": "R13b",
+   "src": "cuad:Gopage",
+   "us": "Licensee",
+   "scenario": [
+    {
+     "event": "holding_insertion",
+     "mechanism": "merger"
     }
    ],
    "expected": {
     "status": "TRIGGERED",
     "kind": "consent",
-    "holder": "counterparty"
-   }
+    "holder": "counterparty",
+    "why": "holding company inserted by merger: 'any merger ... involving Licensee' is deemed a transfer"
+   },
+   "added": "2026-11-02 to separate the merger route from the share exchange route"
   },
   {
    "id": "R14",
@@ -321,6 +344,13 @@
     }
    ],
    "expected": {
+    "status": "TRIGGERED",
+    "kind": "service_limitation",
+    "holder": "counterparty",
+    "why": "Control defined at sid 139 (>50%); 60% sale is a Change in Control; effect: services continue but limited",
+    "revised": "2026-11-02 adjudication: blind check (GLM 5.3) was right; our premise 'defined elsewhere' was wrong"
+   },
+   "expected_v0": {
     "status": "NEEDS_LAWYER",
     "why": "'Change in Control' defined elsewhere in the agreement; effect is a service limitation, not termination"
    }
@@ -587,6 +617,54 @@
     "status": "NEEDS_LAWYER",
     "why": "term redacted"
    }
+  },
+  {
+   "id": "R26",
+   "src": "cuad:VirtualScopics",
+   "us": "VS",
+   "clause": "(d) acquisition by a PPD Competitor of a stake requiring 13d-1 disclosure -> PPD may terminate immediately",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 10,
+     "buyer_is_competitor": true,
+     "management_changes": false
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "termination_right",
+    "holder": "counterparty",
+    "why": "competitor holds 10% >= 5% disclosure threshold"
+   },
+   "added": "2026-11-02 from the clause text"
+  },
+  {
+   "id": "R27",
+   "src": "cuad:iPayment",
+   "us": "ISO",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 60,
+     "management_changes": true,
+     "consented": true,
+     "date": "2027-03-04"
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "reactions": [
+     {
+      "kind": "notice",
+      "holder": "us",
+      "due": "2027-03-09"
+     }
+    ],
+    "why": "prior consent removes the termination right but not the 3-business-day notice"
+   },
+   "added": "2026-11-02 from the clause text"
   }
- ]
+ ],
+ "_adjudication": "Blind check (GLM 5.3, k=3) agreed on status 26/34 before adjudication. Adjudicated: R19 ours wrong (fixed), R13 ours over-firm (fixed, split into R13/R13b). Upheld ours: R15, R16 (consistent: without a competitor every reading gives no consent; with one the readings split), R21/R24/R25 (limb (d) depends on an indenture not in the file), N03 (unit missing), N02 date (stated day convention). No lawyer review."
 }

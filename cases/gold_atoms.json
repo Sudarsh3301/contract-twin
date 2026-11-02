@@ -1,27 +1,315 @@
 {
  "_note": "Hand-labelled atoms per source clause (gold), read from the clause text, independent of expected outcomes. Not lawyer-reviewed.",
- "cuad:RaeSystems":   {"coc":{"whose":"either","triggers":["ownership_threshold"],"threshold_pct":50,"threshold_op":"gte","effect":"termination_right","effect_holder":"them"}},
- "cuad:VirtualScopics":{"coc":{"whose":"us","triggers":["ownership_threshold"],"threshold_pct":50,"threshold_op":"gte","effect":"termination_right","effect_holder":"them"},
-                        "term":{"start":"2010-10-22","initial_term":[2,"years"],"mode":"auto","renewal_term":[1,"years"],"notice":[30,"days"]}},
- "cuad:DynTek":       {"coc":{"whose":"us","triggers":["ownership_threshold"],"threshold_pct":20,"threshold_op":"gte","effect":"termination_right","effect_holder":"them","notice":[60,"days"]},
-                        "term":{"start":"1999-06-01","initial_term":[12,"months"],"mode":"option","option_holder":"either","renewal_term":[1,"years"],"notice":[60,"days"]}},
- "cuad:iPayment":     {"coc":{"whose":"us","triggers":["ownership_threshold","management_change"],"threshold_pct":51,"threshold_op":"gt","carve_outs":["same_management"],"effects":[{"effect":"notice","effect_holder":"us","notice":[3,"business_days"]},{"effect":"termination_right","effect_holder":"them","notice":[180,"days"]}]},
-                        "term":{"end_date":"2010-06-30","mode":"evergreen","notice":[6,"months"]}},
- "cuad:eLandia":      {"coc":{"whose":"us","triggers":["open_textured"],"open_texture":"judgement","effect":"termination_right","effect_holder":"them"}},
- "cuad:BlackBox":     {"coc":{"whose":"us","triggers":["open_textured"],"open_texture":"judgement","effect":"termination_right","effect_holder":"them"}},
- "cuad:mPhase":       {"coc":{"whose":"us","triggers":["open_textured"],"open_texture":"magnitude","effect":"automatic_termination"}},
- "cuad:VerticalNet":  {"assign":{"restricted":true,"consent_needed":true,"coc_not_assignment":true},
-                        "term":{"end_date":"2003-03-31","mode":"mutual"}},
- "cuad:Gopage":       {"assign":{"restricted":true,"consent_needed":true,"deems":["merger","consolidation","reorganization"]}},
- "cuad:Corio":        {"assign":{"restricted":true,"consent_needed":true,"deems":["operation_of_law"],"merger_exception":true,"unless_competitor":true}},
- "cuad:eDiets":       {"coc":{"whose":"either","triggers":["transaction_type"],"transaction_types":["merger","consolidation","asset_sale"],"carve_outs":["prior_holders_keep_50"],"effect":"termination_right","effect_holder":"them"}},
- "cuad:Zounds":       {"coc":{"whose":"us","triggers":["ownership_threshold","management_change"],"threshold_pct":50,"threshold_op":"gte","carve_outs":["consented"],"effect":"automatic_termination"}},
- "cuad:TriCity":      {"coc":{"whose":"us","triggers":["undefined"],"definition_location":"elsewhere_not_located","effect":"service_limitation"}},
- "cuad:JointCorp":    {"coc":{"whose":"us","triggers":["retained_stake"],"retained_holder":"principal_owners","retained_pct":75,"retained_start_pct":100,"effect":"consent","effect_holder":"them"}},
- "edgar:Amscan":      {"coc":{"whose":"us","triggers":["retained_stake","parent_direct_ownership","cross_reference"],"retained_holder":"sponsors","retained_pct":50,
-                        "qualifying_ipo":{"test":"proceeds","threshold":150000000},"post_ipo_threshold_pct":35,"post_ipo_relative_to_retained":true,"effect":"elsewhere"}},
- "cuad:Vertex":       {"term":{"end_date":"2029-04-30","mode":"auto","renewal_term":[5,"years"],"notice":[120,"missing_unit"]}},
- "cuad:Gpaq":         {"term":{"end_date":"2034-12-31","mode":"auto","renewal_term":[5,"years"],"notice":[6,"months"]}},
- "cuad:EuropeanMicro":{"term":{"mode":"conditional"}},
- "cuad:Kiromic":      {"term":{"initial_term":"redacted","mode":"auto"}}
+ "cuad:RaeSystems": {
+  "coc": {
+   "whose": "either",
+   "triggers": [
+    "ownership_threshold"
+   ],
+   "threshold_pct": 50,
+   "threshold_op": "gte",
+   "effect": "termination_right",
+   "effect_holder": "them"
+  }
+ },
+ "cuad:VirtualScopics": {
+  "coc": {
+   "whose": "us",
+   "triggers": [
+    "ownership_threshold",
+    "competitor_stake",
+    "management_change"
+   ],
+   "threshold_pct": 50,
+   "threshold_op": "gte",
+   "effect": "termination_right",
+   "effect_holder": "them",
+   "competitor_threshold_pct": 5,
+   "_src": "sid 121: (c) >=50% voting; (d) competitor stake requiring 13d-1 disclosure (5%); (e) change in a Key Leadership Position"
+  },
+  "term": {
+   "start": "2010-10-22",
+   "initial_term": [
+    2,
+    "years"
+   ],
+   "mode": "auto",
+   "renewal_term": [
+    1,
+    "years"
+   ],
+   "notice": [
+    30,
+    "days"
+   ]
+  }
+ },
+ "cuad:DynTek": {
+  "coc": {
+   "whose": "us",
+   "triggers": [
+    "ownership_threshold"
+   ],
+   "threshold_pct": 20,
+   "threshold_op": "gte",
+   "effect": "termination_right",
+   "effect_holder": "them",
+   "notice": [
+    60,
+    "days"
+   ]
+  },
+  "term": {
+   "start": "1999-06-01",
+   "initial_term": [
+    12,
+    "months"
+   ],
+   "mode": "option",
+   "option_holder": "either",
+   "renewal_term": [
+    1,
+    "years"
+   ],
+   "notice": [
+    60,
+    "days"
+   ]
+  }
+ },
+ "cuad:iPayment": {
+  "coc": {
+   "whose": "us",
+   "triggers": [
+    "ownership_threshold",
+    "management_change"
+   ],
+   "threshold_pct": 51,
+   "threshold_op": "gt",
+   "carve_outs": [
+    "same_management"
+   ],
+   "effects": [
+    {
+     "effect": "notice",
+     "effect_holder": "us",
+     "notice": [
+      3,
+      "business_days"
+     ]
+    },
+    {
+     "effect": "termination_right",
+     "effect_holder": "them",
+     "notice": [
+      180,
+      "days"
+     ],
+     "unless_consented": true
+    }
+   ],
+   "_src": "CoC def sid 41; notice within 3 Business Days; termination on 180 days unless SERVICERS previously consented"
+  },
+  "term": {
+   "end_date": "2010-06-30",
+   "mode": "evergreen",
+   "notice": [
+    6,
+    "months"
+   ]
+  }
+ },
+ "cuad:eLandia": {
+  "coc": {
+   "whose": "us",
+   "triggers": [
+    "open_textured"
+   ],
+   "open_texture": "judgement",
+   "effect": "termination_right",
+   "effect_holder": "them"
+  }
+ },
+ "cuad:BlackBox": {
+  "coc": {
+   "whose": "us",
+   "triggers": [
+    "open_textured"
+   ],
+   "open_texture": "judgement",
+   "effect": "termination_right",
+   "effect_holder": "them"
+  }
+ },
+ "cuad:mPhase": {
+  "coc": {
+   "whose": "us",
+   "triggers": [
+    "open_textured"
+   ],
+   "open_texture": "magnitude",
+   "effect": "automatic_termination"
+  }
+ },
+ "cuad:VerticalNet": {
+  "assign": {
+   "restricted": true,
+   "consent_needed": true,
+   "coc_not_assignment": true
+  },
+  "term": {
+   "end_date": "2003-03-31",
+   "mode": "mutual"
+  }
+ },
+ "cuad:Gopage": {
+  "assign": {
+   "restricted": true,
+   "consent_needed": true,
+   "deems": [
+    "merger",
+    "consolidation",
+    "reorganization"
+   ]
+  }
+ },
+ "cuad:Corio": {
+  "assign": {
+   "restricted": true,
+   "consent_needed": true,
+   "deems": [
+    "operation_of_law"
+   ],
+   "merger_exception": true,
+   "unless_competitor": true
+  }
+ },
+ "cuad:eDiets": {
+  "coc": {
+   "whose": "either",
+   "triggers": [
+    "transaction_type"
+   ],
+   "transaction_types": [
+    "merger",
+    "consolidation",
+    "asset_sale"
+   ],
+   "carve_outs": [
+    "prior_holders_keep_50"
+   ],
+   "effect": "termination_right",
+   "effect_holder": "them"
+  }
+ },
+ "cuad:Zounds": {
+  "coc": {
+   "whose": "us",
+   "triggers": [
+    "ownership_threshold",
+    "management_change",
+    "transaction_type"
+   ],
+   "threshold_pct": 50,
+   "threshold_op": "gte",
+   "carve_outs": [
+    "consented"
+   ],
+   "effect": "automatic_termination",
+   "transaction_types": [
+    "merger",
+    "consolidation",
+    "asset_sale"
+   ],
+   "_src": "sid 189: (i) >=50%; (ii) board turnover; (iii) merger/consolidation/sale of substantially all assets"
+  }
+ },
+ "cuad:TriCity": {
+  "coc": {
+   "whose": "us",
+   "triggers": [
+    "ownership_threshold",
+    "management_change"
+   ],
+   "threshold_pct": 50,
+   "threshold_op": "gt",
+   "effect": "service_limitation",
+   "effect_holder": "them",
+   "_src": "sid 135 Change in Control = acquire Control or board turnover; sid 139 Control = >50% or power to direct; sid 675 effect"
+  }
+ },
+ "cuad:JointCorp": {
+  "coc": {
+   "whose": "us",
+   "triggers": [
+    "retained_stake"
+   ],
+   "retained_holder": "principal_owners",
+   "retained_pct": 75,
+   "retained_start_pct": 100,
+   "effect": "consent",
+   "effect_holder": "them"
+  }
+ },
+ "edgar:Amscan": {
+  "coc": {
+   "whose": "us",
+   "triggers": [
+    "retained_stake",
+    "parent_direct_ownership",
+    "cross_reference"
+   ],
+   "retained_holder": "sponsors",
+   "retained_pct": 50,
+   "qualifying_ipo": {
+    "test": "proceeds",
+    "threshold": 150000000
+   },
+   "post_ipo_threshold_pct": 35,
+   "post_ipo_relative_to_retained": true,
+   "effect": "elsewhere"
+  }
+ },
+ "cuad:Vertex": {
+  "term": {
+   "end_date": "2029-04-30",
+   "mode": "auto",
+   "renewal_term": [
+    5,
+    "years"
+   ],
+   "notice": [
+    120,
+    "missing_unit"
+   ]
+  }
+ },
+ "cuad:Gpaq": {
+  "term": {
+   "end_date": "2034-12-31",
+   "mode": "auto",
+   "renewal_term": [
+    5,
+    "years"
+   ],
+   "notice": [
+    6,
+    "months"
+   ]
+  }
+ },
+ "cuad:EuropeanMicro": {
+  "term": {
+   "mode": "conditional"
+  }
+ },
+ "cuad:Kiromic": {
+  "term": {
+   "initial_term": "redacted",
+   "mode": "auto"
+  }
+ },
+ "_revisions": [
+  "2026-11-02: VirtualScopics, Zounds, iPayment completed after the Arabic-twin worker found triggers missing from gold; TriCity relabelled after the blind check showed Control is defined in the contract (sid 139). All checked against the English text."
+ ]
 }

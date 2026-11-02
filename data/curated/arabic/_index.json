@@ -1,0 +1,180 @@
+[
+ {
+  "file": "ejari_unified_tenancy_contract.txt",
+  "kind": "curated",
+  "source_url": "https://dubailand.gov.ae/media/nijhtrss/ejari_unified_tenancy_contract.pdf",
+  "raw": "data/raw/arabic/ejari_unified_tenancy_contract.pdf",
+  "raw_sha256": "33802759b47522a6ce3e2683f6c70acac0c256a304531b0a095952cdd4973925",
+  "pages": 3,
+  "licence": "Dubai Land Department public template (dubailand.gov.ae). No licence stated on the page; government form published for public use.",
+  "bilingual": true,
+  "text_layer": true,
+  "scanned": false,
+  "extractor": "pypdfium2 get_text_range + NFKC",
+  "text_quality": "clean"
+ },
+ {
+  "file": "balady_urban_roads_contract.txt",
+  "kind": "curated",
+  "source_url": "https://balady.gov.sa/sites/default/files/2024-12/%D8%B9%D9%82%D8%AF%20%D9%85%D9%82%D8%A7%D9%88%D9%84%D8%A9%20%D8%A7%D9%84%D8%B7%D8%B1%D9%82%20%D8%A7%D9%84%D8%AD%D8%B6%D8%B1%D9%8A%D8%A9.pdf",
+  "raw": "data/raw/arabic/balady_urban_roads_contract.pdf",
+  "raw_sha256": "016f0de9acd741284796e1bf49e69b86b76807be03c8f0db8527d6dfdc77225b",
+  "pages": 8,
+  "licence": "Saudi Ministry of Municipalities and Housing model contract published on balady.gov.sa. No licence stated; public government template.",
+  "bilingual": false,
+  "text_layer": true,
+  "scanned": false,
+  "extractor": "pypdfium2 get_text_range + NFKC",
+  "text_quality": "damaged text layer: the embedded font maps many glyphs to wrong code points (e.g. 'في' extracts as 'ࢭʏ', 'على' as 'عڴʄ'), and some word spaces are lost. Kept verbatim, not repaired, not OCR'd."
+ },
+ {
+  "file": "balady_engineering_services_contract.txt",
+  "kind": "curated",
+  "source_url": "https://balady.gov.sa/sites/default/files/2024-12/%D8%A7%D9%84%D8%B9%D9%82%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B3%D8%A7%D8%B3%D9%8A%20%D9%84%D9%84%D8%AE%D8%AF%D9%85%D8%A7%D8%AA%20%D8%A7%D9%84%D9%87%D9%86%D8%AF%D8%B3%D9%8A%D8%A9.pdf",
+  "raw": "data/raw/arabic/balady_engineering_services_contract.pdf",
+  "raw_sha256": "6be95acf771e901b28ad66b690efe130eba1c29351e33407535646f0bb5b8726",
+  "pages": 5,
+  "licence": "Saudi Ministry of Municipalities and Housing model contract published on balady.gov.sa. No licence stated; public government template.",
+  "bilingual": false,
+  "text_layer": true,
+  "scanned": false,
+  "extractor": "pypdfium2 get_text_range + NFKC",
+  "text_quality": "damaged text layer: the embedded font maps many glyphs to wrong code points (e.g. 'في' extracts as 'ࢭʏ', 'على' as 'عڴʄ'), and some word spaces are lost. Kept verbatim, not repaired, not OCR'd."
+ },
+ {
+  "file": "twin_virtualscopics.txt",
+  "kind": "synthetic_twin",
+  "twin_of": "cuad:VirtualScopics",
+  "source_file": "data/curated/cuad/VIRTUALSCOPICS,INC_11_12_2010-EX-10.1-STRATEGIC ALLIANCE AGR.txt",
+  "mirrors": "renewal (s.11 term), PPD termination right incl. change of ownership >=50%, key leadership change, anti-assignment",
+  "drafting_features": "Hijri + Gregorian date; Saudi style",
+  "licence": "Written for this project; legal content mirrors a CUAD contract (CC BY 4.0). Not lawyer-reviewed.",
+  "bilingual": false,
+  "text_layer": true,
+  "scanned": false
+ },
+ {
+  "file": "twin_zounds.txt",
+  "kind": "synthetic_twin",
+  "twin_of": "cuad:Zounds",
+  "source_file": "data/curated/cuad/Zounds Hearing, Inc. - MANUFACTURING DESIGN MARKETING AGREEM.txt",
+  "mirrors": "s.1 term + auto-renewal; s.15.7 assignment ban, change of control (50% / board / merger-asset sale), consent carve-out, automatic termination",
+  "drafting_features": "definitions article separate from operative clause; Arabic-Indic digits; UAE style",
+  "licence": "Written for this project; legal content mirrors a CUAD contract (CC BY 4.0). Not lawyer-reviewed.",
+  "bilingual": false,
+  "text_layer": true,
+  "scanned": false
+ },
+ {
+  "file": "twin_corio.txt",
+  "kind": "synthetic_twin",
+  "twin_of": "cuad:Corio",
+  "source_file": "data/curated/cuad/CORIOINC_07_20_2000-EX-10.5-LICENSE AND HOSTING AGREEMENT.txt",
+  "mirrors": "s.14.1 assignment with merger exception unless direct competitor; 5-year term + 1-year auto-renewal",
+  "drafting_features": "Arabic-Indic digits (٣٠ يوماً); UAE style",
+  "licence": "Written for this project; legal content mirrors a CUAD contract (CC BY 4.0). Not lawyer-reviewed.",
+  "bilingual": false,
+  "text_layer": true,
+  "scanned": false
+ },
+ {
+  "file": "mt_ipayment.txt",
+  "kind": "machine_translation",
+  "translation_of": "cuad:iPayment",
+  "source_file": "data/curated/cuad/IPAYMENT,INC_05_14_2007-EX-10.1-SPONSORSHIP AGREEMENT.txt",
+  "source_line_ranges": [
+   [
+    27,
+    27
+   ],
+   [
+    81,
+    81
+   ],
+   [
+    93,
+    93
+   ],
+   [
+    189,
+    189
+   ],
+   [
+    631,
+    631
+   ],
+   [
+    641,
+    641
+   ],
+   [
+    643,
+    643
+   ],
+   [
+    657,
+    657
+   ],
+   [
+    675,
+    675
+   ],
+   [
+    819,
+    819
+   ]
+  ],
+  "model": "qwen/qwen3-235b-a22b-2507",
+  "served_model": "qwen/qwen3-235b-a22b-2507",
+  "provider": "DeepInfra",
+  "temperature": 0,
+  "date": "2026-11-02",
+  "prompt": "Translate the following contract excerpt from English into formal Modern Standard Arabic legal drafting, as used in Gulf commercial contracts. Rules: translate every sentence; do not add, drop, summarise or explain anything; keep section and item numbers exactly (e.g. 10.1, (l), 3(e)); keep every number, percentage, period and date exactly; keep defined terms consistent and put the English defined term in brackets after its first Arabic use; keep party names transliterated into Arabic script. Separate excerpts are divided by a line '---'; keep those dividers. Output only the Arabic translation.",
+  "licence": "Translation of a CUAD contract excerpt (CC BY 4.0). Raw model output, not post-edited.",
+  "bilingual": false,
+  "text_layer": true,
+  "scanned": false
+ },
+ {
+  "file": "mt_dyntek.txt",
+  "kind": "machine_translation",
+  "translation_of": "cuad:DynTek",
+  "source_file": "data/curated/cuad/DYNTEKINC_07_30_1999-EX-10-ONLINE HOSTING AGREEMENT.txt",
+  "source_line_ranges": [
+   [
+    5,
+    5
+   ],
+   [
+    29,
+    33
+   ],
+   [
+    69,
+    69
+   ],
+   [
+    73,
+    75
+   ],
+   [
+    121,
+    123
+   ],
+   [
+    127,
+    127
+   ]
+  ],
+  "model": "qwen/qwen3-235b-a22b-2507",
+  "served_model": "qwen/qwen3-235b-a22b-2507",
+  "provider": "Venice",
+  "temperature": 0,
+  "date": "2026-11-02",
+  "prompt": "Translate the following contract excerpt from English into formal Modern Standard Arabic legal drafting, as used in Gulf commercial contracts. Rules: translate every sentence; do not add, drop, summarise or explain anything; keep section and item numbers exactly (e.g. 10.1, (l), 3(e)); keep every number, percentage, period and date exactly; keep defined terms consistent and put the English defined term in brackets after its first Arabic use; keep party names transliterated into Arabic script. Separate excerpts are divided by a line '---'; keep those dividers. Output only the Arabic translation.",
+  "licence": "Translation of a CUAD contract excerpt (CC BY 4.0). Raw model output, not post-edited.",
+  "bilingual": false,
+  "text_layer": true,
+  "scanned": false
+ }
+]

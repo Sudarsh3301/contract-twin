@@ -1,0 +1,166 @@
+[page 1]
+التاريخ Date
+Owner / Lessor Information
+Owner / Lessor Information
+Property Information
+Contract Information
+Owner’s Name المالك اسم
+Lessor’s Name المؤجر اسم
+Lessor’s Emirates ID للمؤجر اللإمارتية الهوية
+License No.
+Incase of a Company
+رقم الرخصة
+في حال كانت شركة
+البريد اللإلكتروني للمؤجر Email s'Lessor
+رقم هاتف المؤجر Phone s'Lessor
+الايجار السنوي Rent Annual
+Licensing Authority
+Incase of a Company
+سلطة الترخيص
+في حال كانت شركة
+License No.
+Incase of a Company
+رقم الرخصة
+في حال كانت شركة
+Licensing Authority
+Incase of a Company
+سلطة الترخيص
+في حال كانت شركة
+Tenant’s Name المستأجر اسم
+Tenant’s Emirates ID للمستأجر الإماراتية الهوية
+البريد الإلكتروني للمستأجر Email s'Tenant
+رقم هاتف المستأجر Phone s'Tenant
+رقم مكاني .No Makani رقم الأرض .No Plot
+الموقع Location
+اسم المبنى Name Building
+نوع الوحدة Type Property
+رقم العقار .No Property
+مساحة العقار (متر.مربع ) (m.s (Area Property
+رقم المبنى (ديوا ) (DEWA (.No Premises
+استخدام العقار سكني Residential تجاري Commercial صناعي Industrial Usage Property
+فترة العقد Period Contract
+إلى To من From
+قيمة العقد Value Contract
+Security Deposit Amount التأمين مبلغ
+Mode of Payment الدفع طريقة
+معلومات المالك/ المؤجر
+معلومات المستأجر
+معلومات العقار
+معلومات العقد
+التوقيعات Signatures
+Tenant Signature المستأجر توقيع Date التاريخ Lessor Date التاريخ‘ s Signature المؤجر توقيع
+
+[page 2]
+Terms and Conditions
+1. The tenant has inspected the premises and agreed to lease the unit on
+its current condition.
+2. Tenant undertakes to use the premises for designated purpose, tenant
+has no rights to transfer or relinquish the tenancy contract either with or
+to without counterpart to any without landlord written approval. Also,
+tenant is not allowed to sublease the premises or any part thereof to
+third party in whole or in part unless it is legally permitted.
+3. The tenant undertakes not to make any amendments, modifications or
+addendums to the premises subject of the contract without obtaining
+the landlord written approval. Tenant shall be liable for any damages or
+failure due to that.
+4. The tenant shall be responsible for payment of all electricity, water,
+cooling and gas charges resulting of occupying leased unit unless other
+condition agreed in written.
+5. The tenant must pay the rent amount in the manner and dates agreed
+with the landlord.
+6. The tenant fully undertakes to comply with all the regulations and
+instructions related to the management of the property and the use of
+the premises and of common areas such (parking, swimming pools,
+gymnasium, etc...).
+7. Tenancy contract parties declare all mentioned emails addresses and
+phone numbers are correct, all formal and legal notifications will be sent
+to those addresses in case of dispute between parties
+8. The landlord undertakes to enable the tenant of the full use of the
+premises including its facilities (swimming pool, gym, parking lot, etc)
+and do the regular maintenance as intended unless other condition
+agreed in written, and not to do any act that would detract from the
+premises benefit.
+9. By signing this agreement from the first party, the “Landlord” hereby
+confirms and undertakes that he is the current owner of the property or
+his legal representative under legal power of attorney duly entitled by the
+competent authorities.
+10. Any disagreement or dispute may arise from execution or
+interpretation of this contract shall be settled by the Rental Dispute Center.
+11. This contract is subject to all provisions of Law No (26) of 2007
+regulating the relation between landlords and tenants in the emirate of
+Dubai as amended, and as it will be changed or amended from time to
+time, as long with any related legislations and regulations applied in the
+emirate of Dubai.
+12. Any additional condition will not be considered in case it conflicts with
+law.
+13. In case of discrepancy occurs between Arabic and non Arabic texts
+with regards to the interpretation of this agreement or the scope of its
+application, the Arabic text shall prevail.
+14. The landlord undertakes to register this tenancy contract on EJARI
+affiliated to Dubai LandDepartment and provide with all required documents.
+الأحكام و الشروط
+.١ عاين المستأجر الوحدة موضوع الايجار ووافق على إستئجار العقار على حالته الحالية
+.٢ يتعهد المستأجر باستعمال المأجور للغرض المخصص له، و لا يجوز للمستأجر تحويل أو التنازل عن عقد
+الايجار للغير بمقابل أو دون مقابل دون موافقة المالك خطيا، كما لا يجوز للمستأجر تأجير المأجور أو أي
+جزء منه من الباطن مالم يسمح بذلك قانونا
+.٣ يتعهد المستأجر بعدم إجراء أي تعديلات أو إضافات على العقار موضوع العقد دون موافقة المالك
+الخطية، و يكون المستأجر مسؤولا عن أي أضرار أو نقص أو تلف يلحق بالعقار
+.٤ يكون المستأجر مسؤولا عن سداد كافة فواتير الكهرباء و المياه و التبريد و الغاز المترتبة عن اشغاله
+المأجور مالم يتم الاتفاق على غير ذلك كتابيا
+.٥ يتعهد المستأجر بسداد مبلغ الايجار المتفق عليه في هذا العقد في التواريخ و الطريقة المتفق
+عليها
+.٦ يلتزم المستأجر التقيد التام بالانظمة و التعليمات المتعلقة باستخدام المأجور و المنافع المشتركة
+(كمواقف السيارات، أحواض السباحة، النادي الصحي، الخ)
+.٧ يقر أطراف التعاقد بصحة العناوين و أرقام الهواتف المذكورة أعلاه، و تكون تلك العناوين هي
+المعتمدة رسميا للإخطارات و الأعلانات القضائية في حال نشوء أي نزاع بين أطراف العقد
+.٨ يتعهد المؤجر بتمكين المستأجر من الانتفاع التام بالعقار للغرض المؤجر لأجله و المرافق الخاصة به
+(حوض سباحة، نادي صحي، مواقف سيارات.... إلخ) كما يكون مسؤولا عن أعمال الصيانة مالم يتم الاتفاق
+على غير ذلك، و عدم التعرض له في منفعة العقار
+.٩ يعتبر توقيع المؤجر على هذا العقد إقرار منه بأنه المالك الحالي للعقار أو الوكيل القانوني للمالك
+بموجب وكالة قانونية موثقة وفق الأصول لدى الجهات المختصة
+.١٠ أي خلاف أو نزاع قد ينشأ عن تنفيذ أو تفسير هذا العقد يعود البت فيه لمركز فض المنازعات الإيجارية
+.١١ يخضع هذا العقد لكافة أحكام القانون رقم ( 26 ) لسنة 2007 بشأن تنظيم العلاقة بين مؤجري و
+مستأجري العقارات في إماراة دبي، و تعديلاته و أي تغيير أو تعديل يطرأ عليه من وقت لآخر، كما يخضع
+للتشريعات و اللوائح الأخرى ذات العلاقة النافذة في دبي
+.١٢ لا يعتد بأي شرط تم إضافته إلى هذا العقد في حال تعارضه مع القانون
+.١٣ في حال حدوث أي تعارض أو اختلاف في التفسير بين النص العربيو النص الأجنبي يعتمد النص
+العربي
+.١٤ يتعهد المؤجر بتسجيل عقد الايجار في نظام إيجاري التابع لدائرة الأراضي و الأملاك و توفير كافة
+المستندات اللازمة لذلك
+التوقيعات Signatures
+Tenant Signature المستأجر توقيع Date التاريخ Lessor Date التاريخ‘ s Signature المؤجر توقيع
+
+[page 3]
+Know your Rights
+You may visit Rental Dispute Center website through
+www.dubailand.gov.ae in case of any rental dispute between parties.
+Law No 26 of 2007 regulating relationship between landlords and tenants.
+Law No 33 of 2008 amending law 26 of year 2007.
+Law No 43 of 2013 determining rent increases for properties
+Additional Terms
+1. .١
+Attachments for Ejari Registration
+1. Original unified tenancy contract
+2. Original emirates ID of applicant
+Note : You may add addendum to this tenancy contract in case you
+have additional terms while it needs to be signed by all parties
+لمعرفة حقوق الأطراف
+مرفقات التسجيل في إيجاري
+شروط إضافية
+يمكنكم زيارة موقع مركز فض المنازعات الإيجارية من خلال
+في حال نشوء أي نزاع إيجاري بين الأطراف
+www.dubailand.gov.ae
+الإطلاع على قانون رقم 26 لسنة 2007 بشأن تنظيم العلاقة بين المؤجرين والمستأجرين
+الإطلاع على قانون رقم 33 لسنة 2008 الخاص بتعديل بعض أحكام قانون 26 لعام 2007
+الإطلاع على قانون رقم 43 لسنة 2013 بشأن تحديد زيادة بدل الإيجار
+.١ نسخة أصلية عن عقد الايجار الموحد
+.٢ الهوية الإماراتية الأصلية لمقدم الطلب
+2. .٢
+3. .٣
+4. .٤
+5. .٥
+ملاحظة: يمكن إضافة ملحق إلى هذا العقد في حال وجود أي شروط إضافية، على أن
+يوقع من أطراف التعاقد
+support@dubailand.gov.ae
+التوقيعات Signatures
+Tenant Signature المستأجر توقيع Date التاريخ Lessor Date التاريخ‘ s Signature المؤجر توقيع

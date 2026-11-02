@@ -1,0 +1,930 @@
+{
+ "_note": "Hand-labelled atoms for the Arabic set, read from the Arabic text. Same atom vocabulary as gold_atoms.json. Twins and translations are labelled from what the Arabic says; differences from the English source or its gold label are listed per entry. Every atom has a location and an exact quote (null quote only for silent/absent values). Not lawyer-reviewed; no claim of legal accuracy of the Arabic.",
+ "ar:twin_virtualscopics": {
+  "_file": "twin_virtualscopics.txt",
+  "_kind": "synthetic_twin",
+  "_twin_of": "cuad:VirtualScopics",
+  "coc": {
+   "whose": "us",
+   "triggers": [
+    "ownership_threshold",
+    "management_change"
+   ],
+   "threshold_pct": 50,
+   "threshold_op": "gte",
+   "effect": "termination_right",
+   "effect_holder": "them"
+  },
+  "assign": {
+   "restricted": true,
+   "consent_needed": true
+  },
+  "term": {
+   "start": "2010-10-22",
+   "initial_term": [
+    2,
+    "years"
+   ],
+   "mode": "auto",
+   "renewal_term": [
+    1,
+    "years"
+   ],
+   "notice": [
+    30,
+    "days"
+   ]
+  },
+  "_cite": {
+   "coc.whose": [
+    [
+     "Art. 5-1(c)",
+     "من الأوراق المالية القائمة ذات حق التصويت في الشركة"
+    ],
+    [
+     "Preamble, party 2",
+     "ويشار إليها فيما بعد بـ \"الشركة\" أو \"الطرف الثاني\""
+    ]
+   ],
+   "coc.triggers": [
+    [
+     "Art. 5-1(c)",
+     "(ج) حدوث تغيير في الملكية يعادل خمسين في المائة (50%) أو أكثر"
+    ],
+    [
+     "Art. 5-1(e)",
+     "(هـ) حدوث تغيير في أي منصب من المناصب القيادية الرئيسية في الشركة"
+    ]
+   ],
+   "coc.threshold_pct": [
+    [
+     "Art. 5-1(c)",
+     "خمسين في المائة (50%) أو أكثر"
+    ]
+   ],
+   "coc.threshold_op": [
+    [
+     "Art. 5-1(c)",
+     "خمسين في المائة (50%) أو أكثر"
+    ]
+   ],
+   "coc.effect": [
+    [
+     "Art. 5-1",
+     "يحق للطرف الأول إنهاء هذا العقد أو أمر العمل ذي الصلة فوراً ولسبب"
+    ]
+   ],
+   "coc.effect_holder": [
+    [
+     "Art. 5-1",
+     "يحق للطرف الأول إنهاء هذا العقد"
+    ]
+   ],
+   "assign.restricted": [
+    [
+     "Art. 4-1",
+     "لا يحق لأي من الطرفين التنازل عن هذا العقد"
+    ]
+   ],
+   "assign.consent_needed": [
+    [
+     "Art. 4-1",
+     "إلا بعد الحصول على موافقة كتابية مسبقة من الطرف الآخر"
+    ]
+   ],
+   "term.start": [
+    [
+     "Preamble",
+     "الموافق 14/11/1431هـ، الموافق 22/10/2010م (\"تاريخ النفاذ\")"
+    ],
+    [
+     "Art. 2-1",
+     "يبدأ سريان هذا العقد من تاريخ النفاذ"
+    ]
+   ],
+   "term.initial_term": [
+    [
+     "Art. 2-1",
+     "ويستمر لمدة سنتين (2) (\"المدة الأولية\")"
+    ]
+   ],
+   "term.mode": [
+    [
+     "Art. 2-2",
+     "يتجدد هذا العقد لمدد إضافية متتالية"
+    ]
+   ],
+   "term.renewal_term": [
+    [
+     "Art. 2-2",
+     "مدة كل منها سنة (1) واحدة"
+    ]
+   ],
+   "term.notice": [
+    [
+     "Art. 2-2",
+     "قبل ثلاثين (30) يوماً على الأقل من تاريخ انتهاء المدة السارية آنذاك"
+    ]
+   ]
+  },
+  "_unmodelled": [
+   "Art. 5-1(d): a PPD competitor buying a VS stake large enough to need disclosure under US Rule 13d-1. No catalogue atom for a competitor-only trigger whose threshold is set by an outside rule."
+  ],
+  "_differs_on_purpose": [
+   "Hijri and Gregorian date in the preamble; Saudi governing law (Art. 6) instead of the source's law. Neither is a modelled atom."
+  ],
+  "_en_gold_gaps": [
+   "cuad:VirtualScopics has only ownership_threshold; the English source also has (e) 'a change in any VS Key Leadership Position' (management_change) and (d) the competitor stake.",
+   "cuad:VirtualScopics has no 'assign' group; the source has a consent-based anti-assignment clause."
+  ]
+ },
+ "ar:twin_zounds": {
+  "_file": "twin_zounds.txt",
+  "_kind": "synthetic_twin",
+  "_twin_of": "cuad:Zounds",
+  "coc": {
+   "whose": "us",
+   "triggers": [
+    "ownership_threshold",
+    "management_change",
+    "transaction_type"
+   ],
+   "transaction_types": [
+    "merger",
+    "consolidation",
+    "asset_sale"
+   ],
+   "threshold_pct": 50,
+   "threshold_op": "gte",
+   "carve_outs": [
+    "consented"
+   ],
+   "effect": "automatic_termination",
+   "definition_location": "elsewhere_in_contract"
+  },
+  "assign": {
+   "restricted": true,
+   "consent_needed": false,
+   "deems": [
+    "operation_of_law"
+   ]
+  },
+  "term": {
+   "start": "2018-10-03",
+   "initial_term": [
+    10,
+    "years"
+   ],
+   "mode": "auto",
+   "renewal_term": [
+    1,
+    "years"
+   ],
+   "notice": [
+    60,
+    "days"
+   ],
+   "notice_anchor": "conflict"
+  },
+  "_cite": {
+   "coc.whose": [
+    [
+     "Art. 4-4",
+     "يعد تغيير السيطرة واقعاً بالنسبة إلى المصنع"
+    ]
+   ],
+   "coc.triggers": [
+    [
+     "Art. 1-4(a)",
+     "لنسبة ٥٠٪ (خمسين في المائة) أو أكثر"
+    ],
+    [
+     "Art. 1-4(b)",
+     "أن يتوقف مجلس إدارة المصنع عن أن تتكون أغلبيته"
+    ],
+    [
+     "Art. 1-4(c)",
+     "أن يندمج المصنع أو أي من الجهات التابعة له"
+    ]
+   ],
+   "coc.transaction_types": [
+    [
+     "Art. 1-4(c)",
+     "أن يندمج المصنع أو أي من الجهات التابعة له في أي شخص أو كيان آخر أو يتحد معه، أو أن يبيع إليه جميع أصوله أو معظمها بصورة جوهرية"
+    ]
+   ],
+   "coc.threshold_pct": [
+    [
+     "Art. 1-4(a)",
+     "لنسبة ٥٠٪ (خمسين في المائة) أو أكثر"
+    ]
+   ],
+   "coc.threshold_op": [
+    [
+     "Art. 1-4(a)",
+     "٥٠٪ (خمسين في المائة) أو أكثر"
+    ]
+   ],
+   "coc.carve_outs": [
+    [
+     "Art. 4-4",
+     "ما لم يكن المقاول من الباطن قد وافق صراحة وكتابةً على ذلك التغيير في السيطرة"
+    ]
+   ],
+   "coc.effect": [
+    [
+     "Art. 4-3",
+     "ينتهي هذا العقد فوراً"
+    ]
+   ],
+   "coc.definition_location": [
+    [
+     "Art. 4-3",
+     "بالمعنى المحدد في المادة (١) من هذا العقد"
+    ],
+    [
+     "Art. 1-4",
+     "\"تغيير السيطرة\": أي حدث أو ظرف يترتب عليه"
+    ]
+   ],
+   "assign.restricted": [
+    [
+     "Art. 4-1",
+     "لا يجوز لأي من الطرفين التنازل عن هذا العقد أو نقله"
+    ]
+   ],
+   "assign.consent_needed": [
+    [
+     "Art. 4-1",
+     "لا يجوز لأي من الطرفين التنازل عن هذا العقد أو نقله، سواء بحكم القانون أو بغير ذلك."
+    ]
+   ],
+   "assign.deems": [
+    [
+     "Art. 4-1",
+     "سواء بحكم القانون أو بغير ذلك"
+    ]
+   ],
+   "term.start": [
+    [
+     "Preamble",
+     "يسري اعتباراً من ٣ أكتوبر ٢٠١٨م (\"تاريخ النفاذ\")"
+    ]
+   ],
+   "term.initial_term": [
+    [
+     "Art. 2-1",
+     "وتنتهي بعد مضي عشر (١٠) سنوات منه"
+    ]
+   ],
+   "term.mode": [
+    [
+     "Art. 2-2",
+     "يتجدد هذا العقد تلقائياً"
+    ]
+   ],
+   "term.renewal_term": [
+    [
+     "Art. 2-2",
+     "مدة كل منها سنة واحدة"
+    ]
+   ],
+   "term.notice": [
+    [
+     "Art. 2-2",
+     "بإشعار كتابي لا تقل مدته عن ستين (٦٠) يوماً"
+    ]
+   ],
+   "term.notice_anchor": [
+    [
+     "Art. 2-2",
+     "ما لم يخطر أحد الطرفين الطرف الآخر بالإنهاء، وإلى أن يفعل ذلك، بإشعار كتابي"
+    ]
+   ]
+  },
+  "_notes": [
+   "consent_needed=false: the ban has no consent route at all (absolute prohibition), as in the source.",
+   "notice_anchor=conflict: the notice is not tied to expiry; it can be read as 'before the end of a renewal term' or 'at any time'. Same ambiguity as the source.",
+   "Art. 1-4(a) measures the stake in 'الشركة' (the Company), a term the contract never defines; the source says 'the Company' too. The intended entity is probably the Manufacturer."
+  ],
+  "_differs_on_purpose": [
+   "The change-of-control definition is in a separate definitions article (Art. 1), apart from the operative clause (Art. 4); the source has both in section 15.7.",
+   "Arabic-Indic digits throughout; UAE governing law."
+  ],
+  "_en_gold_gaps": [
+   "cuad:Zounds has no transaction_type trigger; source 15.7(iii) covers merger, consolidation and sale of all or substantially all assets.",
+   "cuad:Zounds has no 'assign' or 'term' group; the source has both (section 15.7 and section 1)."
+  ]
+ },
+ "ar:twin_corio": {
+  "_file": "twin_corio.txt",
+  "_kind": "synthetic_twin",
+  "_twin_of": "cuad:Corio",
+  "assign": {
+   "restricted": true,
+   "consent_needed": true,
+   "deems": [
+    "operation_of_law"
+   ],
+   "merger_exception": true,
+   "unless_competitor": true
+  },
+  "term": {
+   "start": "1999-10-29",
+   "initial_term": [
+    5,
+    "years"
+   ],
+   "mode": "auto",
+   "renewal_term": [
+    1,
+    "years"
+   ],
+   "notice": [
+    30,
+    "days"
+   ]
+  },
+  "_cite": {
+   "assign.restricted": [
+    [
+     "Art. 3-1",
+     "لا يجوز لأي من الطرفين التنازل عن هذا العقد"
+    ]
+   ],
+   "assign.consent_needed": [
+    [
+     "Art. 3-1",
+     "إلا بعد الحصول على موافقة كتابية مسبقة من الطرف الآخر"
+    ]
+   ],
+   "assign.deems": [
+    [
+     "Art. 3-1",
+     "سواء بحكم القانون أو بغير ذلك"
+    ]
+   ],
+   "assign.merger_exception": [
+    [
+     "Art. 3-2",
+     "يحق لأي من الطرفين التنازل عن هذا العقد دون الحاجة إلى تلك الموافقة، وذلك في سياق اندماج ذلك الطرف أو الاستحواذ عليه"
+    ]
+   ],
+   "assign.unless_competitor": [
+    [
+     "Art. 3-2",
+     "إلا إذا كانت تلك الصفقة تشمل منافساً مباشراً للطرف الآخر، ففي هذه الحالة يلزم الحصول على موافقة الطرف الآخر"
+    ]
+   ],
+   "term.start": [
+    [
+     "Preamble",
+     "بتاريخ ٢٩ أكتوبر ١٩٩٩م (\"تاريخ النفاذ\")"
+    ]
+   ],
+   "term.initial_term": [
+    [
+     "Art. 2-1",
+     "لمدة أولية قدرها خمس (٥) سنوات"
+    ]
+   ],
+   "term.mode": [
+    [
+     "Art. 2-2",
+     "يتجدد هذا العقد بعد ذلك تلقائياً"
+    ]
+   ],
+   "term.renewal_term": [
+    [
+     "Art. 2-2",
+     "مدة كل منها سنة (١) واحدة"
+    ]
+   ],
+   "term.notice": [
+    [
+     "Art. 2-2",
+     "قبل ثلاثين (٣٠) يوماً على الأقل من تاريخ انتهاء المدة الأولية"
+    ]
+   ]
+  },
+  "_differs_on_purpose": [
+   "Arabic-Indic digits (٣٠ يوماً); UAE governing law."
+  ],
+  "_en_gold_gaps": [
+   "cuad:Corio has no 'term' group; the source has 5 years + automatic 1-year renewals with 30 days' notice before expiry."
+  ]
+ },
+ "ar:mt_ipayment": {
+  "_file": "mt_ipayment.txt",
+  "_kind": "machine_translation",
+  "_translation_of": "cuad:iPayment",
+  "coc": {
+   "whose": "us",
+   "triggers": [
+    "ownership_threshold",
+    "management_change"
+   ],
+   "threshold_pct": 51,
+   "threshold_op": "gt",
+   "carve_outs": [
+    "same_management",
+    "consented"
+   ],
+   "definition_location": "elsewhere_in_contract",
+   "effects": [
+    {
+     "effect": "notice",
+     "effect_holder": "us",
+     "notice": [
+      3,
+      "business_days"
+     ]
+    },
+    {
+     "effect": "termination_right",
+     "effect_holder": "them",
+     "notice": [
+      180,
+      "days"
+     ]
+    }
+   ]
+  },
+  "assign": {
+   "restricted": true,
+   "consent_needed": true,
+   "deems": [
+    "operation_of_law"
+   ]
+  },
+  "term": {
+   "start": "2007-01-29",
+   "end_date": "2010-06-30",
+   "mode": "evergreen",
+   "notice": [
+    6,
+    "months"
+   ]
+  },
+  "_cite": {
+   "coc.whose": [
+    [
+     "Definitions, Change of Control",
+     "تغيّر السلطة في توجيه إدارة آي إس أو أو شؤونها"
+    ]
+   ],
+   "coc.triggers": [
+    [
+     "Definitions, Change of Control",
+     "تغيّر السلطة في توجيه إدارة آي إس أو أو شؤونها، أو تغيّر الملكية المستفيدة لأكثر من 51% من الأوراق المالية للأسهم"
+    ]
+   ],
+   "coc.threshold_pct": [
+    [
+     "Definitions, Change of Control",
+     "لأكثر من 51%"
+    ]
+   ],
+   "coc.threshold_op": [
+    [
+     "Definitions, Change of Control",
+     "لأكثر من 51%"
+    ]
+   ],
+   "coc.carve_outs": [
+    [
+     "Definitions, Change of Control",
+     "مع الحفاظ على نفس فريق الإدارة، تغييراً في السيطرة"
+    ],
+    [
+     "10.2(l)",
+     "ما لم يكن مقدمو الخدمات (SERVICERS) قد وافقوا مسبقاً على هذا التغيير في السيطرة"
+    ]
+   ],
+   "coc.definition_location": [
+    [
+     "Definitions",
+     "\"تغيير السيطرة\" يعني"
+    ],
+    [
+     "10.2(l)",
+     "في حال حدوث تغيير في السيطرة على آي إس أو"
+    ]
+   ],
+   "coc.effects": [
+    [
+     "12.4",
+     "يجب على آي إس أو (ISO) تقديم إشعار كتابي إلى مقدمي الخدمات (SERVICERS) خلال ثلاثة (3) أيام تجارية من حدوث تغيير في السيطرة"
+    ],
+    [
+     "10.2(l)",
+     "وذلك بعد إشعار كتابي مسبق موجه إلى آي إس أو قبل مئة وثمانين (180) يوماً"
+    ]
+   ],
+   "assign.restricted": [
+    [
+     "12.4",
+     "لا يجوز لآي إس أو (ISO) التنازل عن هذه الاتفاقية"
+    ]
+   ],
+   "assign.consent_needed": [
+    [
+     "12.4",
+     "دون الحصول على موافقة خطية مسبقة من مقدمي الخدمات (SERVICERS)، والتي لا يجوز أن تُرفض بشكل غير معقول"
+    ]
+   ],
+   "assign.deems": [
+    [
+     "12.4",
+     "سواء بحكم القانون أو غير ذلك"
+    ]
+   ],
+   "term.start": [
+    [
+     "Preamble",
+     "المؤرخة في 29 يناير 2007 (يُشار إليه بـ \"تاريخ النفاذ\")"
+    ]
+   ],
+   "term.end_date": [
+    [
+     "10.1",
+     "وتنتهي في 30 يونيو 2010"
+    ]
+   ],
+   "term.mode": [
+    [
+     "10.1",
+     "تستمر هذه الاتفاقية تلقائياً سارية المفعول حتى يُقدّم أحد الطرفين"
+    ]
+   ],
+   "term.notice": [
+    [
+     "10.1",
+     "إشعاراً خطياً بإنهائها قبل ستة (6) أشهر على الأقل"
+    ]
+   ]
+  },
+  "_mt_defects": [
+   "Source item 10.2(g) is lettered '(و)'; the Arabic letter for (g) is '(ز)'. Item (l) is lettered '(ل)'. Labels for items are not atoms, so no atom changes.",
+   "Source 10.1 spans a page break; the excerpt divider '---' falls inside that sentence. Meaning is intact."
+  ],
+  "_en_gold_gaps": [
+   "cuad:iPayment carve_outs has only same_management; source 10.2(l) also says 'unless the SERVICERS had previously consented' (consented). It applies to the termination right only, not to the 3-business-day notice.",
+   "cuad:iPayment has no 'assign' group; source 12.4 restricts assignment (consent not to be unreasonably withheld)."
+  ]
+ },
+ "ar:mt_dyntek": {
+  "_file": "mt_dyntek.txt",
+  "_kind": "machine_translation",
+  "_translation_of": "cuad:DynTek",
+  "coc": {
+   "whose": "us",
+   "triggers": [
+    "ownership_threshold",
+    "transaction_type"
+   ],
+   "transaction_types": [
+    "asset_sale"
+   ],
+   "threshold_pct": "absent",
+   "effect": "termination_right",
+   "effect_holder": "them",
+   "notice": [
+    60,
+    "days"
+   ]
+  },
+  "assign": {
+   "restricted": true,
+   "consent_needed": true,
+   "merger_exception": true,
+   "unless_competitor": false
+  },
+  "term": {
+   "start": "1999-06-01",
+   "initial_term": [
+    12,
+    "months"
+   ],
+   "mode": "option",
+   "option_holder": "either",
+   "renewal_term": [
+    1,
+    "years"
+   ],
+   "notice": [
+    60,
+    "days"
+   ]
+  },
+  "_cite": {
+   "coc.whose": [
+    [
+     "3(e)",
+     "بشراء جميع أصول شركة دبلومات أو جزء كبير منها"
+    ]
+   ],
+   "coc.triggers": [
+    [
+     "3(e)",
+     "بعد قيام أي متلقٍ مسموح له (كما هو معرّف في البند 9(أ) من هذا الاتفاق) بشراء جميع أصول شركة دبلومات أو جزء كبير منها، أو بعد حصول أي شخص أو"
+    ],
+    [
+     "3(e), continued",
+     "فإن العتبة بالنسبة لهذا الشخص تُعدّل"
+    ]
+   ],
+   "coc.transaction_types": [
+    [
+     "3(e)",
+     "بشراء جميع أصول شركة دبلومات أو جزء كبير منها"
+    ]
+   ],
+   "coc.threshold_pct": [
+    [
+     "3(e)",
+     "أو بعد حصول أي شخص أو"
+    ]
+   ],
+   "coc.effect": [
+    [
+     "3(e)",
+     "يحق لشركة تاديو (ولكن ليس عليها التزام) إنهاء هذا الاتفاق"
+    ]
+   ],
+   "coc.effect_holder": [
+    [
+     "3(e)",
+     "يحق لشركة تاديو"
+    ]
+   ],
+   "coc.notice": [
+    [
+     "3(e)",
+     "بموجب إشعار خطي مدته 60 يوماً موجّه إلى شركة دبلومات"
+    ]
+   ],
+   "assign.restricted": [
+    [
+     "10(a)",
+     "لا يجوز لأي طرف تفويض هذا الاتفاق"
+    ]
+   ],
+   "assign.consent_needed": [
+    [
+     "10(a)",
+     "دون موافقة خطية مسبقة من الطرف الآخر"
+    ]
+   ],
+   "assign.merger_exception": [
+    [
+     "10(a)",
+     "يجوز لأي طرف تفويض هذا الاتفاق أو جميع، ولكن ليس أقل من جميع، حقوقه والتزاماته بموجبه إلى أي كيان يُشتريه من خلال"
+    ]
+   ],
+   "assign.unless_competitor": [
+    [
+     "10(a)",
+     null
+    ]
+   ],
+   "term.start": [
+    [
+     "Preamble",
+     "اعتباراً من اليوم الأول من يونيو سنة 1999"
+    ]
+   ],
+   "term.initial_term": [
+    [
+     "3(a)",
+     "وتستمر لمدة اثني عشر شهراً"
+    ]
+   ],
+   "term.mode": [
+    [
+     "3(b)",
+     "تمديد مدة هذا الاتفاق لمدة سنة إضافية واحدة"
+    ]
+   ],
+   "term.option_holder": [
+    [
+     "3(b)",
+     "يحق لدبلومات أو تاديو"
+    ]
+   ],
+   "term.renewal_term": [
+    [
+     "3(b)",
+     "لمدة سنة إضافية واحدة"
+    ]
+   ],
+   "term.notice": [
+    [
+     "3(b)",
+     "قبل نهاية الفترة بستين (60) يوماً على الأقل"
+    ]
+   ]
+  },
+  "_mt_defects": [
+   "Ownership threshold dropped: source 3(e) says 'the acquisition of the beneficial ownership of at least 20% (the \"Threshold\") of the voting power ... by any person or group'. The Arabic stops at 'أو بعد حصول أي شخص أو' and never states 20% or what is acquired. 'العتبة' (the Threshold) is used later but never defined. Arabic label: threshold_pct=absent. English: 20, gte.",
+   "'all or substantially all of the assets' became 'جميع أصول ... أو جزء كبير منها' (all or a large part): a lower bar than the source.",
+   "'assign' became 'تفويض' (delegate) instead of 'التنازل'. A reader can take it as delegation of duties, not transfer of the contract."
+  ],
+  "_differs_from_en": {
+   "coc.threshold_pct": "en 20 (gte) -> ar absent, caused by the translation"
+  },
+  "_unmodelled": [
+   "3(e) excludes the Rubin Trust, Rubin and their affiliates as acquirers, and excludes foreclosure and tax-free spin-off acquisitions; 10(a) lets Tadeo assign to affiliates without consent."
+  ],
+  "_en_gold_gaps": [
+   "cuad:DynTek has no transaction_type trigger; source 3(e) also triggers on an asset acquisition by a Permitted Assignee.",
+   "cuad:DynTek has no 'assign' group; source 10(a) has consent + a merger/acquirer exception."
+  ]
+ },
+ "ar:ejari_tenancy": {
+  "_file": "ejari_unified_tenancy_contract.txt",
+  "_kind": "curated",
+  "coc": {
+   "present": false
+  },
+  "assign": {
+   "restricted": true,
+   "consent_needed": true
+  },
+  "term": {
+   "start": "silent",
+   "end_date": "silent",
+   "mode": "silent"
+  },
+  "_cite": {
+   "coc.present": [
+    [
+     "whole text",
+     null
+    ]
+   ],
+   "assign.restricted": [
+    [
+     "Terms and Conditions, clause ٢",
+     "لا يجوز للمستأجر تحويل أو التنازل عن عقد"
+    ]
+   ],
+   "assign.consent_needed": [
+    [
+     "Terms and Conditions, clause ٢",
+     "دون موافقة المالك خطيا"
+    ]
+   ],
+   "term.start": [
+    [
+     "page 1, Contract Information",
+     "إلى To من From"
+    ]
+   ],
+   "term.end_date": [
+    [
+     "page 1, Contract Information",
+     "إلى To من From"
+    ]
+   ],
+   "term.mode": [
+    [
+     "whole text",
+     null
+    ]
+   ]
+  },
+  "_notes": [
+   "Blank template: the contract period (From/To) is an empty form field.",
+   "The assignment restriction binds the tenant only. Subleasing is also barred unless the law allows it (clause ٢).",
+   "Renewal is not addressed in the text. Clause ١١ subjects the contract to Dubai Law No. 26 of 2007, which is outside the file."
+  ]
+ },
+ "ar:balady_urban_roads": {
+  "_file": "balady_urban_roads_contract.txt",
+  "_kind": "curated",
+  "coc": {
+   "present": false
+  },
+  "assign": {
+   "restricted": "silent"
+  },
+  "term": {
+   "start": "on_execution",
+   "initial_term": "silent",
+   "mode": "mutual",
+   "condition_outside_text": "conflict"
+  },
+  "_cite": {
+   "coc.present": [
+    [
+     "whole text",
+     null
+    ]
+   ],
+   "assign.restricted": [
+    [
+     "whole text",
+     null
+    ]
+   ],
+   "term.start": [
+    [
+     "Article 12 (المادة الثانية عشر)",
+     "يبدأ سرʈان ɸذا العقد من تارʈخ توقيع الطرف؈ن عليه"
+    ]
+   ],
+   "term.initial_term": [
+    [
+     "Article 12",
+     "وʈظل سارʈا ..........................."
+    ]
+   ],
+   "term.mode": [
+    [
+     "Article 12",
+     "باتفاق الطرف؈ن"
+    ]
+   ],
+   "term.condition_outside_text": [
+    [
+     "Article 12",
+     "وࢭʏ حال تمديد الطرف الأول لعقد"
+    ]
+   ]
+  },
+  "_notes": [
+   "Blank template: the duration is an empty field before 'يوما' (days).",
+   "No assignment clause. Article 9 restricts subcontracting (consent of the first party in writing or by email); Article 10(2) lets the employer withdraw the work for unauthorised subcontracting. Subcontracting is not assignment, so assign.restricted=silent.",
+   "condition_outside_text=conflict: Article 12 extends 'this contract' when the first party extends 'the contracting agreement', but this file is itself the contracting agreement. Two readings: a separate main contract, or a self-reference.",
+   "Article 10(5) lets the employer withdraw the work if the contractor company is liquidated or dissolved. This is insolvency/dissolution, not change of control."
+  ]
+ },
+ "ar:balady_engineering_services": {
+  "_file": "balady_engineering_services_contract.txt",
+  "_kind": "curated",
+  "coc": {
+   "present": false
+  },
+  "assign": {
+   "restricted": "silent"
+  },
+  "term": {
+   "start": "on_execution",
+   "initial_term": "silent",
+   "mode": "mutual",
+   "condition_outside_text": true,
+   "renewal_term": "refers_to_missing"
+  },
+  "_cite": {
+   "coc.present": [
+    [
+     "whole text",
+     null
+    ]
+   ],
+   "assign.restricted": [
+    [
+     "whole text",
+     null
+    ]
+   ],
+   "term.start": [
+    [
+     "Article 10 (المادة العاشرة)",
+     "يبدأ سرʈان ɸذا العقد من تارʈخ توقيع الطرفان عليه"
+    ]
+   ],
+   "term.initial_term": [
+    [
+     "Article 10",
+     "وʈظل سارʈا ..........................."
+    ]
+   ],
+   "term.mode": [
+    [
+     "Article 10",
+     "باتفاق الطرف؈ن (خطيا"
+    ]
+   ],
+   "term.condition_outside_text": [
+    [
+     "Article 10",
+     "المقاولة الرئʋؠۜܣ، يتم كذلك"
+    ]
+   ],
+   "term.renewal_term": [
+    [
+     "Article 10",
+     "تمديد ɸذا العقد لمدة مماثلة لمدة عقد"
+    ]
+   ]
+  },
+  "_notes": [
+   "Blank template: the duration is an empty field.",
+   "Extension happens only if the main contracting agreement (not in the file) is extended, and then by agreement of both parties for a period equal to that main contract.",
+   "No assignment clause; Article 8 restricts subcontracting only.",
+   "Article 15(2): the consultant may terminate only for the first party's breach, after notice and a cure period of at least 14 days. No catalogue atom covers termination for breach."
+  ]
+ }
+}
