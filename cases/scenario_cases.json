@@ -1,0 +1,592 @@
+{
+ "_note": "Expected outcomes written BEFORE any rules, by reading the real clause text (CUAD contracts in data/curated/cuad, EDGAR credit agreements in data/raw/edgar). NOT reviewed by a lawyer. 'us' = the party the event happens to. Ownership events are given as the cap table AFTER the event. Day convention for 'N years from D': ends on D + N years - 1 day; 'at least X days prior to expiry' = last notice day is expiry - X days. Statuses: TRIGGERED / NOT_TRIGGERED / NEEDS_LAWYER.",
+ "cases": [
+  {
+   "id": "R01",
+   "src": "cuad:RaeSystems",
+   "us": "either party (we are the party sold)",
+   "clause": "change in ownership representing 50% or more of the equity -> other party may terminate on written notice",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 60
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "termination_right",
+    "holder": "counterparty"
+   }
+  },
+  {
+   "id": "R02",
+   "src": "cuad:RaeSystems",
+   "us": "party sold",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 30
+    }
+   ],
+   "expected": {
+    "status": "NOT_TRIGGERED",
+    "why": "30% < 50%"
+   }
+  },
+  {
+   "id": "R03",
+   "src": "cuad:VirtualScopics",
+   "us": "VS",
+   "clause": "change of ownership equal to 50% or more of outstanding voting securities of VS -> PPD may terminate immediately",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 50
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "termination_right",
+    "holder": "counterparty",
+    "why": "boundary: 'equal to 50% or more'"
+   }
+  },
+  {
+   "id": "R04",
+   "src": "cuad:DynTek",
+   "us": "Diplomat",
+   "clause": "acquisition of beneficial ownership of at least 20% of voting power by any person or group -> Tadeo may terminate on 60 days notice",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 30
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "termination_right",
+    "holder": "counterparty",
+    "notice_days": 60
+   }
+  },
+  {
+   "id": "R05",
+   "src": "cuad:iPayment",
+   "us": "ISO",
+   "clause": "CoC = change in power to direct management OR >51% equity; but not if public company / >51% change with SAME management. ISO must notify within 3 Business Days; Servicers may terminate on 180 days notice unless they consented",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 60,
+     "management_changes": true,
+     "date": "2027-03-04"
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "reactions": [
+     {
+      "kind": "notice",
+      "holder": "us",
+      "due_business_days": 3,
+      "due": "2027-03-09",
+      "why": "Thu 4 Mar 2027 + 3 business days (Sat/Sun excluded, no holiday assumed)"
+     },
+     {
+      "kind": "termination_right",
+      "holder": "counterparty",
+      "notice_days": 180
+     }
+    ]
+   }
+  },
+  {
+   "id": "R06",
+   "src": "cuad:iPayment",
+   "us": "ISO",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 60,
+     "management_changes": false
+    }
+   ],
+   "expected": {
+    "status": "NOT_TRIGGERED",
+    "why": "same-management carve-out"
+   }
+  },
+  {
+   "id": "R07",
+   "src": "cuad:iPayment",
+   "us": "ISO",
+   "scenario": [
+    {
+     "event": "ipo",
+     "float_pct": 30,
+     "management_changes": false
+    }
+   ],
+   "expected": {
+    "status": "NOT_TRIGGERED",
+    "why": "becoming a public company with the same management is carved out"
+   }
+  },
+  {
+   "id": "R08",
+   "src": "cuad:eLandia",
+   "us": "Datec",
+   "clause": "BSP may, not acting unreasonably, terminate if there is a change of control or major shareholding of Datec",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 30
+    }
+   ],
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "'major shareholding' and 'control' undefined; reasonableness standard"
+   }
+  },
+  {
+   "id": "R09",
+   "src": "cuad:BlackBox",
+   "us": "Distributor",
+   "clause": "Company may terminate if there is an unacceptable change in the control or management of the Distributor",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 60
+    }
+   ],
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "'unacceptable' is the counterparty's judgement"
+   }
+  },
+  {
+   "id": "R10",
+   "src": "cuad:mPhase",
+   "us": "mPhase",
+   "clause": "Agreement shall terminate in the event of a significant change in the management or ownership of mPhase",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 60
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "automatic_termination",
+    "why": "a majority sale is significant on any reading"
+   }
+  },
+  {
+   "id": "R11",
+   "src": "cuad:mPhase",
+   "us": "mPhase",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 15
+    }
+   ],
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "'significant' is open-textured at 15%"
+   }
+  },
+  {
+   "id": "R12",
+   "src": "cuad:VerticalNet",
+   "us": "a party",
+   "clause": "no change in Control (incl. transfer of equity) shall be considered an assignment; otherwise no assignment without consent",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 60
+    }
+   ],
+   "expected": {
+    "status": "NOT_TRIGGERED",
+    "why": "CoC expressly not an assignment"
+   }
+  },
+  {
+   "id": "R13",
+   "src": "cuad:Gopage",
+   "us": "Licensee",
+   "clause": "any merger, consolidation or reorganization involving Licensee is deemed a transfer needing Licensor's prior written consent",
+   "scenario": [
+    {
+     "event": "holding_insertion",
+     "mechanism": "reorganization"
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "consent",
+    "holder": "counterparty"
+   }
+  },
+  {
+   "id": "R14",
+   "src": "cuad:Gopage",
+   "us": "Licensee",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 60
+    }
+   ],
+   "expected": {
+    "status": "NOT_TRIGGERED",
+    "why": "a share sale is not a merger, consolidation or reorganization involving Licensee"
+   }
+  },
+  {
+   "id": "R15",
+   "src": "cuad:Corio",
+   "us": "a party",
+   "clause": "no assignment (incl. by operation of law) without consent, but assignment allowed without consent on merger/acquisition unless it involves a direct competitor",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 60,
+     "buyer_is_competitor": false
+    }
+   ],
+   "expected": {
+    "status": "NOT_TRIGGERED"
+   }
+  },
+  {
+   "id": "R16",
+   "src": "cuad:Corio",
+   "us": "a party",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 60,
+     "buyer_is_competitor": true
+    }
+   ],
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "competitor exception applies to assignment 'in connection with' an acquisition; a share sale may not be an assignment at all"
+   }
+  },
+  {
+   "id": "R17",
+   "src": "cuad:eDiets",
+   "us": "a party",
+   "clause": "'Change in Control' = merger/consolidation or sale of substantially all assets, unless prior holders keep >= 50%",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 60
+    }
+   ],
+   "expected": {
+    "status": "NOT_TRIGGERED",
+    "why": "definition covers mergers and asset sales, not share sales"
+   }
+  },
+  {
+   "id": "R18",
+   "src": "cuad:Zounds",
+   "us": "Manufacturer",
+   "clause": "CoC (any person other than Subcontractor >= 50% voting, or board turnover) -> Agreement immediately terminates unless Subcontractor consented in writing",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 50
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "automatic_termination",
+    "why": "50% meets '50% or more'; no consent assumed"
+   }
+  },
+  {
+   "id": "R19",
+   "src": "cuad:TriCity",
+   "us": "Customer",
+   "clause": "on CoC of Customer, M&I continues services but limited to pre-CoC entities and volume +25%",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 60
+    }
+   ],
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "'Change in Control' defined elsewhere in the agreement; effect is a service limitation, not termination"
+   }
+  },
+  {
+   "id": "R20",
+   "src": "cuad:JointCorp",
+   "us": "Franchise Owner",
+   "clause": "transfer of Interest needs franchisor approval if Principal Owners would hold < 75%",
+   "scenario": [
+    {
+     "event": "share_sale",
+     "buyer_pct": 30
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "consent",
+    "holder": "counterparty",
+    "why": "principal owners fall to 70% < 75%"
+   }
+  },
+  {
+   "id": "R21",
+   "src": "edgar:Amscan ABL Amendment No.2 (2011)",
+   "us": "Holdings group",
+   "clause": "pre-Qualifying IPO: CoC if Sponsors hold < 50% voting; post-QIPO: any non-Sponsor person > 35% and >= Sponsors' %; board turnover; Holdings < 100% of Amscan; cross-default to indenture CoC. Qualifying IPO = underwritten primary SEC-registered offering with gross proceeds >= $150M. Effect of CoC is in the original credit agreement (not in file).",
+   "scenario": [
+    {
+     "event": "ipo",
+     "gross_proceeds_usd": 200000000,
+     "sponsor_pct_after": 60,
+     "largest_other_pct_after": 5
+    }
+   ],
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "Qualifying IPO; post-QIPO test not met; BUT limb (d) cross-defaults to the indenture CoC, which is not in the file",
+    "revised": "2026-11-02 on re-reading the clause, before any rule was run"
+   },
+   "expected_v0": {
+    "status": "NOT_TRIGGERED",
+    "why": "Qualifying IPO; post-QIPO test not met"
+   }
+  },
+  {
+   "id": "R22",
+   "src": "edgar:Amscan",
+   "us": "Holdings group",
+   "scenario": [
+    {
+     "event": "ipo",
+     "gross_proceeds_usd": 100000000,
+     "sponsor_pct_after": 45,
+     "largest_other_pct_after": 5
+    }
+   ],
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "not a Qualifying IPO (< $150M) so pre-QIPO test applies: Sponsors 45% < 50% -> CoC occurs; its effect is in the original agreement, not in the file"
+   }
+  },
+  {
+   "id": "R23",
+   "src": "edgar:Amscan",
+   "us": "Holdings group",
+   "scenario": [
+    {
+     "event": "ipo",
+     "gross_proceeds_usd": 200000000,
+     "sponsor_pct_after": 60,
+     "largest_other_pct_after": 5
+    },
+    {
+     "event": "share_sale",
+     "seller": "sponsors",
+     "sponsor_pct_after": 30,
+     "largest_other_pct_after": 40
+    }
+   ],
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "after a Qualifying IPO, a person holds 40% > 35% and > Sponsors 30% -> CoC; effect in original agreement"
+   }
+  },
+  {
+   "id": "R24",
+   "src": "edgar:Amscan",
+   "us": "Holdings group",
+   "scenario": [
+    {
+     "event": "holding_insertion",
+     "position": "above_top_parent"
+    }
+   ],
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "Sponsors keep their % through the new parent (assumed); Holdings still owns 100% of Amscan; BUT limb (d) cross-defaults to the indenture CoC, which is not in the file",
+    "revised": "2026-11-02 on re-reading the clause, before any rule was run"
+   },
+   "expected_v0": {
+    "status": "NOT_TRIGGERED",
+    "why": "Sponsors keep their % through the new parent (assumed); Holdings still owns 100% of Amscan"
+   }
+  },
+  {
+   "id": "R25",
+   "src": "edgar:Amscan",
+   "us": "Holdings group",
+   "scenario": [
+    {
+     "event": "holding_insertion",
+     "position": "between_parent_and_borrower"
+    }
+   ],
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "Holdings ceases to own 100% of Amscan directly -> limb (c) CoC (direct vs indirect ownership is a reading question); effect in original agreement"
+   }
+  },
+  {
+   "id": "N01",
+   "src": "cuad:VirtualScopics",
+   "clause": "effective 2010-10-22, initial term 2 years; renews for 1-year periods unless notice at least 30 days before expiry",
+   "scenario": [
+    {
+     "event": "date_advance",
+     "to": "2012-08-01"
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "deadline",
+    "due": "2012-09-21",
+    "holder": "both",
+    "why": "expiry 2012-10-21"
+   }
+  },
+  {
+   "id": "N02",
+   "src": "cuad:VirtualScopics",
+   "scenario": [
+    {
+     "event": "date_advance",
+     "to": "2012-10-01"
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "deadline_lapsed",
+    "due": "2012-09-21",
+    "why": "renews to 2013-10-21"
+   }
+  },
+  {
+   "id": "N03",
+   "src": "cuad:Vertex",
+   "clause": "term ends 2029-04-30; auto-renews 5 years; non-renewal notice 'no less than 120 prior' (unit missing)",
+   "scenario": [
+    {
+     "event": "date_advance",
+     "to": "2028-11-01"
+    }
+   ],
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "notice unit missing in the text"
+   }
+  },
+  {
+   "id": "N04",
+   "src": "cuad:Gpaq",
+   "clause": "term ends 2034-12-31; auto-renews 5-year terms unless notice at least 6 months prior",
+   "scenario": [
+    {
+     "event": "date_advance",
+     "to": "2034-05-01"
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "deadline",
+    "due": "2034-06-30",
+    "holder": "both"
+   }
+  },
+  {
+   "id": "N05",
+   "src": "cuad:iPayment",
+   "clause": "initial term ends 2010-06-30; thereafter continues until either party gives at least 6 months notice",
+   "scenario": [
+    {
+     "event": "date_advance",
+     "to": "2011-01-01"
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "earliest_exit",
+    "due": "2011-07-01",
+    "why": "evergreen: notice today ends it 6 months later"
+   }
+  },
+  {
+   "id": "N06",
+   "src": "cuad:DynTek",
+   "clause": "12 months from 1999-06-01; either party not in default may extend 1 year by at least 60 days advance written notice",
+   "scenario": [
+    {
+     "event": "date_advance",
+     "to": "2000-03-01"
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "option_deadline",
+    "due": "2000-04-01",
+    "holder": "both",
+    "why": "expiry 2000-05-31; assume no default"
+   }
+  },
+  {
+   "id": "N07",
+   "src": "cuad:VerticalNet",
+   "clause": "initial term to 2003-03-31; renews only by mutual written agreement",
+   "scenario": [
+    {
+     "event": "date_advance",
+     "to": "2003-01-01"
+    }
+   ],
+   "expected": {
+    "status": "TRIGGERED",
+    "kind": "expiry",
+    "due": "2003-03-31"
+   }
+  },
+  {
+   "id": "N08",
+   "src": "cuad:EuropeanMicro",
+   "clause": "auto-renews 1 year provided Distributor met Guaranteed Minimum Purchases and other conditions",
+   "scenario": [
+    {
+     "event": "date_advance",
+     "to": "1998-10-01"
+    }
+   ],
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "renewal depends on facts outside the text (purchase minimums met?)"
+   }
+  },
+  {
+   "id": "N09",
+   "src": "cuad:Kiromic",
+   "clause": "duration '*' years, extendable '*' years unless notice one year before expiry (redacted)",
+   "scenario": [
+    {
+     "event": "date_advance",
+     "to": "2021-01-01"
+    }
+   ],
+   "expected": {
+    "status": "NEEDS_LAWYER",
+    "why": "term redacted"
+   }
+  }
+ ]
+}
