@@ -8,6 +8,8 @@ contracts need consent, which need notice, who can terminate, which deadlines st
 clause text that caused it, the same answer every run, and an explicit **NEEDS_LAWYER** wherever the text leaves a
 real question open.
 
+**Live demo:** https://contract-twin.vercel.app (static; every outcome precomputed, no model is called by the page) · results and limits: https://contract-twin.vercel.app/results.html
+
 Not legal advice. Outputs say "clause X is potentially triggered under reading Y". Nothing here is lawyer-reviewed.
 
 ## How it works
