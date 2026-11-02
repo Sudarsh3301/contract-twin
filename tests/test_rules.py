@@ -46,8 +46,7 @@ for op, thr in itertools.product(["gt", "gte"], [20, 50, 51]):
     at = coc_reactions(a, apply(State(), {"event": "share_sale", "buyer_pct": thr}))[0].status
     assert at == ("TRIGGERED" if op == "gte" else "NOT_TRIGGERED")
 
-# metamorphic 5: renaming/reordering irrelevant fields changes nothing (party labels are not atoms)
-# metamorphic 6: moving the clock never revives a lapsed deadline
+# metamorphic 5: moving the clock never revives a lapsed deadline
 for mode, notice in [("auto", [30, "days"]), ("auto", [6, "months"]), ("option", [60, "days"])]:
     a = dict(start="2025-01-01", initial_term=[2, "years"], mode=mode, renewal_term=[1, "years"], notice=notice)
     lapsed = False

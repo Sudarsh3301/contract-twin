@@ -6,17 +6,17 @@ data/curated. Atoms are derived from the variants; rules are derived from the at
 ### Trigger variants (what counts as a change of control)
 | Variant | Example source | Decides |
 |---|---|---|
-| T1 ownership threshold, any person (">= 50%", "> 51%", ">= 20%") | RaeSystems, VirtualScopics, DynTek, Zounds | buyer % vs threshold; > vs >= |
-| T2 retained-stake threshold (owners keep >= X%) | JointCorp (75%), Amscan pre-IPO (Sponsors >= 50%) | holders' % after event |
-| T3 two regimes split by a Qualifying IPO (pre: retained stake; post: any person > 35% and >= Sponsors) | Amscan, Calpine, Lantheus | whether a Qualifying IPO happened; proceeds test |
-| T4 control / management (power to direct; board turnover) | iPayment, Zounds (board), Amscan (board) | management_changes flag |
-| T5 transaction type only (merger, consolidation, asset sale) | eDiets, Gopage | event mechanism, not %; share sale excluded |
-| T6 open-textured ("significant", "material", "major shareholding", "unacceptable") | mPhase, EuropeanMicro, eLandia, BlackBox | -> NEEDS_LAWYER except where any reading agrees |
-| T7 undefined "control" | Vertex*, HealthGate* (defined elsewhere / not located) | -> resolve definition, else NEEDS_LAWYER |
-| T8 parent ceases to own 100% of borrower (direct) | Amscan (c) | holding insertion position |
-| T9 cross-reference to another instrument's CoC | Amscan (d) | -> gap (refers_to_missing) |
-| T10 competitor takes a disclosable stake (5% under Rule 13d-1) | VirtualScopics (d) | buyer is competitor and % |
-| T11 change in a named key leadership position | VirtualScopics (e) | management_changes flag |
+| CT1 ownership threshold, any person (">= 50%", "> 51%", ">= 20%") | RaeSystems, VirtualScopics, DynTek, Zounds | buyer % vs threshold; > vs >= |
+| CT2 retained-stake threshold (owners keep >= X%) | JointCorp (75%), Amscan pre-IPO (Sponsors >= 50%) | holders' % after event |
+| CT3 two regimes split by a Qualifying IPO (pre: retained stake; post: any person > 35% and >= Sponsors) | Amscan, Calpine, Lantheus | whether a Qualifying IPO happened; proceeds test |
+| CT4 control / management (power to direct; board turnover) | iPayment, Zounds (board), Amscan (board) | management_changes flag |
+| CT5 transaction type only (merger, consolidation, asset sale) | eDiets, Gopage | event mechanism, not %; share sale excluded |
+| CT6 open-textured ("significant", "material", "major shareholding", "unacceptable") | mPhase, EuropeanMicro, eLandia, BlackBox | -> NEEDS_LAWYER except where any reading agrees |
+| CT7 undefined "control" | Vertex*, HealthGate* (defined elsewhere / not located) | -> resolve definition, else NEEDS_LAWYER |
+| CT8 parent ceases to own 100% of borrower (direct) | Amscan (c) | holding insertion position |
+| CT9 cross-reference to another instrument's CoC | Amscan (d) | -> gap (refers_to_missing) |
+| CT10 competitor takes a disclosable stake (5% under Rule 13d-1) | VirtualScopics (d) | buyer is competitor and % |
+| CT11 change in a named key leadership position | VirtualScopics (e) | management_changes flag |
 ### Carve-outs
 | Carve-out | Source |
 |---|---|
