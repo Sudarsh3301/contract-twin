@@ -172,7 +172,7 @@ def _cuad_entry(path):
     if not idx.exists():
         return None
     for e in json.loads(idx.read_text(encoding="utf-8")):
-        if e["file"] == Path(path).name:
+        if e.get("file") == Path(path).name and "cuad_filename" in e:  # other folders keep their own index formats
             return e
     return None
 
