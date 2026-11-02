@@ -381,12 +381,17 @@ def preview_values(template: str, atom: str, states: list) -> list:
     return sorted({v for s in states for v in (_critical(atom, s) or [])})
 
 
+def contract_key(cid: str, lang: str) -> str:
+    """Key of a contract in the compiled-atom files: Arabic contracts use their own `ar:` key, not the English source's."""
+    return comp.gold_key(cid) if lang == "en" else comp.PORTFOLIO[cid]["src"]
+
+
 def questions(atoms_by_contract: dict, scenarios: list[dict], con=None, run: str = "main", reviews=None) -> list[Question]:
     """Ranked, de-duplicated questions. A scenario is {id, events, templates?, only?}: `only` limits it to one contract.
     Rank: reactions one answer makes firm, then reactions the atom can change, then contract name.
     With `reviews` given (the list already laid over the atoms), confirm questions follow the blocking ones."""
     con = con or sqlite3.connect(DB)
-    cids = {comp.gold_key(c): c for (c,) in con.execute("SELECT id FROM contract")}
+    cids = {contract_key(c, lang): c for c, lang in con.execute("SELECT id, language FROM contract")}
     qs: dict[tuple, dict] = {}
     for sc in scenarios:
         s = State()
@@ -424,7 +429,7 @@ def questions(atoms_by_contract: dict, scenarios: list[dict], con=None, run: str
             prev = [dict(answer="(the value given)", changes=[dict(scenario=sid, before=label(b), after="firm once the value is known")
                                                               for sid, b in zip(q["pairs"], q["before"])])]
         out.append(Question(f"{gk}|{t}|{a}", gk, t, a, text_q, allowed,
-                            cited_text(con, cids[gk], t, a, fam, run) if gk in cids else [], q["pairs"], len(firm_ids), prev))
+                            cited_text(con, cids[gk], t, a, fam, run + "_ar" if gk.startswith("ar:") else run) if gk in cids else [], q["pairs"], len(firm_ids), prev))
     out.sort(key=lambda x: (-x.firm_pairs, -len(x.pairs), x.contract, x.template, x.atom))
     if reviews is not None:
         out += confirm_questions(atoms_by_contract, scenarios, reviews, con, run, cids)
@@ -570,7 +575,7 @@ def confirm_questions(atoms_by_contract: dict, scenarios: list[dict], reviews: l
             prev = [dict(answer="(any other value)", changes=[dict(scenario=sid, before=label(b), after="changes or becomes undetermined")
                                                                for sid, b in zip(q["pairs"], q["before"])])]
         out.append(Question(f"{gk}|{t}|{a}", gk, t, a, text_q, allowed,
-                            cited_text(con, cids[gk], t, a, fam, run) if gk in cids else [], q["pairs"], 0, prev,
+                            cited_text(con, cids[gk], t, a, fam, run + "_ar" if gk.startswith("ar:") else run) if gk in cids else [], q["pairs"], 0, prev,
                             "confirm", cur, agreement(con, cids[gk], t, a, run) if gk in cids else (0, False)))
     out.sort(key=lambda x: (x.agreement[0] >= 3 and x.agreement[1], x.agreement[0], -len(x.pairs), x.contract, x.template, x.atom))
     return out
