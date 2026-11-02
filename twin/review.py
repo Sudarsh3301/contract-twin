@@ -1,10 +1,12 @@
 """Review queue: every NEEDS_LAWYER becomes a closed question about ONE atom of ONE contract.
 
-    python -m twin.review queue [--all]                 # ranked questions (scenario cases, or every case scenario x every contract)
+    python -m twin.review queue [--all] [--no-confirm]  # ranked questions (scenario cases, or every case scenario x every contract)
     python -m twin.review show <id>                     # one question as Markdown
-    python -m twin.review answer <id> <value> --by NAME [--reason TEXT]
+    python -m twin.review answer <id> <value> --by NAME [--reason TEXT]    # for a confirm question, <value> "confirm" keeps the compiled value
 
 Questions come from the rules, not from a model: an atom is asked only when some value of it can change a reaction.
+Two kinds: blocking questions (the atom is unknown) and confirm questions (the atom is known, but some other value would change
+a reaction that is otherwise firm). An outcome counts as firm only once its load-bearing atoms are confirmed or corrected.
 An answer is stored in the `review` table as a review of the atom and overrides the compiled atom in later runs.
 No model is called here.
 """
@@ -26,6 +28,7 @@ NL = "NEEDS_LAWYER"
 GROUP = {"initial_term_n": "initial_term", "initial_term_unit": "initial_term", "notice_n": "notice", "notice_unit": "notice",
          "renewal_term_n": "renewal_term", "renewal_term_unit": "renewal_term"}
 BOOLS = {"coc_not_assignment", "merger_exception", "unless_competitor"}
+TRUE_FALSE = BOOLS | {"post_ipo_relative_to_retained"}   # yes/no atoms of either template
 EFFECT_CANDIDATES = [[{"effect": e, "effect_holder": h}] for e in comp.EFFECTS for h in ("us", "them", "either")]
 
 
@@ -102,9 +105,13 @@ def missing(template: str, fam: dict) -> list[str]:
             need += ["open_texture"]
         if fam.get("_fresh"):                   # a clause nobody has read yet: the optional exceptions must be asked too
             need += ["carve_outs"]
+        if fam.get("_fresh") and "retained_stake" in t:
+            need += ["qualifying_ipo"]
         q = fam.get("qualifying_ipo")
         if q:
             need += ["post_ipo_threshold_pct"] + (["qipo_threshold"] if q.get("test") == "proceeds" and "threshold" not in q else [])
+            if fam.get("_fresh"):
+                need += ["post_ipo_relative_to_retained"]
     elif template == "assign":
         need = ["restricted"] + (["consent_needed"] if fam.get("restricted") is True else [])
         if fam.get("_fresh"):
@@ -125,7 +132,7 @@ def apply_reviews(atoms: dict, reviews: list[dict]) -> dict:
     touched = {}
     for r in reviews:
         fam = out.get(r["contract_id"], {}).get(r["template"])
-        if fam is None:
+        if fam is None or r.get("kind") == "confirm":       # a confirmation keeps the compiled value
             continue
         if r["atom"] == "present" and r["value"] == "no":
             del out[r["contract_id"]][r["template"]]
@@ -149,17 +156,39 @@ def apply_reviews(atoms: dict, reviews: list[dict]) -> dict:
 
 
 def load_reviews(con) -> list[dict]:
+    """All reviews, oldest first. `kind` is answer (a blocking question), confirm (compiled value kept) or correct (value replaced)."""
     con.execute("CREATE TABLE IF NOT EXISTS review(contract_id TEXT, template TEXT, atom TEXT, value TEXT, reviewer TEXT, "
-                "reason TEXT, scope TEXT, at TEXT)")
-    return [dict(contract_id=c, template=t, atom=a, value=json.loads(v), reviewer=r, reason=why, scope=s, at=at)
-            for c, t, a, v, r, why, s, at in con.execute("SELECT * FROM review ORDER BY rowid")]
+                "reason TEXT, scope TEXT, at TEXT, kind TEXT DEFAULT 'answer')")
+    if "kind" not in {r[1] for r in con.execute("PRAGMA table_info(review)")}:
+        con.execute("ALTER TABLE review ADD COLUMN kind TEXT DEFAULT 'answer'")
+    return [dict(contract_id=c, template=t, atom=a, value=json.loads(v), reviewer=r, reason=why, scope=s, at=at, kind=k or "answer")
+            for c, t, a, v, r, why, s, at, k in con.execute(
+                "SELECT contract_id, template, atom, value, reviewer, reason, scope, at, kind FROM review ORDER BY rowid")]
 
 
-def add_review(con, contract_id, template, atom, value, reviewer, reason="", scope="contract"):
+def add_review(con, contract_id, template, atom, value, reviewer, reason="", scope="contract", kind="answer"):
     load_reviews(con)
-    con.execute("INSERT INTO review VALUES(?,?,?,?,?,?,?,?)", (contract_id, template, atom, json.dumps(value), reviewer, reason,
-                                                               scope, datetime.now(timezone.utc).isoformat(timespec="seconds")))
+    con.execute("INSERT INTO review(contract_id, template, atom, value, reviewer, reason, scope, at, kind) VALUES(?,?,?,?,?,?,?,?,?)",
+                (contract_id, template, atom, json.dumps(value), reviewer, reason, scope,
+                 datetime.now(timezone.utc).isoformat(timespec="seconds"), kind))
     con.commit()
+
+
+def confirmed(reviews: list[dict]) -> set:
+    """(contract, template, atom) a lawyer has looked at: answered, confirmed or corrected. A given end date settles the term atoms too."""
+    out = set()
+    for r in reviews:
+        out.add((r["contract_id"], r["template"], r["atom"]))
+        if r["atom"] == "end_date":
+            out |= {(r["contract_id"], r["template"], "start"), (r["contract_id"], r["template"], "initial_term")}
+    return out
+
+
+def expand(atom: str, value) -> list[tuple]:
+    """An answer as (atom, value) pairs to store. A term can also be answered with {"end_date": "YYYY-MM-DD"}."""
+    if atom in ("start", "initial_term") and isinstance(value, dict) and set(value) == {"end_date"}:
+        return [("end_date", value["end_date"])]
+    return [(atom, value)]
 
 
 # ---------------- what could an answer change? ----------------
@@ -173,8 +202,10 @@ def candidates(template: str, atom: str, s: State):
         return [True, False]
     if atom in CHOICE:
         return CHOICE[atom]
-    if atom in BOOLS:
+    if atom in TRUE_FALSE:
         return [True, False]
+    if atom == "qualifying_ipo":
+        return [False, {"test": "listing"}, {"test": "proceeds"}]
     if atom == "deems":
         from .rules import _subsets
         return _subsets(comp.ASSIGN["deems"][1], True)
@@ -257,13 +288,21 @@ class Question:
     pairs: list
     firm_pairs: int = 0
     preview: list = field(default_factory=list)
+    kind: str = "blocking"          # blocking: the atom is unknown. confirm: the atom is known and load-bearing for a firm outcome
+    current: object = None          # confirm only: the compiled value
+    agreement: tuple = (0, False)   # confirm only: (fewest compile runs that agreed on the atom, support check passed on all)
 
     def markdown(self) -> str:
-        lines = [f"### {self.contract} — {self.template} — `{self.atom}`", "", f"**Question.** {self.text}", "",
+        lines = [f"### {self.contract} — {self.template} — `{self.atom}`", ""]
+        if self.kind == "confirm":
+            lines += [f"**Confirm: compiled value = {short(self.current)}** (compile agreement {self.agreement[0]}/3, "
+                      f"support check {'passed' if self.agreement[1] else 'not passed'}). Answer `confirm`, or give the right value.", ""]
+        lines += [f"**Question.** {self.text}", "",
                  f"**Allowed answers.** {self.allowed}", "", "**Cited sentences (verbatim).**", ""]
         lines += [f"> [{sid}] {t}" for sid, t in self.cited] or ["> (no sentence cited)"]
         lines += ["", f"**Affects** {len(self.pairs)} scenario(s): {', '.join(self.pairs)}; "
-                  f"{self.firm_pairs} of them become firm with one answer.", "", "**Impact preview (reactions that change).**", ""]
+                  + (f"they stay pending confirmation until this is confirmed or corrected." if self.kind == "confirm" else
+                     f"{self.firm_pairs} of them become firm with one answer."), "", "**Impact preview (reactions that change).**", ""]
         groups = {}
         for p in self.preview:
             ch = "; ".join(f"{c['scenario']}: {c['before']} → {c['after']}" for c in p["changes"]) or "no change"
@@ -286,24 +325,41 @@ def question_text(template: str, atom: str) -> tuple[str, str]:
     if atom.startswith("unless_consented:"):
         return (f"Does prior written consent of the other party remove the '{atom.split(':', 1)[1]}' effect (and only that one)?",
                 "true or false")
+    if atom == "qualifying_ipo":
+        return ("Does a change of control exception apply after a Qualifying IPO (a listing, possibly with minimum proceeds) that replaces the retained-stake test?",
+                'false (no such exception), {"test": "listing"}, or {"test": "proceeds", "threshold": number}')
+    if atom == "post_ipo_relative_to_retained":
+        return ("After a Qualifying IPO, must the largest other holder also hold at least as much as the retained holder?", "true or false")
+    if atom == "start":
+        return (defs["start"][2], 'a date YYYY-MM-DD, or {"end_date": "YYYY-MM-DD"} when the contract states an end date and no start')
     keys = [k for k in defs if GROUP.get(k, k) == atom] or [atom]
     kind, vals, q = defs.get(keys[0], ("num", None, f"What is the value of {atom}?"))
+    if atom == "initial_term":
+        return (" ".join(defs[k][2] for k in keys), '[number, unit] with unit days, months, years, business_days, or "redacted"; '
+                'or {"end_date": "YYYY-MM-DD"} when the contract states an end date instead of a length')
     if len(keys) > 1:
         return (" ".join(defs[k][2] for k in keys), "[number, unit] with unit days, months, years, business_days, or \"redacted\"")
     if kind == "enum":
         return (q, " or ".join(json.dumps(v) for v in vals))
     if kind == "set":
         return (q, "any list drawn from: " + ", ".join(vals))
-    if atom in ("restricted", "consent_needed") or atom in BOOLS:
+    if atom in ("restricted", "consent_needed") or atom in TRUE_FALSE:
         return (q, "true or false")
     if atom == "mode":
         return (q, " or ".join(json.dumps(v) for v in vals))
     return (q, "a number" if kind == "num" or "pct" in atom or "threshold" in atom else "a date YYYY-MM-DD" if atom in ("start", "end_date") else "a value")
 
 
+def atom_keys(template: str, atom: str) -> list[str]:
+    """The compiler's atom keys behind one reviewed atom."""
+    if atom == "qualifying_ipo":
+        return ["qipo_test", "qipo_threshold"]
+    return [k for k in comp.ATOMS[template] if GROUP.get(k, k) == atom] or [atom.split(":")[0]]
+
+
 def cited_text(con, cid: str, template: str, atom: str, fam: dict, run: str = "main"):
     """Sentences the compiler cited for the atom; else those it cited for the rest of the clause; else the best keyword hits."""
-    keys = [k for k in comp.ATOMS[template] if GROUP.get(k, k) == atom] or [atom.split(":")[0]]
+    keys = atom_keys(template, atom)
     def sids(ks):
         out = set()
         for (s,) in con.execute(f"SELECT sids FROM atom WHERE run=? AND contract_id=? AND template=? AND key IN ({','.join('?' * len(ks))})",
@@ -318,16 +374,17 @@ def cited_text(con, cid: str, template: str, atom: str, fam: dict, run: str = "m
 
 
 def preview_values(template: str, atom: str, states: list) -> list:
-    if atom in CHOICE or atom in BOOLS or atom in ("present", "effects") or atom.startswith("unless_consented:"):
+    if atom in CHOICE or atom in TRUE_FALSE or atom in ("present", "effects", "qualifying_ipo", "deems") or atom.startswith("unless_consented:"):
         return candidates(template, atom, states[0])
     if atom in POWER:
         return [[v] for v in POWER[atom]] + ([[]] if atom == "carve_outs" else [])
     return sorted({v for s in states for v in (_critical(atom, s) or [])})
 
 
-def questions(atoms_by_contract: dict, scenarios: list[dict], con=None, run: str = "main") -> list[Question]:
+def questions(atoms_by_contract: dict, scenarios: list[dict], con=None, run: str = "main", reviews=None) -> list[Question]:
     """Ranked, de-duplicated questions. A scenario is {id, events, templates?, only?}: `only` limits it to one contract.
-    Rank: reactions one answer makes firm, then reactions the atom can change, then contract name."""
+    Rank: reactions one answer makes firm, then reactions the atom can change, then contract name.
+    With `reviews` given (the list already laid over the atoms), confirm questions follow the blocking ones."""
     con = con or sqlite3.connect(DB)
     cids = {comp.gold_key(c): c for (c,) in con.execute("SELECT id FROM contract")}
     qs: dict[tuple, dict] = {}
@@ -369,6 +426,153 @@ def questions(atoms_by_contract: dict, scenarios: list[dict], con=None, run: str
         out.append(Question(f"{gk}|{t}|{a}", gk, t, a, text_q, allowed,
                             cited_text(con, cids[gk], t, a, fam, run) if gk in cids else [], q["pairs"], len(firm_ids), prev))
     out.sort(key=lambda x: (-x.firm_pairs, -len(x.pairs), x.contract, x.template, x.atom))
+    if reviews is not None:
+        out += confirm_questions(atoms_by_contract, scenarios, reviews, con, run, cids)
+    return out
+
+
+# ---------------- load-bearing atoms ----------------
+LOGICAL = {"coc": ["whose", "triggers", "threshold_pct", "threshold_op", "retained_holder", "retained_pct", "competitor_threshold_pct",
+                   "transaction_types", "open_texture", "carve_outs", "effects", "qualifying_ipo", "post_ipo_threshold_pct",
+                   "post_ipo_relative_to_retained"],
+           "assign": ["restricted", "consent_needed", "deems", *sorted(BOOLS)],
+           "term": ["mode", "start", "initial_term", "end_date", "notice", "option_holder", "renewal_term"]}
+ALWAYS = {"whose", "mode", "deems", "carve_outs", "triggers", *BOOLS}      # tried even when the family does not list them (absent = none)
+EFFECT_KEYS = ["effect", "effect_holder", "notice", "unless_consented", "effects"]
+_LB: dict = {}
+
+
+def get_atom(fam: dict, atom: str):
+    """The value of a reviewed atom in a family, in the shape a review stores it (inverse of set_atom)."""
+    if atom == "present":
+        return "yes"
+    if atom == "effects":
+        return get_effects(fam)
+    if atom in ("carve_outs", "deems", "transaction_types", "triggers"):
+        return copy.deepcopy(fam.get(atom, []))
+    if atom in TRUE_FALSE:
+        return bool(fam.get(atom, False))
+    if atom == "qualifying_ipo":
+        return copy.deepcopy(fam.get(atom)) or False
+    return copy.deepcopy(fam.get(atom))
+
+
+def logical_atoms(template: str, fam: dict) -> list[str]:
+    out = ["present"]
+    for a in LOGICAL[template]:
+        if a == "effects":
+            keep = bool(get_effects(fam))
+        elif a == "qualifying_ipo":
+            keep = a in fam or "retained_stake" in (fam.get("triggers") or [])
+        else:
+            keep = a in fam or a in ALWAYS
+        if keep:
+            out.append(a)
+    return out
+
+
+def _sig(rs) -> frozenset:
+    """What a lawyer would see: status, and for a triggered reaction its kind, holder and date."""
+    return frozenset((r.status, r.kind, r.holder, str(r.due)) if r.status == "TRIGGERED" else (r.status,) for r in rs)
+
+
+def _run(template: str, fam: dict | None, s: State) -> frozenset:
+    if fam is None:
+        return frozenset({("NOT_TRIGGERED",)})          # no clause: nothing happens
+    try:
+        return _sig(react(template, fam, s))
+    except (KeyError, TypeError, ValueError):             # this reading needs a number or date that is not there
+        return frozenset({(NL,)})
+
+
+def variants_of(template: str, fam: dict, atom: str, s: State) -> list:
+    """Families that differ from `fam` in one atom: each other allowed value, or, for a free value, the value taken away."""
+    if atom == "present":
+        return [None]
+    vals = candidates(template, atom, s)
+    out = []
+    for v in vals or [None]:
+        f = copy.deepcopy(fam)
+        if vals:
+            if v == get_atom(fam, atom):
+                continue
+            set_atom(f, atom, v)
+        else:
+            for k in (EFFECT_KEYS if atom == "effects" else [atom]):
+                f.pop(k, None)
+        out.append(f)
+    return out
+
+
+def load_bearing(template: str, fam: dict, s: State) -> list[str]:
+    """Known atoms of a firm family such that some other allowed value would change a reaction in state s.
+    Closed lists and critical numbers are tried value by value; a free value (a date, a term length) is tried by
+    taking it away: the rules then need it or they do not."""
+    key = (template, json.dumps(fam, sort_keys=True, default=str), repr(s))
+    if key in _LB:
+        return _LB[key]
+    base = _run(template, fam, s)
+    out = []
+    if not any(x[0] == NL for x in base):
+        out = [a for a in logical_atoms(template, fam) if any(_run(template, f, s) != base for f in variants_of(template, fam, a, s))]
+    _LB[key] = out
+    return out
+
+
+def agreement(con, cid: str, template: str, atom: str, run: str) -> tuple:
+    """(fewest compile runs that agreed on the atom's keys, support check passed on all of them). Unseen atoms count as 0 / False."""
+    ks = atom_keys(template, atom)
+    rows = con.execute(f"SELECT k_agree, support_ok FROM atom WHERE run=? AND contract_id=? AND template=? AND key IN ({','.join('?' * len(ks))})",
+                       [run, cid, template, *ks]).fetchall()
+    return (min(r[0] for r in rows), all(r[1] for r in rows)) if rows else (0, False)
+
+
+def confirm_questions(atoms_by_contract: dict, scenarios: list[dict], reviews: list[dict], con, run, cids) -> list[Question]:
+    """One question per load-bearing atom that nobody has looked at, for families whose reactions are firm in some scenario.
+    Rank: weakest compile evidence first (fewer than 3 agreeing runs or an unsupported atom), then most scenarios."""
+    done = confirmed(reviews)
+    qs: dict[tuple, dict] = {}
+    for sc in scenarios:
+        s = State()
+        for ev in sc["events"]:
+            s = apply(s, ev)
+        templates = sc.get("templates") or (["term"] if all(e["event"] == "date_advance" for e in sc["events"]) else ["coc", "assign"])
+        for gk in sorted([sc["only"]] if sc.get("only") else atoms_by_contract):
+            for t in templates:
+                fam = atoms_by_contract.get(gk, {}).get(t)
+                if not fam:
+                    continue
+                base = react(t, fam, s)
+                if not firm(base):
+                    continue
+                for a in load_bearing(t, fam, s):
+                    if (gk, t, a) in done:
+                        continue
+                    q = qs.setdefault((gk, t, a), dict(pairs=[], states=[], before=[], fam=fam))
+                    q["pairs"].append(sc["id"])
+                    q["states"].append(s)
+                    q["before"].append(base)
+    out = []
+    for (gk, t, a), q in qs.items():
+        fam, cur = q["fam"], get_atom(q["fam"], a)
+        text_q, allowed = question_text(t, a)
+        prev = []
+        for v in ["no"] if a == "present" else [v for v in preview_values(t, a, q["states"]) if v != cur]:
+            after = apply_reviews({gk: {t: fam}}, [dict(contract_id=gk, template=t, atom=a, value=v, kind="correct")])
+            changes = []
+            for sid, s, before in zip(q["pairs"], q["states"], q["before"]):
+                rs = run_pair(after, gk, t, s) or []
+                if label(rs) != label(before):
+                    changes.append(dict(scenario=sid, before=label(before), after=label(rs) or "clause removed"))
+            if changes:
+                prev.append(dict(answer=v, changes=changes))
+        if not prev:        # a free value cannot be tried: say that any other value changes these reactions
+            prev = [dict(answer="(any other value)", changes=[dict(scenario=sid, before=label(b), after="changes or becomes undetermined")
+                                                               for sid, b in zip(q["pairs"], q["before"])])]
+        out.append(Question(f"{gk}|{t}|{a}", gk, t, a, text_q, allowed,
+                            cited_text(con, cids[gk], t, a, fam, run) if gk in cids else [], q["pairs"], 0, prev,
+                            "confirm", cur, agreement(con, cids[gk], t, a, run) if gk in cids else (0, False)))
+    out.sort(key=lambda x: (x.agreement[0] >= 3 and x.agreement[1], x.agreement[0], -len(x.pairs), x.contract, x.template, x.atom))
     return out
 
 
@@ -415,6 +619,18 @@ def _check():
     add_review(mem, "c", "coc", "threshold_pct", 50, "someone", "read clause 4")
     got = load_reviews(mem)
     assert len(got) == 1 and got[0]["value"] == 50 and got[0]["scope"] == "contract" and got[0]["reviewer"] == "someone"
+    got = apply_reviews(atoms, [dict(rv("threshold_pct", 10), kind="confirm")])["c"]["coc"]
+    assert got == fam, "a confirmation changes nothing"
+    assert expand("start", {"end_date": "2030-01-01"}) == [("end_date", "2030-01-01")] and expand("start", "2020-01-01") == [("start", "2020-01-01")]
+    assert {("c", "term", "start"), ("c", "term", "initial_term")} <= confirmed([dict(contract_id="c", template="term", atom="end_date")])
+    # load-bearing: a share sale of 60% against a 50% threshold with consent -> the threshold and the effect matter, 'whose' too
+    f5 = {"whose": "us", "triggers": ["ownership_threshold"], "threshold_pct": 50, "threshold_op": "gte", "effect": "consent"}
+    lb = load_bearing("coc", f5, s)
+    assert {"present", "whose", "triggers", "threshold_pct", "effects"} <= set(lb) and "carve_outs" not in lb, lb
+    low = apply(State(), {"event": "share_sale", "buyer_pct": 10})
+    assert "effects" not in load_bearing("coc", f5, low), "nothing triggers, so the effect decides nothing"
+    f6 = {"mode": "mutual", "start": "2020-01-01", "initial_term": [2, "years"], "notice": [30, "days"], "renewal_term": [1, "years"]}
+    assert load_bearing("term", f6, State()) == ["present", "mode", "start", "initial_term"], "notice and renewal term decide nothing under mutual renewal"
     print("review self-check ok")
 
 
@@ -423,6 +639,7 @@ def main():
     ap.add_argument("cmd", choices=["queue", "show", "answer", "check"])
     ap.add_argument("args", nargs="*")
     ap.add_argument("--all", action="store_true", help="every case scenario against every contract")
+    ap.add_argument("--no-confirm", action="store_true", help="ask blocking questions only (no confirmation of load-bearing atoms)")
     ap.add_argument("--by", default="")
     ap.add_argument("--reason", default="")
     a = ap.parse_args()
@@ -431,11 +648,13 @@ def main():
         return _check()
     con = sqlite3.connect(DB)
     atoms, scs = load_inputs(a.all)
-    atoms = apply_reviews(atoms, load_reviews(con))
-    qs = questions(atoms, scs, con)
+    reviews = load_reviews(con)
+    atoms = apply_reviews(atoms, reviews)
+    qs = questions(atoms, scs, con, reviews=None if a.no_confirm else reviews)
     if a.cmd == "queue":
         for i, q in enumerate(qs, 1):
-            print(f"{i:3}. {q.id:48} makes firm {q.firm_pairs:2}  affects {len(q.pairs):2}  [{', '.join(q.pairs[:6])}]")
+            tag = f"confirm {short(q.current)[:24]:24}" if q.kind == "confirm" else f"makes firm {q.firm_pairs:2}"
+            print(f"{i:3}. {q.id:48} {tag}  affects {len(q.pairs):2}  [{', '.join(q.pairs[:6])}]")
         print(f"{len(qs)} questions")
     elif a.cmd == "show":
         print(next(q for q in qs if q.id == a.args[0]).markdown())
@@ -450,11 +669,16 @@ def main():
             value = json.loads(raw)
         except ValueError:
             value = raw
+        kind = "answer"
+        if q.kind == "confirm":
+            kind = "confirm" if value == "confirm" or value == q.current else "correct"
+            value = q.current if kind == "confirm" else value
         if q.atom in CHOICE and value not in CHOICE[q.atom] or q.atom in POWER and not set(value) <= set(POWER[q.atom]):
             raise SystemExit(f"not an allowed answer: {q.allowed}")
         gk, t, at = qid.split("|")
-        add_review(con, gk, t, at, value, a.by, a.reason)
-        print("stored")
+        for at2, v2 in expand(at, value) if kind != "confirm" else [(at, value)]:
+            add_review(con, gk, t, at2, v2, a.by, a.reason, kind=kind)
+        print(f"stored ({kind})")
 
 
 if __name__ == "__main__":
