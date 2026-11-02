@@ -113,6 +113,8 @@ def clause_max(t: str, fam: dict | None) -> int:
 _PLAIN = [
     (r"clause concerns the counterparty's change of control", lambda m: "the clause is about the other party's change of control"),
     (r"buyer ([\d.]+)% vs (gt|gte) ([\d.]+)%", lambda m: f"buyer gets {m[1]}%; the clause needs {'more than' if m[2] == 'gt' else 'at least'} {m[3]}%"),
+    (r"buyer ([\d.]+)% vs (gt|gte) ([\d.]+)% \((.*)\)",
+     lambda m: f"buyer gets {m[1]}%; the clause needs {'more than' if m[2] == 'gt' else 'at least'} {m[3]}% ({m[4]})"),
     (r"post-QIPO: other holder ([\d.]+)% vs > ([\d.]+)% and >= (\w+) ([\d.]+)%",
      lambda m: f"after a qualifying IPO: the largest other holder has {m[1]}% (the clause needs more than {m[2]}% and at least the {m[3]}' {m[4]}%)"),
     (r"(\w+) keep ([\d.]+)% vs required ([\d.]+)%", lambda m: f"{m[1]} keep {m[2]}%; the clause triggers below {m[3]}%"),
@@ -125,9 +127,9 @@ _PLAIN = [
     (r"open-textured magnitude, buyer ([\d.]+)%", lambda m: f"a vague size word (such as 'significant') applies; buyer gets {m[1]}%"),
     (r"holding position (\w+)", lambda m: "no new holding company" if m[1] == "none" else f"new holding company {m[1].replace('_', ' ')}"),
     (r"carve-out: (.*)", lambda m: f"exception applies: {m[1].replace('_', ' ')}"),
-    (r"(\w+): depends on (.*)", lambda m: f"the outcome depends on {m[2]}, which the compiler could not settle"),
+    (r"(\w+): depends on (.*)", lambda m: f"the outcome depends on {m[2]}, which the clause leaves open"),
     (r"(\w+): too many readings \((.*)\)", lambda m: f"too many open atoms to try every reading ({m[2]})"),
-    (r"(coc|assign|term): (.* is \w+.*)", lambda m: f"the compiler could not settle: {m[2]}"),
+    (r"(coc|assign|term): (.* is \w+.*)", lambda m: f"the clause leaves open: {m[2]}"),
 ]
 
 
@@ -144,10 +146,253 @@ def plain(reason: str) -> str:
     return "; ".join(out)
 
 
+# ---------------- one phrase table: the plain words for every clause fact, value and step the graphs show ----------------
+ATOM_NAME = {
+    "whose": "Whose change of control", "triggers": "What counts", "threshold_pct": "Threshold", "threshold_op": "Rule",
+    "competitor_threshold_pct": "Competitor threshold", "retained_holder": "Group whose stake is tested",
+    "retained_pct": "Stake that group must keep", "transaction_types": "Kinds of deal that count",
+    "qualifying_ipo": "Qualifying IPO test", "post_ipo_threshold_pct": "Threshold after an IPO",
+    "post_ipo_relative_to_retained": "After an IPO, compared with the group that kept its stake",
+    "carve_outs": "Exceptions", "open_texture": "Vague standard", "effects": "Effects", "present": "Clause present",
+    "restricted": "Assignment restricted", "consent_needed": "Consent needed", "deems": "Treated as an assignment",
+    "coc_not_assignment": "Change of control is not an assignment", "merger_exception": "Merger exception",
+    "unless_competitor": "Unless the successor is a competitor", "start": "Start date", "end_date": "End date",
+    "initial_term": "First term", "initial_term_n": "First term", "mode": "How it renews", "notice": "Notice period",
+    "option_holder": "Who may extend", "renewal_term": "Renewal term", "reading": "Reading",
+    "silence guard: keywords found but no clause extracted": "Clause not found"}
+WORD = {
+    # clause values
+    "ownership_threshold": "an ownership threshold", "management_change": "a change in management",
+    "competitor_stake": "a competitor’s stake", "transaction_type": "a kind of deal", "open_textured": "a vague standard",
+    "parent_direct_ownership": "a new holding company", "retained_stake": "a stake the owners keep",
+    "termination_right": "right to terminate", "automatic_termination": "ends automatically",
+    "service_limitation": "limit on service", "prepayment": "prepayment", "elsewhere": "set elsewhere",
+    "same_management": "unchanged management", "prior_holders_keep_50": "prior holders keep 50%",
+    "operation_of_law": "operation of law", "asset_sale": "asset sale", "share_sale": "share sale",
+    "share_exchange": "share exchange", "business_days": "business days", "missing_unit": "unit missing",
+    "unless_consented": "unless consented", "effect_holder": "who holds it", "original_owners": "the original owners",
+    "principal_owners": "the principal owners", "above_top_parent": "above the top parent",
+    "refers_to_missing": "in another document", "option_deadline": "option deadline", "earliest_exit": "earliest exit",
+    "consent_needed": "consent needed", "initial_term_n": "first term", "cross_reference": "reference to another document",
+    "initial_term_unit": "unit of the first term",
+    # step labels the rules write
+    "legal_judgement": "a legal reading", "check_extraction": "a fact to check", "missing_document": "a missing document",
+    "missing_fact": "a missing fact",
+    **{k: v.lower() for k, v in ATOM_NAME.items() if "_" in k}}
+BARE = {"gt": "more than", "gte": "at least"}
+SNAKE = re.compile(r"[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)+")
+UNKNOWN_WORDS: set = set()          # snake_case words met without a phrase (the check reports them)
+
+
+def words(s) -> str:
+    """Replace the engine's snake_case names and bare operators in a label by plain words; note any name without a phrase."""
+    def one(m):
+        w = m[0]
+        if w not in WORD:
+            UNKNOWN_WORDS.add(w)
+            return w.replace("_", " ")
+        return WORD[w]
+    s = SNAKE.sub(one, str(s))
+    s = re.sub(r"\b(gt|gte)\b", lambda m: BARE[m[1]], s)
+    s = re.sub(r"(\d+)\.0{3,}\d*\b", r"just over \1", s)              # 10.000001 -> just over 10
+    return re.sub(r"(\d+)\.0%", r"\1%", s)
+
+
+def vwords(v) -> str:
+    """A clause value in words: lists joined, effects as 'right to terminate (them)', notice periods as '60 days'."""
+    if v is None:
+        return "not stated"
+    if v is True or v is False:
+        return "yes" if v else "no"
+    if isinstance(v, (int, float)):
+        return f"{v:g}"
+    if isinstance(v, dict):
+        if "test" in v:
+            return words(f"{v['test']} of {v.get('threshold', '')}").replace(" of ", " ").strip()
+        e = v.get("effect")
+        if e:
+            who = {"us": "us", "them": "them", "either": "either side", "both": "both sides"}.get(v.get("effect_holder"), "")
+            n = v.get("notice")
+            return words(e) + (f" ({who})" if who else "") + (f", {n[0]} {words(n[1])} notice" if n else "") + (", unless consented" if v.get("unless_consented") else "")
+        return ", ".join(f"{words(k)} {vwords(x)}" for k, x in v.items())
+    if isinstance(v, (list, tuple)):
+        if len(v) == 2 and isinstance(v[0], (int, float)) and isinstance(v[1], str):
+            return f"{v[0]:g} {words(v[1])}"
+        return "; ".join(vwords(x) for x in v) if v else "none"
+    return words(v)
+
+
+MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+
+def fdate(s: str) -> str:
+    y, m, d = map(int, str(s).split("-"))
+    return f"{d} {MONTHS[m - 1]} {y}"
+
+
+FACT_PHRASE = {            # fact id -> (text with {v}, how to show the value)
+    "fact:buyer_pct": ("The buyer gets {v}%", "num"), "fact:aggregate_change": ("Ownership changing hands in total: {v}%", "num"),
+    "fact:buyer_is_competitor": ("The buyer is a competitor: {v}", "yn"), "fact:consented": ("The other party consented in advance: {v}", "yn"),
+    "fact:holding_position": ("New holding company: {v}", "word"), "fact:ipo_proceeds": ("The IPO raises ${v}", "money"),
+    "fact:largest_other_pct": ("The largest other holder has {v}%", "num"), "fact:listed": ("The company is listed: {v}", "yn"),
+    "fact:management_changed": ("Management changes: {v}", "yn"), "fact:mechanism": ("The deal is a {v}", "word"),
+    "fact:retained": ("{v}", "label"), "fact:as_of": ("Date: {v}", "date")}
+EXC_PHRASE = {"exc:same_management": "an unchanged management team", "exc:consented": "prior consent",
+              "exc:merger_exception": "a merger", "exc:qualifying_ipo": "a qualifying IPO",
+              "exc:coc_not_assignment": "a change of control that the contract says is not an assignment"}
+EFFECT_PHRASE = {("termination_right", "them"): "they may terminate", ("termination_right", "us"): "we may terminate them",
+                 ("termination_right", "either"): "either side may terminate", ("notice", "us"): "we must notify them",
+                 ("notice", "them"): "they must notify us", ("notice", "either"): "either side must notify", ("notice", "both"): "both sides must notify",
+                 ("consent", "them"): "we need their consent", ("consent", "us"): "they need our consent",
+                 ("automatic_termination", ""): "the agreement ends automatically", ("prepayment", "them"): "they may demand prepayment",
+                 ("service_limitation", "them"): "they may limit the service", ("elsewhere", ""): "the effect is set elsewhere"}
+LIMB_ID = {"limb:" + k for k in ("after_expiry", "before_deadline", "competitor", "competitor_stake", "cross_reference", "deadline", "decided",
+           "deems", "expiry", "management_change", "mode", "notice", "open_textured", "ownership_threshold", "parent_direct_ownership",
+           "retained_stake", "running", "share_sale", "transaction_type", "transfer", "unreached", "whose")}
+
+
+def nf(v) -> str:
+    return f"{v:g}"
+
+
+def step_text(st) -> str:
+    """The plain phrase one graph step shows. Display only: the rules decide, nothing is read back from this text."""
+    inp, base, val_ = dict(st.inputs), re.sub(r":\d+$", "", st.id), "FUT"[int(st.value)]
+    v = inp.get("value")
+    if st.kind == "atom":
+        name = ATOM_NAME[base[5:]]
+        if base == "atom:threshold_pct":
+            return f"{name}: {nf(v)}% or more" if v is not None else f"{name}: not stated"
+        if base == "atom:threshold_op":
+            return f"{name}: " + {"gt": "more than that share", "gte": "that share or more"}.get(v, vwords(v))
+        return f"{name}: {vwords(v)}"
+    if st.kind == "fact":
+        tpl, how = FACT_PHRASE[base]
+        if how == "label":
+            return words(st.label)
+        val = {"num": lambda: nf(v), "yn": lambda: "yes" if v else "no", "word": lambda: words(v or "none"),
+               "money": lambda: f"{v:,.0f}", "date": lambda: fdate(v)}[how]()
+        return tpl.format(v=val)
+    if st.kind == "effect":
+        m = re.match(r"(.*?) \((us|them|either|both|\?)\)$", st.label)
+        kind, who = (m[1].replace(" ", "_"), "" if m[2] == "?" else m[2]) if m else (st.label.replace(" ", "_"), "")
+        return "Effect: " + EFFECT_PHRASE.get((kind, who), words(st.label))
+    if st.kind == "exception":
+        name = EXC_PHRASE[base]
+        why = st.label.split(": ", 1)[1] if val_ == "F" and ": " in st.label else ""
+        return f"Exception for {name}: " + ("applies" if val_ == "T" else "does not apply" + (f" ({words(why)})" if why else ""))
+    if st.kind == "outcome":
+        return words(st.label).replace("open: ", "Open: ").replace("a legal reading", "question for counsel") if st.label.startswith("open:") else \
+            "No reaction" if st.label == "no reaction" else "Result: " + words(st.label)
+    if st.kind == "fork":
+        atom = base[5:]
+        if atom == "reading":
+            return "Reading: " + words(st.label)
+        name = ATOM_NAME.get(atom, atom.replace("_", " ").capitalize())
+        m = re.match(r".* (?:is|are) (unknown|silent|refers_to_missing)(?:: (\d+) different outcomes across (\d+) values)?$", st.label)
+        if m:
+            what = {"unknown": "not settled", "silent": "not stated in the clause", "refers_to_missing": "in another document"}[m[1]]
+            return f"{name}: {what}" + (f" ({m[2]} different outcomes are possible)" if m[2] else "")
+        m = re.match(r".* unknown: every tried value gives this outcome", st.label)
+        if m:
+            return f"{name}: not settled; every value tried gives this result"
+        m = re.match(r".* assumed (.*)$", st.label)
+        if m:
+            return f"{name}: assumed {words(m[1].strip('[]').replace(chr(39), ''))}"
+        return words(st.label)
+    return words(plain(st.label))       # test
+
+
+def phrase_errors(graphs: dict) -> list[str]:
+    """Every step id in the exports has a phrase and no step text is left with an engine name, '=' or a snake_case word."""
+    errs = []
+    for gid, steps in graphs.items():
+        for s in steps:
+            base = re.sub(r":\d+$", "", s["id"])
+            if s["kind"] == "fact" and base not in FACT_PHRASE:
+                errs.append(f"fact without a phrase: {base}")
+            if s["kind"] == "atom" and base[5:] not in ATOM_NAME:
+                errs.append(f"clause fact without a name: {base}")
+            if s["kind"] == "exception" and base not in EXC_PHRASE:
+                errs.append(f"exception without a phrase: {base}")
+            if s["kind"] == "limb" and base not in LIMB_ID:
+                errs.append(f"test without a phrase: {base}")
+            if SNAKE.search(s["text"]) or "=" in s["text"] or re.search(r"\b(gt|gte)\b", s["text"]):
+                errs.append(f"engine words left in: {s['text']}")
+    return sorted(set(errs)) + sorted(f"value without a phrase: {w}" for w in UNKNOWN_WORDS)
+
+
+def phrase_table() -> list[tuple[str, str]]:
+    """The whole table as (name, phrase) rows, for the author to check the wording."""
+    return ([("clause fact: " + k, v) for k, v in ATOM_NAME.items()] + [("value: " + k, v) for k, v in WORD.items()] +
+            [("event fact: " + k, t) for k, (t, _) in FACT_PHRASE.items()] + [("exception: " + k, "Exception for " + v) for k, v in EXC_PHRASE.items()] +
+            [("effect: " + f"{k}/{h or '-'}", v) for (k, h), v in EFFECT_PHRASE.items()])
+
+
+# ---------------- why lines: two or three plain sentences from the trace of one clause ----------------
+CAUSE_SENTENCE = {"legal_judgement": "The rules do not guess this: it needs a legal reading, so it goes to counsel.",
+                  "check_extraction": "One fact read from the clause is unsure, so the rules wait for someone to check it.",
+                  "missing_document": "The answer depends on a definition or text that is not in this file.",
+                  "missing_fact": "The answer depends on a business fact that has not been given."}
+
+
+def sentence_case(t: str) -> str:
+    t = re.sub(r"^(buyer|management|sponsors|the buyer) ", lambda m: "The " + m[1].removeprefix("the ") + " " if m[1] != "management" else "Management ", t)
+    return t[:1].upper() + t[1:] + ("" if t.endswith((".", ")", "?")) else ".")
+
+
+def effect_line(r: Reaction, notes: dict) -> str:
+    text = EFFECT_PHRASE.get((r.kind, r.holder or ""))
+    if text is None:
+        text = {"expiry": "the agreement expires", "expired": "the agreement has expired", "renewed": "the agreement renews",
+                "deadline": "a deadline falls under the agreement", "option_deadline": "an option deadline falls under the agreement",
+                "earliest_exit": "the earliest exit date is reached"}.get(r.kind, words(r.kind))
+    n = notes.get((r.kind, r.holder or ""))
+    if r.kind == "termination_right" and n and n[1] != "missing_unit":
+        unit = words(n[1])
+        text += f" on {n[0]:g} {unit.rstrip('s')}’s notice" if n[0] == 1 else f" on {n[0]:g} {unit}’ notice"
+    if r.due:
+        text += (" by " if r.kind in BY_KINDS else " on ") + fdate(str(r.due))
+    return text
+
+
+def why_lines(rs: list, status: str = "firm") -> list[list[str]]:
+    """[(kind, sentence)] for one clause: the tests that were met, the exceptions, then the effect. A clause that cannot be
+    answered says what stops the rules (and the worst case, if one is planned for). Display only."""
+    steps = {}
+    for r in rs:
+        for st in r.trace:
+            steps.setdefault(st.id, st)
+    val = lambda st: "FUT"[int(st.value)]
+    eff = dict(steps["atom:effects"].inputs).get("value") if "atom:effects" in steps else None
+    notes = {(e.get("effect"), e.get("effect_holder") or ""): e.get("notice") for e in eff or [] if isinstance(e, dict)}
+    out = []
+    tests = [st for st in steps.values() if st.kind == "limb" and not st.id.startswith("limb:decided")]
+    shown = [st for st in tests if val(st) == ("T" if any(r.status == "TRIGGERED" for r in rs) else "U" if status != "firm" else "F")]
+    for st in shown[:2]:
+        out.append(["test", sentence_case(words(plain(st.label)))])
+    for st in steps.values():
+        if st.kind == "exception" and st.id in EXC_PHRASE:
+            out.append(["exception", step_text(st) + "."])
+    if any(r.status == "TRIGGERED" for r in rs):
+        out.append(["effect", "Effect: " + "; ".join(effect_line(r, notes) for r in rs if r.status == "TRIGGERED") + "."])
+    elif any(r.status == "NEEDS_LAWYER" for r in rs):
+        for c in dict.fromkeys(r.cause for r in rs if r.status == "NEEDS_LAWYER"):
+            out.append(["result", CAUSE_SENTENCE.get(c, "The rules cannot answer this yet.")])
+    else:
+        out.append(["result", "Result: no reaction."])
+    return out[:4]
+
+
 # ---------------- inputs ----------------
 def load_gold() -> dict:
     return {k: v for f in ("cases/gold_atoms.json", "cases/gold_atoms_ar.json")
             for k, v in json.loads((ROOT / f).read_text(encoding="utf-8")).items() if not k.startswith("_")}
+
+
+def hand_labelled(ctx) -> set:
+    """Contract keys with at least one hand-labelled clause: the clauses the simulated reviewer can answer."""
+    return {k for k, fams in load_gold().items() if any(not t.startswith("_") and t in ctx.atoms.get(k, {}) for t in fams)}
 
 
 class Ctx:
@@ -236,7 +481,7 @@ def graph(rs) -> list[dict]:
             text = plain(st.label) if st.kind in ("limb", "exception") else st.label
             parents = [ids.get(p, p) for p in st.parents]
             layer = max([layer] + [out[p]["layer"] + 1 for p in parents if p in out])
-            out[sid] = dict(id=sid, kind=st.kind, label=text, value="FUT"[int(st.value)], layer=layer,
+            out[sid] = dict(id=sid, kind=st.kind, label=text, text=step_text(st), value="FUT"[int(st.value)], layer=layer,
                             atoms=list(st.atom_refs), parents=parents,
                             inputs=json.loads(json.dumps(inputs, default=str)))
     return list(out.values())
@@ -447,6 +692,9 @@ def run(library: list, ctx: Ctx, G: Graphs | None = None) -> list[dict]:
                                            reason=plain(r.reason), cause=r.cause) for r in o["reactions"]],
                            sids=sorted({sid for a in used for sid, _ in ctx.cited(key, t, a)}))
                 row["graph"] = G.add(o["reactions"])
+                row["why"] = why_lines(o["reactions"], o["status"])
+                if o["status"] != "firm":
+                    row["need"] = [review.ask_text(t, a) for a in review.blocker_atoms(fam)][:2]
                 row["flips"] = flips(sc, t, fam, G)
                 if o["status"] == "firm" and open_:
                     row["corrections"] = {a: corrections(t, fam, a, s) for a in row["unconfirmed"]}
@@ -668,14 +916,16 @@ def build_state(ctx: Ctx, sents: dict, library=LIBRARY, G: Graphs | None = None)
             open_questions=sum(sc["id"] in q["sev_by"] for q in qs), pending=sum(sc["id"] in c["sev_by"] for c in cards),
             material_open=sum(x["sev_by"][sc["id"]] >= MATERIAL for x in items))
     ags = agreements(ctx)
-    acells = agreement_cells(ags, rows, cs, sents)
+    hand = hand_ags(ctx, ags)
+    acells = agreement_cells(ags, rows, cs, sents, hand)
     nl = [x for r in rows for x in r["reactions"] if x["status"] == "NEEDS_LAWYER"]
     outs = Counter(r["status"] for r in rows)
     sim = ctx.sim["stats"] if ctx.sim else {}
     header = dict(cards_answered=sim.get("cards", 0), questions_answered=sim.get("answers", 0),
                   firm=outs["firm"], provisional=outs["provisional"], blocked=outs["blocked"],
                   counsel=sum("legal_judgement" in r["causes"] for r in rows), outcomes=len(rows),
-                  cases=case_safety(ctx), hand_labels=sim.get("hand_labels"))
+                  cases=case_safety(ctx), hand_labels=sim.get("hand_labels"),
+                  hand_agreements=sorted(hand) if hand is not None else None)
     return dict(label=STATES[ctx.state] if not ctx.gold else "Gold atoms", header=header, summaries=summaries, cells=cs, rows=rows,
                 atominfo=info, questions=qs, cards=cards, acells=acells, brief=brief(ags, acells), effort=card_counts(cards),
                 automation=automation(ags, acells), stake=stake(ags, rows),
@@ -768,10 +1018,36 @@ def clause_ref(text: str, sid: int) -> str:
 
 
 STATUS_RANK = {"firm": 0, "provisional": 1, "blocked": 2}
+# Open items, by the action each one needs. 'unreviewed' exists only after the simulated review: the reviewer skipped the agreement.
+OPEN_KINDS = ["document", "counsel", "check", "unreviewed"]
+OPEN_OF = {"missing_document": "document", "legal_judgement": "counsel"}      # every other reason is a fact to check
+
+
+def hand_ags(ctx: "Ctx", ags: dict):
+    """Agreements the simulated reviewer could work on (some version has hand labels); None before any review."""
+    if ctx.sim is None or ctx.gold:
+        return None
+    lab = hand_labelled(ctx)
+    return {ak for ak, a in ags.items() if any(v in lab for v in a["versions"])}
+
+
+def open_item(kind: str, rows: list[dict], k: str) -> dict:
+    """What one open agreement needs, for the record version: the question or reason, the clause kind and a cited sentence."""
+    r = next((x for x in rows if x["status"] != "firm"), rows[0] if rows else None)
+    if r is None:
+        return dict(kind=kind, k=k, what="", template="", sid=None)
+    miss = r.get("missing", "")
+    if kind == "counsel":
+        q = re.search(r"\(([^()]*\?)\)", miss)          # a reason that ends in a question ("does a new parent count as an acquirer?")
+        test = next((t for w, t in r.get("why", []) if w == "test"), "")
+        what = q[1][:1].upper() + q[1][1:] if q else test.rstrip(".") if test else miss
+    else:
+        what = (r.get("need") or [miss])[0]
+    return dict(kind=kind, k=k, what=what, template=r["template"], sid=r["sids"][0] if r["sids"] else None)
 WHY_OPEN = ["missing_document", "missing_fact", "check_extraction", "legal_judgement"]      # the order a reason is chosen in
 
 
-def agreement_cells(ags: dict, rows: list[dict], cs: dict, sents: dict) -> dict:
+def agreement_cells(ags: dict, rows: list[dict], cs: dict, sents: dict, hand: set | None = None) -> dict:
     """Per scenario and agreement: what happens to us. Effects come from the triggered reactions on the map (firm ones, or
     the worst case of a provisional outcome), grouped by kind and holder; an agreement counts once, under its most severe
     group. The English text is the agreement of record. A translation that cannot tell beside a record that can is a note on
@@ -796,6 +1072,7 @@ def agreement_cells(ags: dict, rows: list[dict], cs: dict, sents: dict) -> dict:
                         sid = r["sids"][0] if r["sids"] else None
                         effs.append(dict(kind=x["kind"], holder=x["holder"], due=x["due"], group=effect_group(x["kind"], x["holder"]),
                                          text=effect_text(x["kind"], x["holder"]), by=x["kind"] in BY_KINDS, template=r["template"],
+                                         worst=r["status"] == "provisional" and "legal_judgement" in r["causes"],
                                          sid=sid, ref=clause_ref(sents[k][str(sid)], sid) if sid is not None else ""))
                 effs.sort(key=lambda e: (GROUP_ORDER.index(e["group"]), e["due"] or "9999", e["kind"]))
                 c = cells_[k]
@@ -808,41 +1085,53 @@ def agreement_cells(ags: dict, rows: list[dict], cs: dict, sents: dict) -> dict:
             firm_ans = {json.dumps(vers[k]["answer"]) for k in ks if not vers[k]["cant"]}
             disagree = len(firm_ans) > 1       # only two answers that both say something and differ
             p = vers[rec]
+            # an answer that is only a worst case because it rests on a legal reading stays in the schedule as a worst case,
+            # marked for counsel to confirm; it is not an open item, because the plan for it is known
+            wc = not disagree and not p["cant"] and bool(p["effects"]) and all(e["worst"] for e in p["effects"])
             cant = disagree or p["cant"]
             causes = [c for c in CAUSES if any(c in vers[k]["causes"] for k in ks)]
             rec_causes = [c for c in CAUSES if c in p["causes"]]
             why = "versions" if disagree else next((c for c in WHY_OPEN if c in rec_causes), "unclear") if p["cant"] else ""
+            kind = ""
+            if cant:
+                kind = OPEN_OF.get(why) or ("unreviewed" if hand is not None and ak not in hand else "check")
             note = ""
             for k in ks[1:]:                  # a translation that cannot tell, beside a record that can: shown as a note
                 if vers[k]["cant"] != p["cant"] and not disagree:
                     miss = " ".join(r.get("missing", "") for r in by[(sc, k)] if r["status"] == "blocked")
-                    note = f"{version_name(k)}: can't tell — " + ("the threshold was lost in translation." if "threshold_pct" in miss
+                    note = f"{version_name(k)}: open item — " + ("the threshold was lost in translation." if "threshold_pct" in miss
                                                             else "the translation does not settle it.")
             out[sc][ak] = dict(status=max((v["status"] for v in vers.values()), key=STATUS_RANK.get) if disagree else p["status"],
                                effects=[] if disagree else p["effects"], group=p["effects"][0]["group"] if p["effects"] and not disagree else "",
-                               cant=cant, why=why, causes=causes, disagree=disagree, note=note,
+                               cant=cant, why=why, causes=causes, disagree=disagree, note=note, counsel_wc=wc,
+                               item=open_item(kind, by[(sc, rec)], rec) if cant else None,
                                versions={k: dict(status=v["status"], effects=v["effects"], cant=v["cant"], causes=v["causes"]) for k, v in vers.items()})
     return out
 
 
 def brief(ags: dict, acells: dict) -> dict:
     """Per scenario: the counts the event sentence states. react = agreements that expose us (every group but 'we may
-    terminate'); options = those where only we hold a right; cant = unknown (not false); none = the rest."""
+    terminate'); options = those where only we hold a right; open = unknown (not false), by the action each needs;
+    none = the rest. A worst case that rests on a legal reading counts where its worst case falls, and worst_counsel says how
+    many of the reacting agreements are such worst cases, for counsel to confirm."""
     out = {}
     for sc, cs in acells.items():
         n = Counter(a["group"] for a in cs.values() if a["group"])
         react = sum(n[g] for g in GROUP_ORDER[:-1])
-        cant = {}
+        open_by = {k: [] for k in OPEN_KINDS}
         for ak, a in cs.items():
             if a["cant"]:
-                cant.setdefault(a["why"], []).append(ak)
-        notify = [e["due"] for a in cs.values() for e in a["effects"] if e["group"] == "notify" and e["due"]]      # in any position
+                open_by[a["item"]["kind"]].append(ak)
+        eff = [a["effects"] for a in cs.values() if a["group"]]
+        notify = [e["due"] for es in eff for e in es if e["group"] == "notify" and e["due"]]      # in any position
+        n_open = sum(len(v) for v in open_by.values())
         out[sc] = dict(agreements=len(ags), react=react, groups={g: n[g] for g in GROUP_ORDER[:-1]}, options=n["we"],
-                       more=sum(len(a["effects"]) - 1 for a in cs.values() if a["effects"]),
+                       worst_counsel=sum(1 for a in cs.values() if a["group"] and a["group"] != "we" and a["counsel_wc"]),
+                       more=sum(len(es) - 1 for es in eff),
                        other_kinds=sorted({a["effects"][0]["kind"] for a in cs.values() if a["group"] == "other"}),
                        notify_due=min(notify, default=""), counsel=sum("legal_judgement" in a["causes"] for a in cs.values()),
-                       cant=sum(len(v) for v in cant.values()), cant_by={k: sorted(v) for k, v in sorted(cant.items())},
-                       none=len(ags) - react - n["we"] - sum(len(v) for v in cant.values()))
+                       cant=n_open, open_by={k: sorted(v) for k, v in open_by.items()},
+                       none=len(ags) - react - n["we"] - n_open)
     return out
 
 
@@ -920,6 +1209,11 @@ def reading_panel(ctx: Ctx, ags: dict) -> dict:
                 ask=review.ask_text("coc", "triggers"), options=out)
 
 
+# The "how it decides" strip: three real clauses under one event each (event id, agreement key, what the case shows)
+DECIDE = [("sale_60", "cuad:DynTek", "A threshold is crossed: they may terminate"),
+          ("sale_60", "cuad:iPayment", "An exception fails; the rules compute a notice date"),
+          ("sale_30", "cuad:mPhase", "A vague word (“significant”): the rules do not guess")]
+
 LLM_CASES = {"N06": dict(src="cuad:DynTek", templates=["term"], title="DynTek extension: when is notice due?"),
              "R16": dict(src="cuad:Corio", templates=["coc", "assign"], title="Corio: a competitor buys 60% of us")}
 
@@ -978,8 +1272,10 @@ def scale_cards(res: dict) -> dict:
 
 
 def proof_line(res: dict) -> dict:
-    c = res["cases"]["compiled"]
-    return dict(cases=c["n"], wrong_firm=c["wrong_firm"], sent_to_person=c["abstain"], correct=c["correct"])
+    c, aw = res["cases"]["compiled"], res["review"]["atom_walk"]
+    return dict(cases=c["n"], wrong_firm=c["wrong_firm"], sent_to_person=c["abstain"], correct=c["correct"],
+                wrong_after_review=res["portfolio"]["review"]["cases"]["wrong firm"],
+                facts_checked=aw["hidden_checked"], facts_wrong=aw["hidden_wrong"])
 
 
 def measure_runtime() -> dict:
@@ -1028,7 +1324,11 @@ def build(atoms_kind="compiled", library=LIBRARY) -> dict:
     llm = llm_panel(first)
     for key, sid, text in [(reading["ak"], reading["sid"], reading["quote"])] + [(c["contract"], sid, t) for c in llm["cases"] for sid, t in c["quotes"].items()]:
         sents.setdefault(key, {})[str(sid)] = text
-    return dict(as_of=D, atoms=atoms_kind, sentences=sents, states=states, graphs=dict(sorted(G.all.items())),
+    ipo = [sc["id"] for sc in library if sc["events"][0]["event"] == "ipo"]
+    shown_state = states.get("review") or states["compiled"]
+    default = max(ipo, key=lambda i: (shown_state["brief"][i]["react"], -ipo.index(i)))      # the IPO that most agreements react to
+    return dict(as_of=D, atoms=atoms_kind, sentences=sents, states=states, graphs=dict(sorted(G.all.items())), default_event=default,
+                words=dict(WORD), decide=[dict(sc=a, ak=b, title=c) for a, b, c in DECIDE],
                 agreements=ags, ask=ask_table(states), scale=scale_cards(res), proof=proof_line(res),
                 runtime=json.loads(RUNTIME.read_text(encoding="utf-8")) if RUNTIME.exists() else {}, reading=reading, llm=llm,
                 scenarios=[dict(id=sc["id"], name=sc["name"], templates=sc["templates"], events=sc["events"]) for sc in library],
@@ -1333,10 +1633,15 @@ def check(out: Path) -> None:
         for sc, bf in st["brief"].items():          # the groups of the event sentence add up to what it says reacts
             assert sum(bf["groups"].values()) == bf["react"], (name, sc, bf)
             assert bf["react"] + bf["options"] + bf["cant"] + bf["none"] == bf["agreements"] == len(data["agreements"]), (name, sc, bf)
-            assert sum(len(v) for v in bf["cant_by"].values()) == bf["cant"], (name, sc, bf)
+            assert sum(len(v) for v in bf["open_by"].values()) == bf["cant"], (name, sc, bf)
+            assert bf["react"] + bf["options"] + sum(len(v) for v in bf["open_by"].values()) + bf["none"] == len(data["agreements"]), (name, sc, bf)
+            assert name == "review" or not bf["open_by"]["unreviewed"], (name, sc, "unreviewed exists only after review")
             for ak, a in st["acells"][sc].items():
-                assert a["group"] == (a["effects"][0]["group"] if a["effects"] else ""), (sc, ak)
+                assert a["group"] == (a["effects"][0]["group"] if a["effects"] and not a["disagree"] else ""), (sc, ak)
+                assert not a["counsel_wc"] or (a["group"] and not a["cant"]), (sc, ak, "a counsel worst case stays in the schedule")
                 assert not (a["cant"] and a["group"]), (sc, ak)
+                assert bool(a["item"]) == a["cant"] and (not a["cant"] or a["item"]["kind"] in OPEN_KINDS), (sc, ak)
+                assert not a["counsel_wc"] or all(e["worst"] for e in a["effects"]), (sc, ak)
         au = st["automation"]
         assert au["answered"] + au["plan"] + au["person"] == au["total"] == len(DEAL) * len(data["agreements"]), au
         for sc, cs_ in st["acells"].items():      # two versions disagree only when both answer, and they differ
@@ -1347,6 +1652,10 @@ def check(out: Path) -> None:
         print(f"{name}: group counts add up to the reacting agreements for all {len(st['brief'])} events ({len(data['agreements'])} agreements)")
         print(f"{name}: {len(nl)} open reactions, causes {st['causes']}; {sum(r['status'] == 'provisional' for r in st['rows'])} "
               f"provisional worst cases match readings(); cases {st['header']['cases']}")
+    assert all(sc in {x["id"] for x in LIBRARY} and ak in data["agreements"] for sc, ak, _ in DECIDE), "the strip names real cases"
+    perr = phrase_errors(data["graphs"])
+    assert not perr, perr[:8]
+    print(f"phrase table: {len(phrase_table())} phrases; every fact, clause fact and value in {len(data['graphs'])} graphs has one")
     assert [o["settled"] for o in data["reading"]["options"]] == [8, 8, 0], [o["settled"] for o in data["reading"]["options"]]
     assert all(c["twin"]["status"] in ("TRIGGERED", "NEEDS_LAWYER") for c in data["llm"]["cases"])
     if "review" in data["states"]:

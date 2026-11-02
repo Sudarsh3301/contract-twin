@@ -7,7 +7,7 @@ Proof of concept. Not legal advice. Nothing here is lawyer-reviewed. Every numbe
 - Data: 27 CUAD v1 contracts (CC BY 4.0, The Atticus Project), 3 SEC EDGAR credit-agreement amendments, 8 Arabic texts. 10,810 sentences in the database [measured].
 - Models (open weights, via OpenRouter): answers `deepseek/deepseek-v4.1-flash`, support check `qwen/qwen3.8-27b`, blind check `z-ai/glm-5.3`.
 - Hand-labelled by the authors: 37 scenario cases with expected outcomes, gold atoms for the clauses they use, and the portfolio file that names our party in each contract. The same author wrote the cases and the rules.
-- Portfolio demo: 38 contracts, 9 scenarios, 612 outcomes per state.
+- Portfolio demo: 38 contract files = 33 agreements; 5 are Arabic versions of English agreements. 9 scenarios, 612 outcomes per state.
 
 ## Scenario cases
 

@@ -52,7 +52,7 @@ body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 syste
 a { color: var(--notice); }
 header { padding: 14px 24px 0; border-bottom: 1px solid var(--line); background: var(--panel); }
 .top { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; align-items: flex-start; }
-h1 { font-size: 28px; line-height: 1.2; margin: 0 0 4px; letter-spacing: -.015em; max-width: 30ch; }
+h1 { font-size: 28px; line-height: 1.2; margin: 0 0 4px; letter-spacing: -.015em; max-width: 34ch; }
 h2 { font-size: 18px; margin: 22px 0 8px; }
 h3 { font-size: 16px; margin: 0 0 6px; }
 h4 { font-size: 14px; }
@@ -177,6 +177,7 @@ table.atoms { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6
 .rvnav { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 0 10px; font-size: 14px; }
 .events { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
 @media (min-width: 700px) { .events { flex-wrap: wrap; overflow-x: visible; } }
+@media (max-width: 699px) { .events.more { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent); } }
 .events button { font: inherit; font-size: 14px; font-weight: 600; flex: none; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 18px; padding: 6px 14px; cursor: pointer; }
 .events button[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
 .sentence { font-size: 18px; line-height: 1.5; max-width: 72ch; margin: 12px 0 16px; }
@@ -212,6 +213,7 @@ svg.ripple { width: 100%; height: auto; max-width: 560px; background: var(--pane
 .ripple .spoke { stroke: var(--line); stroke-width: 1; }
 .ripple .ring { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 3 5; }
 .ripple .ringbtn { cursor: pointer; }
+.ripple .openarc { fill: none; stroke: var(--blocked); stroke-width: 10; stroke-dasharray: 6 4; opacity: .75; }
 .ripple .ringbtn rect { fill: var(--panel); stroke: var(--line); }
 .ripple .ringbtn:focus { outline: none; }
 .ripple .ringbtn:focus rect { stroke: var(--focus); stroke-width: 2.5; }
@@ -231,8 +233,55 @@ svg.ripple { width: 100%; height: auto; max-width: 560px; background: var(--pane
 .marks svg.cant .shape { stroke-dasharray: 5 3; }
 .marks svg text { font: 700 15px system-ui, sans-serif; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
 
+.lead { font-size: 17px; margin: 0 0 12px; max-width: 70ch; }
+.proofs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0 0 8px; }
+.proofs > div { background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--c); border-radius: 8px; padding: 8px 12px; font-size: 14px; line-height: 1.4; }
+.proofs b { display: block; font-size: 15px; margin-bottom: 2px; }
+.proofs .sm { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+.honest { font-size: 14px; color: var(--muted); margin: 0 0 12px; max-width: 110ch; }
+.sched h2, .oi h2 { margin: 0 0 6px; font-size: 20px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; }
+.sched h2 button { font-size: 13px; font-weight: 400; }
+.oi { margin-top: 22px; }
+.oi .line { margin: 0 0 8px; font-weight: 600; }
+.oi h3 { margin: 14px 0 2px; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+.oi .help { margin: 0 0 6px; color: var(--muted); font-size: 14px; max-width: 70ch; }
+.oitem { background: var(--panel); border: 1px solid var(--line); border-left: 5px solid var(--c); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; }
+.oitem .top { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; justify-content: space-between; }
+.oitem .what { margin: 2px 0 0; }
+.oitem .wc { margin: 2px 0 0; font-size: 14px; color: var(--muted); }
+.oitem details { margin: 4px 0 0; }
+.oitem details summary { margin: 0; }
+.strip3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 8px 0 0; }
+.dcard { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.dcard h3 { margin: 0; font-size: 16px; }
+.dcard blockquote { margin: 0; font-size: 14px; max-height: 9.5em; overflow: hidden; }
+.dcard ol { margin: 0; padding-left: 20px; font-size: 14px; }
+.dcard ol li { margin: 2px 0; }
+.dcard .go { margin-top: auto; align-self: flex-start; }
+.effort { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; justify-content: space-between; }
+.effort p { margin: 0; max-width: 100ch; }
+.whylines { margin: 6px 0 10px; padding-left: 20px; font-size: 16px; max-width: 72ch; }
+.whylines li { margin: 2px 0; }
+#printsheet { display: none; }
+.howto { margin: 0 0 6px; }
+.howto summary { margin: 0; }
+details.fact { background: var(--panel); border: 1px solid var(--line); border-left: 5px solid var(--c); border-radius: 8px; padding: 6px 12px; margin-bottom: 6px; }
+details.fact > summary { margin: 0; color: var(--ink); font-size: 15px; }
+details.fact .chip { white-space: normal; max-width: 100%; }
+details.fact[open] > summary { margin-bottom: 6px; }
+@media print {
+  header, main, #ev, footer, nav { display: none !important; }
+  #printsheet { display: block; color: #000; background: #fff; font: 12pt/1.4 Georgia, serif; padding: 0; }
+  #printsheet h1 { font-size: 18pt; margin: 0 0 2pt; max-width: none; }
+  #printsheet h2 { font-size: 13pt; margin: 10pt 0 3pt; }
+  #printsheet ul { margin: 0 0 4pt; padding-left: 16pt; }
+  #printsheet li { margin: 1pt 0; break-inside: avoid; }
+  #printsheet .sub { color: #333; font-size: 10pt; }
+  body { background: #fff; }
+}
+
 /* ---------- drawer ---------- */
-#ev { position: fixed; top: 0; right: 0; bottom: 0; width: min(1100px, 100vw); background: var(--panel); border-left: 1px solid var(--line); box-shadow: -8px 0 24px rgba(0,0,0,.18); overflow: auto; padding: 18px 24px 40px; z-index: 10; }
+#ev { position: fixed; top: 0; right: 0; bottom: 0; width: min(1180px, 100vw); overflow-x: hidden; background: var(--panel); border-left: 1px solid var(--line); box-shadow: -8px 0 24px rgba(0,0,0,.18); overflow: auto; padding: 18px 24px 40px; z-index: 10; }
 #ev[hidden] { display: none; }
 #ev .close { position: sticky; top: 0; float: right; z-index: 2; }
 .answer { font-size: 20px; line-height: 1.45; max-width: 60ch; margin: 8px 0 6px; }
@@ -245,6 +294,7 @@ svg.ripple { width: 100%; height: auto; max-width: 560px; background: var(--pane
 .branches li { margin: 2px 0; }
 details.reasoning { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 6px; }
 details.reasoning > summary { font-size: 16px; font-weight: 600; color: var(--ink); }
+.rg-bar label, .rg-bar select { max-width: 100%; min-width: 0; }
 /* ---------- reasoning graph ---------- */
 .rg { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 8px 0 12px; background: var(--bg); }
 .rg-bar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font-size: 14px; }
@@ -252,12 +302,14 @@ details.reasoning > summary { font-size: 16px; font-weight: 600; color: var(--in
 .rg-bar input[type=range] { width: 160px; }
 .qual { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; padding: 2px 10px 2px 2px; border-radius: 14px; border: 1px solid var(--c); color: var(--c); background: var(--cbg); }
 .assumed { font-size: 13px; font-weight: 700; color: var(--warn); border: 1px dashed var(--warn); border-radius: 10px; padding: 1px 8px; }
-.rg-main { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 12px; position: relative; margin-top: 8px; }
-.rg-scroll { overflow: auto; border: 1px solid var(--soft); border-radius: 6px; background: var(--panel); max-height: 560px; }
+.rg-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; position: relative; margin-top: 8px; }
+.rg-pane:empty { display: none; }
+@media (min-width: 900px) { svg.graph { max-width: 100%; height: auto; } }
+.rg-scroll { overflow: auto; border: 1px solid var(--soft); border-radius: 6px; background: var(--panel); max-height: 620px; }
 .rg-scroll:focus-visible { outline: 2px solid var(--focus); }
-.rg-pane { font-size: 14px; border: 1px solid var(--soft); border-radius: 6px; background: var(--panel); padding: 8px 10px; max-height: 560px; overflow: auto; }
+.rg-pane { font-size: 14px; border: 1px solid var(--soft); border-radius: 6px; background: var(--panel); padding: 8px 10px; max-height: 360px; overflow: auto; }
 .rg-pane h4 { margin: 0 0 4px; font-size: 15px; }
-.rg-link { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.rg-link { display: none; }
 .rg-link polyline { stroke: var(--lit); stroke-width: 1.5; stroke-dasharray: 4 3; }
 svg.graph { display: block; font-family: system-ui, sans-serif; }
 .graph .edge { fill: none; stroke: var(--edge); stroke-width: 1.4; }
@@ -330,6 +382,10 @@ svg.graph { display: block; font-family: system-ui, sans-serif; }
   .ripbox { position: static; }
   .bar { justify-content: flex-start; }
 }
+@media (max-width: 1099px) {
+  .proofs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .strip3 { grid-template-columns: minmax(0, 1fr); }
+}
 @media (max-width: 899px) {
   .top2 { grid-template-columns: minmax(0, 1fr); }
   .cases { grid-template-columns: minmax(0, 1fr); }
@@ -337,12 +393,15 @@ svg.graph { display: block; font-family: system-ui, sans-serif; }
   h1 { font-size: 24px; }
 }
 @media (max-width: 699px) {
+  .proofs { grid-template-columns: minmax(0, 1fr); }
   .scale { grid-template-columns: minmax(0, 1fr); }
   .revs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   h1 { font-size: 22px; }
   #ev { padding: 14px 16px 40px; }
   .act { grid-template-columns: 1fr; }
   .act .st, .act .what, .act .meta, .act button { grid-row: auto; grid-column: 1; }
+  .act button { justify-self: start; }
+  #ev .close { max-width: 100%; }
   .kv { grid-template-columns: 1fr; }
   .sentence { font-size: 17px; }
   .answer { font-size: 18px; }
@@ -352,7 +411,7 @@ svg.graph { display: block; font-family: system-ui, sans-serif; }
 <body>
 <header>
   <div class="top">
-    <div><h1>Run a deal against every contract. Compile once, answer every scenario.</h1><div class="sub" id="meta"></div></div>
+    <div><h1>Run a deal against every contract.</h1><div class="sub" id="meta"></div></div>
     <div class="bar"><div class="seg" role="group" aria-label="Colour theme" id="theme"></div></div>
   </div>
   <nav><a href="#ripple" id="nav-ripple">Overview</a><a href="#reviewers" id="nav-reviewers">For reviewers</a></nav>
@@ -361,43 +420,52 @@ svg.graph { display: block; font-family: system-ui, sans-serif; }
   <section id="view-ripple"></section>
   <section id="view-reviewers" hidden>
     <div class="simnote" id="simnote"></div>
-    <p class="rvnav"><a href="#queue" data-jump="rv-queue">To resolve</a><a href="#map" data-jump="rv-clock">+90 days</a><a href="#map" data-jump="rv-map">Exposure map and per-event table</a></p>
+    <p class="rvnav"><a href="#queue" data-jump="rv-queue">Open work</a><a href="#map" data-jump="rv-clock">+90 days</a><a href="#map" data-jump="rv-map">Exposure map and per-event table</a></p>
     <div id="rv-queue"></div>
     <div id="rv-clock"></div>
     <div id="rv-map"></div>
   </section>
 </main>
 <aside id="ev" hidden aria-label="Agreement detail"></aside>
+<section id="printsheet" aria-hidden="true"></section>
 <script id="data" type="application/json">/*DATA*/null</script>
 <script>
 "use strict";
 const D = JSON.parse(document.getElementById("data").textContent);
 const TEMPLATE = {coc: "change of control", assign: "assignment", term: "term and renewal"};
-const STATUS = {firm: "Clear", provisional: "Plan for worst case", blocked: "Can’t tell yet"};
+const STATUS = {firm: "Answered", provisional: "Worst case planned", blocked: "Open item"};
 const WHY_LABEL = {missing_document: "Document missing", missing_fact: "Fact missing", check_extraction: "Check the extraction",
   legal_judgement: "A legal call", versions: "Language versions disagree", unclear: "Not yet clear"};
 const WHY_HELP = {missing_document: "The answer is in another document, or in a definition we do not have.",
   missing_fact: "The answer depends on a business fact, not on the text. Give it as an input.",
-  check_extraction: "The compiler was unsure what the clause says. Someone should check the quote.",
+  check_extraction: "The model was unsure what the clause says. Someone should check the quote.",
   legal_judgement: "The clause needs a legal reading. It is a question for counsel.",
   versions: "The English and Arabic versions give different answers. Unknown is not false, so nothing is assumed.",
-  unclear: "The result is open for a reason the compiler did not name."};
+  unclear: "The result is open for a reason that is not named."};
 const WHY_ORDER = ["missing_document", "missing_fact", "check_extraction", "legal_judgement", "versions", "unclear"];
-const GROUPS = ["auto", "they", "prepay", "consent", "notify", "other", "we"];
+// Open items, by the action each one needs: [group title, one-line help, lead word on each item]
+const OPEN = {document: ["Needs a document we don’t have", "A definition or a term lives in another agreement. With that document the rules can answer.", "Missing"],
+  counsel: ["Question for counsel", "The clause needs a legal reading. Nothing is guessed; where there is a worst case it is shown as a note.", "Question"],
+  check: ["Check one fact", "The model was unsure what the clause says. Someone checks the quote and confirms one fact.", "Check"],
+  unreviewed: ["Not reviewed in this demo", "The model was unsure and this agreement has no hand labels, so the simulated reviewer skipped it.", "Not checked"]};
+const OPEN_ORDER = ["document", "counsel", "check", "unreviewed"];
+const OPEN_OF = {missing_document: "document", legal_judgement: "counsel"};
+const GROUPS = ["consent", "notify", "they", "auto", "prepay", "other", "we"];
 const GCLS = {auto: "termination", they: "termination", prepay: "prepayment", consent: "consent", notify: "notice", other: "other", we: "option"};
 const STATUS_CLS = {firm: "clear", provisional: "plan", blocked: "blocked"};
-const DEALS = D.scenarios.filter(s => s.templates.join() !== "term");      // the clock is not a deal: it lives under For reviewers
+const DEALS = D.scenarios.filter(s => s.templates.join() !== "term").sort((a, z) => (z.events[0].event === "ipo") - (a.events[0].event === "ipo"));      // IPO first; the clock is not a deal
 const KIND_WORD = {service_limitation: "service limitation", deadline: "deadline", option_deadline: "option deadline", earliest_exit: "earliest exit",
   expired: "already expired", expiry: "expiry", renewed: "renewal"};
 const SC = Object.fromEntries(D.scenarios.map(s => [s.id, s]));
 const AG = D.agreements, AG_OF = {};
 for (const [a, v] of Object.entries(AG)) v.versions.forEach(k => AG_OF[k] = a);
 const keys = Object.keys(D.contracts), agKeys = Object.keys(AG);
+const wj = s => String(s).replace(/[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)+/g, w => D.words[w] || w.replace(/_/g, " "));
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
 const lang = k => D.contracts[k].lang;
 const nm = k => AG[AG_OF[k]].name;
 const hasPair = ak => AG[ak].versions.length > 1;
-const langMark = (ak, a) => hasPair(ak) ? `<span class="lang"${a && a.note ? ` title="${esc(a.note)}"` : ""}>EN · AR${a && a.note ? ": Arabic can’t tell" : ""}</span>` : lang(AG[ak].versions[0]) === "ar" ? '<span class="lang">AR</span>' : "";
+const langMark = (ak, a) => hasPair(ak) ? `<span class="lang"${a && a.note ? ` title="${esc(a.note)}"` : ""}>EN · AR${a && a.note ? ": Arabic is an open item" : ""}</span>` : lang(AG[ak].versions[0]) === "ar" ? '<span class="lang">AR</span>' : "";
 const verName = k => lang(k) === "ar" ? "Arabic version" : "English version";
 const who = (h, k) => ({us: `our party (${D.contracts[k].party})`, them: "counterparty", either: "either party", both: "both parties"}[h] || "-");
 const sevName = n => ({6: "they may terminate or demand prepayment", 5: "their consent is needed", 4: "we must notify", 3: "a service limitation", 2: "a deadline", 1: "another effect", 0: "nothing"})[n];
@@ -409,7 +477,7 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 const fmtDate = s => { const [y, m, d] = s.split("-").map(Number); return `${d} ${MONTHS[m - 1]} ${y}`; };
 const fmtMoney = v => `$${+(v / 1e6).toFixed(1)}M`;
 const dayDiff = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5);
-let stateName = D.states.review ? "review" : "compiled", view = "ripple", rowOrder = [], colOrder = [], sortNote = "", backTo = "ripple", rippleSc = "sale_60", qEv = "", showNone = false, rippleDone = false;
+let stateName = D.states.review ? "review" : "compiled", view = "ripple", rowOrder = [], colOrder = [], sortNote = "", backTo = "ripple", rippleSc = D.default_event, qEv = "", showNone = false, rippleDone = false;
 const S = () => D.states[stateName];
 const PHONE = window.matchMedia("(max-width: 699px)");
 
@@ -434,7 +502,7 @@ const KIND_PL = {"termination right": ["we may terminate", "they may terminate"]
 function plainLabel(l) {
   return String(l).split("; ").map(p => {
     if (p === "no reaction") return "no reaction";
-    if (p === "blocked") return "can’t tell yet";
+    if (p === "blocked") return "open item";
     const m = p.match(/^(.*?)(?: \((us|counterparty)\))?(?: by (\d{4}-\d\d-\d\d))?$/);
     const t = KIND_PL[m[1]] ? KIND_PL[m[1]][m[2] === "us" ? 0 : 1] : m[1];
     return t + (m[3] ? ` by ${fmtDate(m[3])}` : "");
@@ -450,6 +518,15 @@ function compose(effects, name) {
   return s.startsWith(name) ? s : s.charAt(0).toUpperCase() + s.slice(1);
 }
 const clauseWord = ref => ref ? "§" + ref : "";
+const itemsOf = (n, one, many) => `${n} ${plural(n, one, many)}`;
+function openTail(b) {
+  const o = b.open_by, parts = [];
+  if (o.document.length) parts.push(`${o.document.length} ${plural(o.document.length, "needs", "need")} a document we don’t have`);
+  if (o.counsel.length) parts.push(`${itemsOf(o.counsel.length, "question", "questions")} for counsel`);
+  if (o.check.length) parts.push(`${itemsOf(o.check.length, "fact", "facts")} to check`);
+  if (o.unreviewed.length) parts.push(`${o.unreviewed.length} not reviewed in this demo`);
+  return `${itemsOf(b.cant, "open item", "open items")}: ${parts.join(", ")}`;
+}
 function sentence(sc) {
   const b = S().brief[sc], g = b.groups, parts = [];
   if (g.auto) parts.push(g.auto === 1 ? "1 ends automatically" : `${g.auto} end automatically`);
@@ -459,12 +536,13 @@ function sentence(sc) {
   if (g.notify) parts.push(`we must notify ${g.notify}`);
   if (g.other) parts.push(`${g.other} ${plural(g.other, "has", "have")} another effect (${b.other_kinds.map(k => KIND_WORD[k] || k).join(", ")})`);
   const nd = b.notify_due ? `we must give notice by ${fmtDate(b.notify_due)}` : "";
-  let s = `If ${esc(eventPhrase(sc))}: ` + (b.react ? `<b>${b.react} of ${b.agreements} contracts</b> react — ${esc(parts.join(", "))}.` : `<b>no contract</b> reacts against us.`);
-  if (b.options) s += ` We hold a right to terminate ${b.options} ${plural(b.options, "contract", "contracts")}.`;
+  const wc = b.worst_counsel ? ` (${b.worst_counsel} of them as a worst case for counsel to confirm)` : "";
+  let s = `If ${esc(eventPhrase(sc))}: ` + (b.react ? `<b>${b.react} of ${b.agreements} agreements</b> react${wc} — ${esc(parts.join(", "))}.` : `<b>no agreement</b> is certain to react against us.`);
+  if (b.options) s += ` We hold a right to terminate ${b.options} ${plural(b.options, "agreement", "agreements")}.`;
   if (b.more) s += ` They carry ${b.more} more ${plural(b.more, "effect", "effects")}${nd ? ", and " + nd : ""}.`;
   else if (nd) s += ` ${nd.charAt(0).toUpperCase() + nd.slice(1)}.`;
-  if (b.counsel) s += ` <a href="#queue${sfx()}">${b.counsel} ${plural(b.counsel, "question", "questions")} for counsel</a>.`;
-  return s + ` ${b.cant} can’t tell yet; ${b.none} ${plural(b.none, "has", "have")} no reaction.`;
+  if (b.cant) s += ` <a href="#openitems${sfx()}" data-jump="openitems">${esc(openTail(b))}</a>.`;
+  return s + ` ${b.none} ${plural(b.none, "has", "have")} no reaction.`;
 }
 
 // ---------------- text and quotes ----------------
@@ -494,11 +572,11 @@ function quotesHi(k, r) {
     || '<p class="note">No sentence is cited for this answer.</p>';
 }
 function atomRows(k, t, atoms, pend) {
-  return `<table class="atoms"><tr><th>fact</th><th>value</th><th>compiler status</th><th>agreement</th><th>review</th></tr>` +
+  return `<table class="atoms"><tr><th>fact</th><th>value</th><th>reading status</th><th>agreement</th><th>review</th></tr>` +
     atoms.map(a => {
       const i = S().atominfo[`${k}|${t}|${a}`] || {};
       const agree = D.atoms === "gold" ? "gold" : `${i.agree}/3 runs, support ${i.support ? "passed" : "not passed"}`;
-      const rv = i.reviewed ? '<span class="ok">reviewed</span>' : i.unsure ? '<span class="warn">answer needed (compiler unsure)</span>' :
+      const rv = i.reviewed ? '<span class="ok">reviewed</span>' : i.unsure ? '<span class="warn">answer needed (the model is unsure)</span>' :
         pend && pend.includes(a) ? '<span class="warn">confirm</span>' : "-";
       return `<tr><td><code>${esc(a)}</code></td><td><code>${fmt(i.value)}</code>${i.suspicious ? `<div class="warn">⚠ ${esc(i.suspicious)}</div>` : ""}</td>` +
         `<td>${esc(i.status || "")}</td><td>${agree}</td><td>${rv}</td></tr>`;
@@ -521,7 +599,7 @@ function renderTop() {
   const hl = S().header.hand_labels;
   document.getElementById("simnote").textContent = stateName === "review" ?
     `Simulated review: hand labels play the reviewer. This is not a lawyer’s review. ${hl.contracts_without} of ${keys.length} contract files have no hand labels and stay as compiled.` :
-    "Before review: the answers are exactly what the compiler read, with no reviewer checks.";
+    "Before review: the answers are exactly what the model read, with no reviewer checks.";
 }
 
 // ---------------- analyst view: the exposure map and the engine numbers ----------------
@@ -531,9 +609,9 @@ function cellHtml(id, k) {
   if (!cell) return `<td><span class="cell absent">no clause</span></td>`;
   const blk = cell.status === "blocked", prov = cell.status === "provisional";
   const cls = cell.sev ? cell.cls : blk ? "blocked" : "none";
-  const main = cell.sev ? plainLabel(cell.labels[0]) : blk ? "Can’t tell yet" : "no reaction";
+  const main = cell.sev ? plainLabel(cell.labels[0]) : blk ? "Open item" : "no reaction";
   const more = cell.sev && cell.labels.length > 1 ? ` <span class="cz">+ ${esc(plainLabel(cell.labels.slice(1).join("; ")))}</span>` : "";
-  const tag = prov ? `plan for worst case · clears with ${cell.clears} ${plural(cell.clears, "fact", "facts")}` : blk ? (cell.sev ? "rest can’t be told" : "") : "clear";
+  const tag = prov ? `plan for worst case · clears with ${cell.clears} ${plural(cell.clears, "fact", "facts")}` : blk ? (cell.sev ? "rest is open" : "") : "answered";
   const cz = cell.causes.map(c => `<span class="${c === "legal_judgement" ? "counsel" : ""}">${esc(D.cause_label[c])}</span>`).join(" · ");
   return `<td><button class="cell c-${cls} ${prov ? "prov" : ""} ${blk ? "blk" : ""} ${cell.pending ? "pending" : ""}" data-ev="${esc(id + "|" + k)}" ` +
     `aria-label="${esc(SC[id].name)}, ${esc(nm(k))}: ${esc(main)}, ${esc(STATUS[cell.status])}${cz ? ", " + esc(cell.causes.map(c => D.cause_label[c]).join(", ")) : ""}">` +
@@ -549,17 +627,17 @@ function defaultOrder() {
 function renderMap() {
   const v = document.getElementById("rv-map"), st = S(), h0 = st.header, c = h0.cases, e = st.effort;
   let h = `<p class="stats"><span>Across ${D.scenarios.length} events and ${agKeys.length} agreements (${keys.length} contract files): <b>${h0.firm}</b> of ${h0.outcomes} answers clear</span>` +
-    `<span><b>${h0.provisional}</b> plan for worst case</span><span><b>${h0.blocked}</b> can’t tell yet</span>` +
+    `<span><b>${h0.provisional}</b> plan for worst case</span><span><b>${h0.blocked}</b> open items</span>` +
     `<span><b>${h0.counsel}</b> need a legal call</span><span>Test cases: <b>${c["wrong firm"]}</b> wrong answers</span></p>`;
   h += `<div class="big"><b>${e.pending_outcomes}</b> pending outcomes rest on <b>${e.single_atom_confirmations}</b> unconfirmed atoms over ${e.clauses} clauses. ` +
-    `They need <b>${e.cards}</b> reasoning-path cards instead of ${e.single_atom_confirmations} one-atom confirmations. <b>${st.questions.length}</b> atoms the compiler could not settle come first. ` +
+    `They need <b>${e.cards}</b> reasoning-path cards instead of ${e.single_atom_confirmations} one-atom confirmations. <b>${st.questions.length}</b> atoms the model could not settle come first. ` +
     `Both lists start with what could cause the most harm.</div>`;
-  h += `<table class="counts"><tr><th>Event</th><th>Clear</th><th>Plan for worst case</th><th>Can’t tell yet</th><th>Legal calls</th><th>Open facts</th><th>Pending outcomes</th><th>Material open</th></tr>` +
+  h += `<table class="counts"><tr><th>Event</th><th>Answered</th><th>Plan for worst case</th><th>Open items</th><th>Legal calls</th><th>Open facts</th><th>Pending outcomes</th><th>Material open</th></tr>` +
     D.scenarios.map(s => { const m = st.summaries[s.id];
       return `<tr><td>${esc(s.name)}</td><td>${m.firm}</td><td>${m.provisional}</td><td>${m.blocked}</td><td>${m.counsel}</td><td>${m.open_questions}</td><td>${m.pending}</td><td>${m.material_open}</td></tr>`; }).join("") +
     `</table><p class="note prose">Material open: open facts and cards whose worst answer in that event is a termination right, a prepayment or a consent. Counts here are per contract file and per clause, so a translation counts as its own file.</p>`;
-  h += `<h2>Exposure map, per contract file</h2><div class="legend">${[["termination", "They may terminate"], ["prepayment", "They may demand prepayment"], ["consent", "Consent"], ["notice", "Notice"], ["deadline", "Deadline"], ["other", "Other effect"], ["blocked", "Can’t tell yet"], ["none", "No reaction"]].map(([c, l]) => `<span class="chip c-${c}">${l}</span>`).join("")}` +
-    `<span>Solid edge: clear. Dashed edge: plan for worst case. Hatched: can’t tell yet. Open because:</span>${causeChips(Object.keys(D.cause_label))}</div>`;
+  h += `<h2>Exposure map, per contract file</h2><div class="legend">${[["termination", "They may terminate"], ["prepayment", "They may demand prepayment"], ["consent", "Consent"], ["notice", "Notice"], ["deadline", "Deadline"], ["other", "Other effect"], ["blocked", "Open item"], ["none", "No reaction"]].map(([c, l]) => `<span class="chip c-${c}">${l}</span>`).join("")}` +
+    `<span>Solid edge: answered. Dashed edge: plan for worst case. Hatched: open item. Open because:</span>${causeChips(Object.keys(D.cause_label))}</div>`;
   h += `<div class="tools"><span>Click an event to sort contracts by it; click a contract to sort events by it. ${esc(sortNote)}</span><button class="plain" id="reset">Reset order</button></div>`;
   h += `<div class="tablewrap"><table class="map"><thead><tr><th class="corner">Contract file (our party)</th>` +
     colOrder.map(id => `<th scope="col"><button class="hbtn" data-col="${id}"><span class="nm">${esc(SC[id].name)}</span></button></th>`).join("") + `</tr></thead><tbody>`;
@@ -584,42 +662,57 @@ function reactionLines(xs, k) {
     (x.status === "TRIGGERED" ? `${esc(who(x.holder, k))} · ${x.due ? esc(fmtDate(x.due)) : "no date in the clause"}<br>` : "") + `<span class="note">${esc(x.reason || "")}</span></dd>`).join("");
 }
 function answerOf(id, ak, k) {
-  const a = S().acells[id][ak], v = a && a.versions[k], name = AG[ak].name, rows = (S().rows[id] || {})[k] || [];
+  const a = S().acells[id][ak], v = a && a.versions[k], name = AG[ak].name;
   if (!v) return ["No clause of this kind was found in this contract, so nothing reacts.", "none"];
+  const rec = k === AG[ak].versions[0];
+  if (rec && a.counsel_wc) return [`Worst case, for counsel to confirm: ${compose(v.effects, name)}.`, GCLS[v.effects[0].group]];
   if (v.effects.length) return [(v.status === "firm" ? "" : "Plan for the worst case: ") + compose(v.effects, name) + ".", GCLS[v.effects[0].group]];
   if (v.cant) {
-    const w = WHY_ORDER.find(c => v.causes.includes(c));
-    return [`We can’t tell yet${w ? ": " + WHY_LABEL[w].toLowerCase() + ". " + WHY_HELP[w] : "."}`, "blocked"];
+    const kind = rec && a.item ? a.item.kind : OPEN_OF[WHY_ORDER.find(c => v.causes.includes(c))] || "check";
+    return [`Open item: ${OPEN[kind][0].charAt(0).toLowerCase() + OPEN[kind][0].slice(1)}. ${OPEN[kind][1]}`, kind === "counsel" ? "counsel" : "blocked"];
   }
-  return ["No reaction: under the compiled reading, this event does not trigger the clause.", "none"];
+  return ["No reaction: under the reading of the clause, this event does not trigger it.", "none"];
 }
 // What the engine says for one clause: for the event itself, or for the slider interval the reader has picked (`iv`).
 function rxHtml(r, k, iv) {
   const st = iv ? iv.status : r.status, rs = iv ? iv.rx : st === "firm" ? r.reactions : r.worst;
   const at = iv ? `<p class="note">At ${esc(fmtNum(iv.at, r.flips.find(f => f.intervals.includes(iv)).unit))} (picked on the slider):</p>` : "";
-  if (st === "firm") return at + `<dl class="kv">${reactionLines(rs, k)}</dl>` + (!iv && r.tried ? `<p class="note">Clear in every reading of the open ${plural(r.tried.length, "fact", "facts")} ` +
+  if (st === "firm") return at + `<dl class="kv">${reactionLines(rs, k)}</dl>` + (!iv && r.tried ? `<p class="note">Answered in every reading of the open ${plural(r.tried.length, "fact", "facts")} ` +
     `${r.tried.map(x => `<code>${esc(x)}</code>`).join(", ")}; the reason shows the first reading tried, not a compiled value.</p>` : "");
   if (st === "provisional") return at + `<p><b>Worst case for us:</b></p><dl class="kv">${reactionLines(rs, k)}</dl>` + (iv ? "" : `<p><b>Readings</b> (clears with ${r.clears} ${plural(r.clears, "fact", "facts")}):</p>` +
     `<ul class="branches">${r.branches.map(b => `<li><span class="chip c-${sevClass(b.sev)}">${esc(plainLabel(b.label))}</span> — ${esc(b.when)}</li>`).join("")}</ul>`);
-  return at + `<p><b>Can’t tell yet:</b> ${esc(iv ? "the answer is open at this value." : r.missing)}</p>`;
+  return at + `<p><b>Open item:</b> ${esc(iv ? "the answer is open at this value." : r.missing)}</p>`;
 }
 function renderEvidence(id, k) {
   const ev = document.getElementById("ev"), ak = AG_OF[k], A = AG[ak], c = D.contracts[k], s = SC[id], a = S().acells[id][ak];
   const rows = (S().rows[id] || {})[k] || [];
   const [text, cls] = answerOf(id, ak, k);
+  const v0 = a && a.versions[k], headT = new Set(v0 ? v0.effects.map(e => e.template) : []);
+  const head = rows.filter(r => headT.has(r.template)), use = head.length ? head : rows;
   let h = `<button class="plain close" id="close">Close</button><h2><bdi>${esc(A.name)}</bdi> <span class="sub">· ${esc(A.type)}</span> ${langMark(ak)}</h2>` +
     `<p class="sub">${esc(chipLabel(id))} · our party <bdi>${esc(c.party)}</bdi> · as of ${esc(fmtDate(D.as_of))} · ${esc(S().label)}</p>`;
   if (hasPair(ak)) h += `<div class="seg" role="group" aria-label="Language version">` + A.versions.map(v =>
     `<button data-ver="${esc(v)}" aria-pressed="${v === k}">${verName(v)}</button>`).join("") + `</div>`;
-  if (a && a.disagree) h += `<p class="warn"><b>The language versions disagree.</b> Unknown is not false, so this agreement counts as “can’t tell yet” until counsel settles it.</p>` +
+  if (a && a.disagree) h += `<p class="warn"><b>The language versions disagree.</b> Unknown is not false, so this agreement is an open item until counsel settles it.</p>` +
     `<ul>` + A.versions.map(v => `<li>${verName(v)}: ${esc(answerOf(id, ak, v)[0])}</li>`).join("") + `</ul>`;
   if (a && a.note) h += `<p class="langnote">${esc(a.note)} The English text is the agreement of record, so its answer stands.</p>`;
   h += `<p class="answer c-x c-${cls}"><bdi>${a && a.disagree ? esc(verName(k)) + ": " : ""}${esc(text)}</bdi></p>`;
-  const counsel = a && a.causes.includes("legal_judgement"), vs = a && a.versions[k] ? a.versions[k].status : "";
-  h += `<p>${a && a.disagree ? '<span class="chip c-blocked">Language versions disagree</span>' : a ? `<span class="chip c-${STATUS_CLS[vs || a.status]}">${esc(STATUS[vs || a.status])}</span>` : ""}` +
-    `${counsel ? ' <span class="chip c-counsel">Question for counsel</span>' : ""}</p>`;
-  const open = rows.reduce((n, r) => n + r.unconfirmed.length + r.ask.length, 0);
-  if (open) h += `<p class="note prose">${open} ${plural(open, "fact behind this answer is", "facts behind this answer are")} not confirmed yet. Open “Show reasoning” to confirm or correct ${plural(open, "it", "them")}.</p>`;
+  const lines = [];
+  for (const r of use) for (const [kind, t] of r.why || []) if (!lines.includes(t) && !(kind === "result" && /no reaction/.test(t) && use.length > 1)) lines.push(t);
+  if (lines.length) h += `<ul class="whylines" aria-label="Why this answer">${lines.slice(0, 5).map(t => `<li>${esc(t)}</li>`).join("")}</ul>`;
+  const counsel = a && a.causes.includes("legal_judgement"), vs = v0 ? v0.status : "";
+  const kindNow = a && a.cant && a.item && k === A.versions[0] ? a.item.kind : "";
+  h += `<p>${a && a.disagree ? '<span class="chip c-blocked">Language versions disagree</span>' : kindNow ? `<span class="chip c-${ITEM_CLS[kindNow]}">${esc(OPEN[kindNow][0])}</span>` : a ? `<span class="chip c-${STATUS_CLS[vs || a.status]}">${esc(STATUS[vs || a.status])}</span>` : ""}` +
+    `${counsel && kindNow !== "counsel" ? ' <span class="chip c-counsel">Question for counsel</span>' : ""}</p>`;
+  // Two counts, kept apart: the facts that decide this answer, and facts in the other clauses of the same contract.
+  const pend = r => r.unconfirmed.length + r.ask.length, hp = use.reduce((n, r) => n + pend(r), 0), others = rows.filter(r => !use.includes(r));
+  const op = others.reduce((n, r) => n + pend(r), 0), names = [...new Set(others.filter(r => pend(r)).map(r => TEMPLATE[r.template]))].join(" and ");
+  const decided = use.reduce((n, r) => n + (r.status === "firm" ? r.atoms.length : 0), 0);
+  let note = "";
+  if (!hp && decided) note = "Every fact that decides this answer is confirmed.";
+  else if (hp) note = `${hp} ${plural(hp, "fact that decides this answer is", "facts that decide this answer are")} not confirmed yet. Open “Show reasoning” to confirm or correct ${plural(hp, "it", "them")}.`;
+  if (op) note += ` ${op} other ${plural(op, "fact", "facts")}, in the ${names} clause, ${plural(op, "is", "are")} not confirmed; ${plural(op, "it", "they")} could add an effect but cannot change the answer above.`;
+  if (note) h += `<p class="note prose">${esc(note.trim())}</p>`;
   h += `<details class="reasoning" id="reasoning"><summary>Show reasoning</summary>`;
   for (const r of rows) {
     const top = r.status === "provisional" ? sevClass(r.worst_sev) : r.status === "blocked" ? "blocked" :
@@ -629,7 +722,7 @@ function renderEvidence(id, k) {
     h += `<div id="rx-${rows.indexOf(r)}">${rxHtml(r, k, null)}</div>`;
     if (r.causes.length) h += `<ul class="note">${r.causes.map(x => `<li><b>${esc(D.cause_label[x])}</b>: ${esc(WHY_HELP[x])}</li>`).join("")}</ul>`;
     if (r.unconfirmed.length || r.ask.length) h += `<p class="note">Before relying on this answer: confirm ${r.unconfirmed.map(x => `<code>${esc(x)}</code>`).join(", ") || "nothing"}` +
-      `${r.ask.length ? `; answer ${r.ask.map(x => `<code>${esc(x)}</code>`).join(", ")} (the compiler is unsure)` : ""}.</p>`;
+      `${r.ask.length ? `; answer ${r.ask.map(x => `<code>${esc(x)}</code>`).join(", ")} (the model is unsure)` : ""}.</p>`;
     h += `<h3>Facts used from the clause</h3>` + (r.atoms.length ? atomRows(k, r.template, r.atoms, r.unconfirmed) : '<p class="note">None: no fact changes this answer.</p>') + `</div>`;
   }
   h += `</details>`;
@@ -639,23 +732,23 @@ function renderEvidence(id, k) {
   });
   if (!rows.length) h += `<p class="note">There is no clause of this kind to quote.</p>`;
   h += `<p class="note prose">The rules apply the compiled reading of the clause. A reaction shown here means the clause is potentially triggered under that reading; it is not a legal conclusion.</p>`;
-  ev.innerHTML = h; ev.hidden = false;
+  ev.innerHTML = h; ev.hidden = false; ev.scrollTop = 0;
   ev.querySelectorAll("[data-ver]").forEach(b => b.onclick = () => go("ev=" + id + "|" + b.dataset.ver, stateName));
   mountGraphs(id, k, rows);
   document.getElementById("reasoning").addEventListener("toggle", e => { if (e.target.open) GV.forEach((_, i) => renderGraph(i)); });
   document.getElementById("close").onclick = () => go(backTo, stateName);
-  document.getElementById("close").focus();
+  document.getElementById("close").focus({preventScroll: true});
 }
 
 // ---------------- to resolve ----------------
 function answerOpts(allowed) {
   if (/^true or false/.test(allowed) || /^"yes" or "no"/.test(allowed)) return ["Yes", "No", "Not stated"];
   const m = allowed.match(/^"[a-z_]+"( or "[a-z_]+")+/);
-  return m ? m[0].split(" or ").map(x => x.replace(/"/g, "").replace(/_/g, " ")).concat("Not stated") : null;
+  return m ? m[0].split(" or ").map(x => wj(x.replace(/"/g, ""))).concat("Not stated") : null;
 }
-const plainAllowed = a => a.replace(/^any list drawn from: /, "choose any that apply: ").replace(/^a list of effects: /, "choose the effects: ").replace(/[a-z]+(?:_[a-z]+)+/g, w => w.replace(/_/g, " "));
-const plainImpact = s => s.replace(/become firm/g, "become clear").replace(/none of (\d+) become firm/, "none of $1 becomes clear");
-const askOf = (t, a) => D.ask[`${t}|${a}`] || a;
+const plainAllowed = a => wj(a.replace(/^any list drawn from: /, "choose any that apply: ").replace(/^a list of effects: /, "choose the effects: "));
+const plainImpact = s => s.replace(/become firm/g, "become answered").replace(/none of (\d+) become firm/, "none of $1 becomes answered");
+const askOf = (t, a) => D.ask[`${t}|${a}`] || wj(a);
 function counselItems(sc) {
   const out = [];
   for (const s of D.scenarios) {
@@ -666,7 +759,7 @@ function counselItems(sc) {
       const rs = a.versions && Object.keys(a.versions).flatMap(k => ((S().rows[s.id] || {})[k] || []).filter(r => r.causes.includes("legal_judgement")).map(r => ({k, r})));
       const first = rs[0];
       out.push({sc: s.id, ak, k: first ? first.k : AG[ak].versions[0], templates: [...new Set(rs.map(x => TEMPLATE[x.r.template]))],
-        sev: Math.max(0, ...rs.map(x => x.r.worst_sev || 0)), text: a.effects.length ? "Worst case: " + compose(a.effects, AG[ak].name) + "." : (first ? first.r.missing : "")});
+        sev: Math.max(0, ...rs.map(x => x.r.worst_sev || 0)), text: a.item && a.item.what && a.item.kind === "counsel" ? a.item.what : (a.effects.length ? "Worst case: " + compose(a.effects, AG[ak].name) + "." : (first ? first.r.missing : ""))});
     }
   }
   return out.sort((x, z) => z.sev - x.sev || AG[x.ak].name.localeCompare(AG[z.ak].name));
@@ -680,36 +773,37 @@ function renderQueue() {
   let h = `<div class="resolve"><div class="pick"><label>Event <select id="qev">` +
     D.scenarios.map(s => `<option value="${s.id}" ${s.id === sc ? "selected" : ""}>${esc(s.name)}</option>`).join("") + `<option value="all" ${sc ? "" : "selected"}>All events</option></select></label></div>` +
     `<p class="prose">Two kinds of work are open. <a href="#qc${sfx()}" data-jump="qc">Questions for counsel (${ci.length})</a> need a legal call. ` +
-    `<a href="#qf${sfx()}" data-jump="qf">Facts to confirm (${facts})</a> are details of a clause that the compiler could not settle, or that someone should check against the text. Both lists start with what could cause the most harm.</p>`;
+    `<a href="#qf${sfx()}" data-jump="qf">Facts to confirm (${Math.min(10, facts)} of ${facts})</a> are details of a clause that the model could not settle, or that someone should check against the text. Both lists start with what could cause the most harm.</p>`;
   h += `<h2 id="qc">Questions for counsel (${ci.length})</h2>` + (ci.length ? "" : '<p class="note">None for this selection.</p>');
   ci.forEach((x, i) => {
     h += `<div class="item c-${sevClass(x.sev)}"><div class="head"><h3><span class="rank">${i + 1}</span>${nmv(x.k)} · ${esc(AG[x.ak].type)}${sc ? "" : " · " + esc(chipLabel(x.sc))}</h3>` +
       `<button class="plain" data-why="${esc(x.sc + "|" + x.k)}">Open the clause</button></div>` +
       `<p class="prose">A legal call on ${esc(x.templates.join(" and "))}. ${esc(x.text)}</p></div>`;
   });
-  h += `<h2 id="qf">Facts to confirm (${facts})</h2>` + (facts ? "" : '<p class="note">None for this selection.</p>');
-  qs.forEach((q, i) => {
-    const opts = answerOpts(q.allowed), t = q.template;
-    h += `<div class="item c-${sevClass(q.sev)}"><div class="head"><h3><span class="rank">${i + 1}</span>${nmv(q.contract)} · ${esc(TEMPLATE[t])}</h3>${couldCause(q)}</div>` +
-      `<div class="qa"><div><p class="ask">${esc(q.ask)}</p>` +
-      (opts ? `<div class="ans" aria-label="Answers">${opts.map(o => `<span>${esc(o)}</span>`).join("")}</div>` : `<p class="note">Answer: ${esc(plainAllowed(q.allowed))}</p>`) +
-      `<p class="note">Touches ${q.pairs.length} ${plural(q.pairs.length, "event", "events")}: ${q.pairs.map(p => esc(chipLabel(p))).join(", ")}</p>` +
-      `<details><summary>What each answer would change</summary><ul class="note">${q.preview.map(p => `<li><b>${esc(p.answers.slice(0, 3).join(", "))}${p.answers.length > 3 ? ` +${p.answers.length - 3}` : ""}</b> → ${esc(plainImpact(p.line))}</li>`).join("")}</ul></details>` +
-      `<details><summary>How the compiler read this</summary><p class="note prose">${esc(q.text)}</p><p class="note">Allowed answers in the compiler: ${esc(q.allowed)}</p></details></div>` +
-      `<div>${quotes(q.contract, q.sids)}</div></div></div>`;
-  });
-  cards.forEach((c, i) => {
-    h += `<div class="item c-${sevClass(c.sev)}"><div class="head"><h3><span class="rank">${qs.length + i + 1}</span>${nmv(c.contract)} · ${esc(TEMPLATE[c.template])} · check ${c.atoms.length} ${plural(c.atoms.length, "fact", "facts")}</h3>${couldCause(c)}</div>` +
-      `<div class="qa"><div>` + c.atoms.map(a => {
-        const i2 = st.atominfo[`${c.contract}|${c.template}|${a}`] || {};
-        return `<p class="ask">${esc(askOf(c.template, a))}</p><p class="read">The compiler read: <b>${esc(valuePlain(i2.value))}</b></p>`;
-      }).join("") + `<p class="note">Settles: ${c.outcomes.map(o => `${esc(chipLabel(o.scenario))} (${esc(plainLabel(o.label))})`).join("; ")}</p>` +
-      `<details><summary>How the compiler read this</summary>${atomRows(c.contract, c.template, c.atoms, c.atoms)}</details></div><div>${quotes(c.contract, c.sids)}</div></div></div>`;
+  h += `<h2 id="qf">Facts to confirm (top ${Math.min(10, facts)} of ${facts})</h2>` + (facts ? "" : '<p class="note">None for this selection.</p>');
+  const rank = [...qs.map(q => ({q})), ...cards.map(c => ({c}))].slice(0, 10);
+  rank.forEach((x, i) => {
+    if (x.q) {
+      const q = x.q, opts = answerOpts(q.allowed), t = q.template;
+      h += `<details class="fact c-${sevClass(q.sev)}"><summary><b>${i + 1}.</b> <bdi>${nmv(q.contract)}</bdi> · ${esc(TEMPLATE[t])}: ${esc(q.ask)} ${couldCause(q)}</summary>` +
+        `<div class="qa"><div>` +
+        (opts ? `<div class="ans" aria-label="Answers">${opts.map(o => `<span>${esc(o)}</span>`).join("")}</div>` : `<p class="note">Answer: ${esc(plainAllowed(q.allowed))}</p>`) +
+        `<p class="note">Affects ${q.pairs.length} ${plural(q.pairs.length, "event", "events")}: ${q.pairs.map(p => esc(chipLabel(p))).join(", ")}</p>` +
+        `<details><summary>What each answer would change</summary><ul class="note">${q.preview.map(p => `<li><b>${esc(wj(p.answers.slice(0, 3).join(", ")))}${p.answers.length > 3 ? ` +${p.answers.length - 3}` : ""}</b> → ${esc(plainImpact(p.line))}</li>`).join("")}</ul></details></div>` +
+        `<div>${quotes(q.contract, q.sids)}</div></div></details>`;
+    } else {
+      const c = x.c;
+      h += `<details class="fact c-${sevClass(c.sev)}"><summary><b>${i + 1}.</b> <bdi>${nmv(c.contract)}</bdi> · ${esc(TEMPLATE[c.template])}: ${esc(askOf(c.template, c.atoms[0]))}${c.atoms.length > 1 ? ` (+${c.atoms.length - 1} more)` : ""} ${couldCause(c)}</summary>` +
+        `<div class="qa"><div>` + c.atoms.map(a => {
+          const i2 = st.atominfo[`${c.contract}|${c.template}|${a}`] || {};
+          return `<p class="ask">${esc(askOf(c.template, a))}</p><p class="read">The model read: <b>${esc(wj(valuePlain(i2.value)))}</b></p>`;
+        }).join("") + `<p class="note">Settles: ${c.outcomes.map(o => `${esc(chipLabel(o.scenario))} (${esc(plainLabel(o.label))})`).join("; ")}</p></div>` +
+        `<div>${quotes(c.contract, c.sids)}</div></div></details>`;
+    }
   });
   v.innerHTML = h + `</div>`;
   document.getElementById("qev").onchange = e => { qEv = e.target.value; renderQueue(); };
   v.querySelectorAll("[data-why]").forEach(b => b.onclick = () => go("ev=" + b.dataset.why, stateName));
-  v.querySelectorAll("[data-jump]").forEach(a => a.onclick = e => { e.preventDefault(); document.getElementById(a.dataset.jump).scrollIntoView(); });
 }
 
 // ---------------- reasoning graph ----------------
@@ -717,7 +811,7 @@ function renderQueue() {
 // No rule is evaluated in the browser.
 const CAP = {fact: "event fact", atom: "clause fact", fork: "clause fact · open", limb: "test", exception: "exception", effect: "effect", outcome: "conclusion"};
 const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)");
-const NW = 196, NH = 62, CW = 224, RH = 84;
+const NW = 158, NH = 74, CW = 172, RH = 90;
 const confirmed = new Set();      // atoms confirmed on this page only (nothing is stored)
 const corrected = {};             // atom -> correction picked on this page only
 let GV = [];                      // view state of each graph on the open evidence panel
@@ -727,7 +821,7 @@ const shortVal = v => { const s = typeof v === "string" ? v : jv(v); return s.le
 
 function valText(st, pending) {
   if (pending) return "not yet";
-  if (st.kind === "outcome") return {T: "reaction", F: "no reaction", U: "can’t tell"}[st.value];
+  if (st.kind === "outcome") return {T: "reaction", F: "no reaction", U: "open"}[st.value];
   if (st.kind === "atom") return "stated";
   if (st.kind === "fork") return "assumed" in st.inputs ? "assumed" : "unknown";
   if (st.kind === "fact") return typeof st.inputs.value === "boolean" || st.value === "F" ? (st.value === "T" ? "yes" : "no") : "given";
@@ -738,7 +832,7 @@ function wrap(s, n) {
   for (const w of words) {
     if ((out[out.length - 1] + " " + w).trim().length > n && out[out.length - 1]) out.push(w); else out[out.length - 1] = (out[out.length - 1] + " " + w).trim();
   }
-  if (out.length > 2) { out.length = 2; out[1] = out[1].slice(0, n - 1) + "…"; }
+  if (out.length > 3) { out.length = 3; out[2] = out[2].slice(0, n - 1) + "…"; }
   return out;
 }
 const lbAtoms = g => new Set(g.row.status === "firm" ? g.row.atoms : []);
@@ -781,12 +875,12 @@ const order = nodes => nodes.map((n, i) => [n, i]).sort((a, z) => a[0].layer - z
 
 function qualifier(g) {
   const r = g.row;
-  if (g.branch !== null) return ["Plan for worst case — reading assumed", "plan"];
-  if (r.status === "blocked") return ["Can’t tell yet", "blocked"];
-  if (r.status === "provisional") return ["Plan for worst case", "plan"];
+  if (g.branch !== null) return ["Worst case planned — reading assumed", "plan"];
+  if (r.status === "blocked") return ["Open item", "blocked"];
+  if (r.status === "provisional") return ["Worst case planned", "plan"];
   const c = Object.entries(corrected).find(([key]) => key.startsWith(ck(g, "")));
   if (c) return [`Corrected (simulated): ${c[1].label}`, "notice"];
-  return pendingAtoms(g).length ? ["Clear · not yet reviewed", "clear"] : ["Clear", "clear"];
+  return pendingAtoms(g).length ? ["Answered · not yet fully confirmed", "clear"] : ["Answered", "clear"];
 }
 function ring(g) {
   const lb = lbAtoms(g), total = lb.size, done = total - pendingAtoms(g).length, f = total ? done / total : 1, C = 2 * Math.PI * 8;
@@ -804,7 +898,7 @@ function rangeText(iv, f) {
   const a = iv.lo === f.lo ? "" : iv.lo_in ? `from ${lo}` : `above ${lo}`, b = iv.hi === f.hi ? "" : iv.hi_in ? `up to ${hi}` : `below ${hi}`;
   return [a, b].filter(Boolean).join(" ") || "across the whole range";
 }
-const ivLabel = x => x.status === "blocked" ? "can’t tell yet" : plainLabel(x.label) + (x.status === "provisional" ? " (worst case)" : "");
+const ivLabel = x => x.status === "blocked" ? "open item" : plainLabel(x.label) + (x.status === "provisional" ? " (worst case)" : "");
 function flipHtml(g) {
   return g.row.flips.map((f, p) => {
     const nowI = f.intervals.findIndex(iv => (iv.lo < f.now || iv.lo_in && iv.lo === f.now) && (f.now < iv.hi || iv.hi_in && f.now === iv.hi));
@@ -818,38 +912,40 @@ function flipHtml(g) {
         "Where the answer changes: " + esc(f.intervals.map(x => `${ivLabel(x)} ${rangeText(x, f)}`).join(" · "))}</div></div>`;
   }).join("");
 }
-function highlight(text, tokens) {
-  const words = tokens.filter(t => t.length > 1 && !["us", "them", "gt", "gte", "none", "true", "false"].includes(t.toLowerCase()));
+const STOP = new Set(["us", "them", "gt", "gte", "none", "true", "false", "of", "the", "and", "or", "an", "to", "in", "no", "yes", "not"]);
+// Marks whole words and phrases only ("right" is not marked inside "rights"; "60 days" is one mark).
+function highlight(text, toks) {
+  const words = [...new Set(toks.map(t => String(t).trim()).filter(t => t.length > 1 && !STOP.has(t.toLowerCase())))].sort((a, z) => z.length - a.length);
   if (!words.length) return esc(text);
-  const re = new RegExp("(" + words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")", "i");
-  return text.split(new RegExp(re.source, "gi")).map((part, i) => i % 2 ? `<mark>${esc(part)}</mark>` : esc(part)).join("");
+  const rx = new RegExp("(?<![\\p{L}\\p{N}_])(" + words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")(?![\\p{L}\\p{N}_])", "giu");
+  return text.split(rx).map((part, i) => i % 2 ? `<mark>${esc(part)}</mark>` : esc(part)).join("");
 }
 function tokens(v) {
   if (v === null || v === undefined || typeof v === "boolean") return [];
   if (typeof v === "number") return [String(v), String(Math.round(v))];
-  if (typeof v === "string") return [v, ...v.split("_")].filter(Boolean);
-  if (Array.isArray(v)) return v.flatMap(tokens);
+  if (typeof v === "string") return [v.replace(/_/g, " "), ...v.split("_").filter(w => w.length > 3)];
+  if (Array.isArray(v)) {
+    if (v.length === 2 && typeof v[0] === "number" && typeof v[1] === "string") { const u = v[1].replace(/_/g, " "); return [`${v[0]} ${u}`, `${v[0]} ${u.replace(/s$/, "")}`]; }
+    return v.flatMap(tokens);
+  }
   if (typeof v === "object") return Object.values(v).flatMap(tokens);
   return [];
 }
 function paneHtml(g, st) {
-  if (!st) return `<h4>How to read this graph</h4><p>Left to right: <b>event facts</b>, <b>clause facts</b> (each with its quote), ` +
-    `<b>tests</b> (one per trigger), <b>exceptions</b> checked, the <b>effect</b> and the <b>conclusion</b>. The label above says how sure the answer is.</p>` +
-    `<p>The colour shows the kind of step. The outline shows its value: solid is true, dashed and struck through is false, amber is unknown. Ringed clause facts are key: another value would change the answer.</p>` +
-    `<p class="note">Select a clause fact to see its clause. Arrow keys move along the trace, Enter opens the clause, Esc closes it.</p>`;
-  let h = `<h4>${esc(CAP[st.kind])}: ${esc(valText(st))}</h4><p>${esc(st.label)}</p>`;
-  if (st.was) h += `<p class="note">In “${esc(SC[g.diff].name)}”: ${esc(valText(st.was))} · ${esc(st.was.label)}</p>`;
+  if (!st) return "";
+  let h = `<h4>${esc(CAP[st.kind])}: ${esc(valText(st))}</h4><p>${esc(st.text || st.label)}</p>`;
+  if (st.was) h += `<p class="note">In “${esc(SC[g.diff].name)}”: ${esc(valText(st.was))} · ${esc(st.was.text || st.was.label)}</p>`;
   const a = st.atoms[0];
   if (!a) return h + (st.kind === "outcome" ? `<p class="note">A reaction shown here means the clause is potentially triggered under this reading; it is not a legal conclusion.</p>` : "");
   const i = S().atominfo[`${g.k}|${g.row.template}|${a}`];
-  if (i) h += `<p class="note">Compiler: ${esc(i.status)}${D.atoms === "gold" ? "" : ` · agreement ${i.agree}/3 runs · support ${i.support ? "passed" : "not passed"}`}${i.reviewed ? " · reviewed" : ""}</p>`;
+  if (i) h += `<p class="note">Read from the clause: ${esc(i.status)}${D.atoms === "gold" ? "" : ` · agreement ${i.agree}/3 runs · support ${i.support ? "passed" : "not passed"}`}${i.reviewed ? " · reviewed" : ""}</p>`;
   if (st.kind === "fork" && Array.isArray(st.inputs.tried) && g.row.branches) {
     const vals = st.inputs.tried.filter(v => g.row.branches.some(b => b.alts.some(x => jv(x.values[a]) === jv(v))));
     h += `<p><b>Explore a reading.</b> Pick a value for <code>${esc(a)}</code>:</p><div class="valpick">` +
       vals.slice(0, 40).map(v => `<button data-act="pick" data-atom="${esc(a)}" data-v="${esc(jv(v))}" title="${esc(jv(v))}">${esc(shortVal(v))}</button>`).join("") +
       (vals.length > 40 ? `<span class="note">+${vals.length - 40} more: use the branch buttons</span>` : "") + `</div>`;
   } else if (st.kind === "fork") {
-    h += `<p class="note">The compiler could not settle this fact. Every value that matters was tried; see the readings above, or answer it under To resolve.</p>`;
+    h += `<p class="note">This fact could not be settled. Every value that matters was tried; see the readings above, or answer it under Open work in For reviewers.</p>`;
   }
   if (lbAtoms(g).has(a) && g.row.unconfirmed.includes(a)) {
     const done = confirmed.has(ck(g, a));
@@ -878,12 +974,12 @@ function svgHtml(g) {
   }
   for (const n of nodes) {
     const p = pos[n.id], pending = rank[n.id] >= g.step, a = n.atoms[0], isLb = a && lb.has(a) && n.kind === "atom";
-    const lines = wrap(n.label, 28), val = valText(n, pending);
+    const lines = wrap(n.text || n.label, 22), val = valText(n, pending);
     s += `<g class="node k-${n.kind} v${n.value} ${pending ? "pending" : ""} ${isLb ? "lb" : ""} ${g.sel === n.id ? "sel" : ""} ${rank[n.id] === g.step - 1 && g.step < g.n ? "now" : ""}" ` +
-      `data-node="${esc(n.id)}" transform="translate(${p.x},${p.y})" role="button" tabindex="-1" aria-label="${esc(CAP[n.kind] + ", " + val + ": " + n.label)}">` +
-      `<title>${esc(n.label)}</title>${isLb ? `<rect class="ring" x="-4" y="-4" width="${NW + 8}" height="${NH + 8}"/>` : ""}<rect class="box" width="${NW}" height="${NH}"/>` +
+      `data-node="${esc(n.id)}" transform="translate(${p.x},${p.y})" role="button" tabindex="-1" aria-label="${esc(CAP[n.kind] + ", " + val + ": " + (n.text || n.label))}">` +
+      `<title>${esc(n.text || n.label)}</title>${isLb ? `<rect class="ring" x="-4" y="-4" width="${NW + 8}" height="${NH + 8}"/>` : ""}<rect class="box" width="${NW}" height="${NH}"/>` +
       `<text class="cap" x="8" y="17">${esc(CAP[n.kind])}</text><text class="val" x="${NW - 8}" y="17" text-anchor="end">${esc(val)}</text>` +
-      lines.map((l, i) => `<text class="t" x="8" y="${36 + i * 15}">${esc(l)}</text>`).join("") +
+      lines.map((l, i) => `<text class="t" x="8" y="${35 + i * 15}">${esc(l)}</text>`).join("") +
       (n.was && !n.other ? `<text class="diffwas" x="8" y="${NH + 14}">was ${esc(valText(n.was))}${n.only ? " (new here)" : ""}</text>` : "");
     if (isLb && g.row.unconfirmed.includes(a)) {
       const done = !pend.has(a);
@@ -910,6 +1006,9 @@ function renderGraph(i) {
       '<code>graphs.json</code> next to this page. Open the page through a web server (any static host, or <code>python -m http.server</code> in this folder).</p>'; });
     return;
   }
+  const howto = `<details class="howto"><summary>Read left to right: facts, tests, exceptions, effect, conclusion. <b>?</b></summary>` +
+    `<p>Colour shows the kind of step; the outline shows its value (solid true, dashed and struck through false, amber unknown). Ringed clause facts are key: another value would change the answer. ` +
+    `Select a clause fact to see its clause. Arrow keys move along the trace, Enter opens the clause, Esc closes it.</p></details>`;
   const hadFocus = el.contains(document.activeElement) && document.activeElement.classList.contains("rg-scroll");
   const {svg, hidden} = svgHtml(g), [, qc] = qualifier(g), r = g.row;
   const sel = g.sel && steps(g).find(s => s.id === g.sel);
@@ -926,7 +1025,7 @@ function renderGraph(i) {
     (g.diff ? `<span class="assumed">Showing only the steps that differ from “${esc(SC[g.diff].name)}”</span>` : "") + `</div>`;
   if (r.branches && !g.diff) h += `<div class="chips" role="group" aria-label="Readings"><button data-act="branch" data-b="-1" aria-pressed="${g.branch === null}">Open outcome</button>` +
     r.branches.map((b, j) => `<button data-act="branch" data-b="${j}" aria-pressed="${g.branch === j}">${esc(b.label)} — ${esc(b.when)}</button>`).join("") + `</div>`;
-  h += `<div class="rg-main"><div class="rg-scroll" tabindex="0" aria-label="Reasoning graph. Arrow keys move along the trace; Enter opens the clause; Escape closes it.">${svg}</div>` +
+  h += howto + `<div class="rg-main"><div class="rg-scroll" tabindex="0" aria-label="Reasoning graph. Arrow keys move along the trace; Enter opens the clause; Escape closes it.">${svg}</div>` +
     `<div class="rg-pane" aria-live="polite">${paneHtml(g, sel)}</div><svg class="rg-link" aria-hidden="true"></svg></div>`;
   el.innerHTML = h;
   const rx = document.getElementById("rx-" + i);
@@ -937,6 +1036,7 @@ function renderGraph(i) {
   connect(el, g);
 }
 function connect(el, g) {
+  return;       // the clause opens under the graph, so no line is drawn to it
   const link = el.querySelector(".rg-link"), main = el.querySelector(".rg-main");
   const node = g.sel && el.querySelector(`[data-node="${CSS.escape(g.sel)}"]`), q = el.querySelector("[data-quote]");
   if (!node || !q) return;
@@ -996,37 +1096,33 @@ function mountGraphs(id, k, rows) {
   GV.forEach((_, i) => { renderGraph(i); graphEvents(i); });
 }
 
-// ---------------- first screen: scale, automation, proof ----------------
+// ---------------- first screen: the four proofs, review effort, how we tested ----------------
 const usd = v => v >= 1000 ? "$" + Math.round(v).toLocaleString("en-US") : "$" + (+v.toFixed(2)).toFixed(2);
-function scaleHtml() {
-  const sc = D.scale, rt = D.runtime;
-  return `<div class="card"><h2>Scale: compile once, then run any number of scenarios</h2><div class="scale">` + sc.cards.map(c =>
-    `<div class="sc"><div class="n">${c.contracts.toLocaleString("en-US")} contracts <small>· ${c.scenarios} scenarios</small></div>` +
-    `<div class="row twin"><span>Compile once</span><b>${usd(c.twin_usd)}</b></div>` +
-    `<div class="row"><span>Direct read, 1 run</span><b>${usd(c.direct_1)}</b></div>` +
-    `<div class="row"><span>Direct read, vote of 3</span><b>${usd(c.direct_3)}</b></div>` +
-    (c.projected ? '<div class="tag">projected</div>' : "") + `</div>`).join("") + `</div>` +
-    `<p class="scnote"><b>Same answer every run.</b> The rules give identical answers every time. A direct read changed its status on ${D.proof.cases - +sc.status_same.split("/")[0]} of ${D.proof.cases} test cases across 3 runs.` +
-    (rt.median_ms ? ` <b>Re-run the whole portfolio in ${rt.median_ms} ms</b> (${rt.events} events, ${rt.agreements} agreements, rules on compiled answers).` : "") + `</p></div>`;
+const perAgreement = st => st.effort.cards / agKeys.length;       // reasoning-path cards (one card = the facts behind one clause, confirmed together)
+function proofsHtml() {
+  const p = D.proof, rt = D.runtime, a0 = D.states.compiled.automation, secs = rt.median_ms ? (rt.median_ms / 1000).toFixed(1) : "";
+  return `<p class="lead">Pick a deal and see, in seconds, every contract that reacts, with the clause quoted.</p><div class="proofs">` +
+    `<div class="c-clear"><b>On-prem</b>Open models only — it can run on your own servers; no contract has to leave the building.<span class="sm">This page makes 0 model calls.</span></div>` +
+    `<div class="c-notice"><b>Reliable</b>Same answer every time; when unsure it flags the point, never guesses.<span class="sm">${p.wrong_firm} wrong answers on ${p.cases} test cases.</span></div>` +
+    `<div class="c-deadline"><b>Scalable</b>Read once, then any number of deals: the whole portfolio re-runs in ${secs} s.<span class="sm">${rt.events} events, ${rt.agreements} agreements.</span></div>` +
+    `<div class="c-consent"><b>Automates work</b>Before any review, ${a0.answered} of ${a0.total} outcomes are answered. A lawyer then confirms about ${Math.round(perAgreement(D.states.compiled))} checks per agreement, once.` +
+    `<span class="sm">Every later deal reuses those answers.</span></div></div>` +
+    `<p class="honest">About 1 in ${Math.round(p.facts_checked / p.facts_wrong)} facts the model reads off a contract was wrong on the test cases (${p.facts_wrong} of ${p.facts_checked}), which is why every answer can be checked; after review, ${p.wrong_after_review} wrong answers.</p>`;
 }
-const AUTO = [["answered", "answered", "clear"], ["plan", "plan for the worst case", "plan"], ["person", "need a person", "blocked"]];
-// Before review nothing but the compiler and the rules answered; after review the count includes the reviewer's answers.
-const autoLabel = (k, l) => k !== "answered" ? l : stateName === "compiled" ? "answered automatically" : "answered with review";
-function automationHtml() {
-  const a = D.states[stateName].automation, other = D.states[stateName === "review" ? "compiled" : "review"];
-  const gain = D.states.review ? D.states.review.automation.answered - D.states.compiled.automation.answered : 0;
-  return `<div class="card acard"><h2>Automation: ${a.total} outcomes (${agKeys.length} agreements × ${DEALS.length} deals)</h2>` +
-    `<div class="seg" role="group" aria-label="Review state">` + [["compiled", "Before review"], ["review", "After review (simulated)"]].map(([k, l]) =>
-      `<button data-state="${k}" aria-pressed="${k === stateName}" ${D.states[k] ? "" : "disabled"}>${l}</button>`).join("") + `</div>` +
-    `<div class="abar" role="img" aria-label="${AUTO.map(([k, l]) => `${a[k]} ${autoLabel(k, l)}`).join(", ")}">` + AUTO.map(([k, , c]) =>
-      `<span class="c-${c}" style="flex:${a[k]}">${a[k] / a.total > .08 ? a[k] : ""}</span>`).join("") + `</div>` +
-    `<div class="alegend">` + AUTO.map(([k, l, c]) => `<span class="c-${c}"><i></i><b>${a[k]}</b> ${autoLabel(k, l)}</span>`).join("") + `</div>` +
-    `<p class="scnote">${stateName === "review" ? `<span class="delta">+${gain} answered</span> after review <span class="note">· review simulated from hand labels</span>` :
-      `Review adds <span class="delta">+${gain} answered</span> <span class="note">(simulated)</span>`}</p></div>`;
+function effortHtml() {
+  const c = D.states.compiled, r = D.states.review, a = c.automation, n = agKeys.length, now = D.states[stateName];
+  const sw = `<div class="seg" role="group" aria-label="Review state">` + [["compiled", "Before review"], ["review", "After review (simulated)"]].map(([k, l]) =>
+    `<button data-state="${k}" aria-pressed="${k === stateName}" ${D.states[k] ? "" : "disabled"}>${l}</button>`).join("") + `</div>`;
+  return `<section class="panel acard" id="p-effort"><h2>Review effort</h2><div class="effort"><div><p>Before any review, <b>${a.answered} of ${a.total}</b> outcomes are answered. ` +
+    `A lawyer then confirms about <b>${Math.round(perAgreement(c))}</b> checks per agreement (${c.effort.cards} checks over ${n} agreements), once, with the clause on screen; every later deal reuses those answers.</p>` +
+    (r ? `<p class="note">${stateName === "review" ? `After the simulated review: ${now.automation.answered} of ${now.automation.total} outcomes answered and ${now.effort.cards} checks left (${perAgreement(now).toFixed(1)} per agreement). The review is played by hand labels, not by a lawyer.` :
+      `Switch to “After review” to see the answers a reviewer adds (simulated).`}</p>` : "") +
+    `<p class="note">Count used: reasoning-path cards from the review queue; one check is one card.</p></div>${sw}</div></section>`;
 }
-function proofHtml() {
-  const p = D.proof;
-  return `<p class="proof">${p.wrong_firm} wrong answers on ${p.cases} test cases · unsure cases go to a person, never guessed · 0 model calls on this page</p>`;
+function testedHtml() {
+  const sc = D.scale, same = D.proof.cases - +sc.status_same.split("/")[0];
+  return `<section class="panel" id="p-test"><h2>How we tested</h2><p>Compile about ${usd(sc.compile_per_contract_usd)} per contract once; every later deal costs nothing.</p>` +
+    `<p class="note prose">A direct read by a model changed its status on ${same} of ${D.proof.cases} test cases across 3 runs; the rules never do. <a href="results.html">Full results</a>.</p></section>`;
 }
 
 // ---------------- three panels ----------------
@@ -1043,7 +1139,7 @@ function panelStake() {
     `<p class="note prose">${st.other.length ? `Every other clear answer is the same at any size. ${st.other.length} more ${plural(st.other.length, "agreement changes", "agreements change")} with size but ${plural(st.other.length, "is", "are")} not clear on both sides, or ${plural(st.other.length, "is", "are")} our own right: ${esc(st.other.join(", "))}.` :
       "Every other agreement reacts the same at any size."}</p></section>`;
 }
-let readPick = 2;
+let readPick = 0;
 function panelReading() {
   const R = D.reading, o = R.options[readPick], q = R.quote, at = q.indexOf("(e) is subject");
   const short = q.slice(at);
@@ -1053,7 +1149,7 @@ function panelReading() {
     `<div class="rbtns" role="group" aria-label="Reading of change of control">${R.options.map((x, i) => `<button data-read="${i}" aria-pressed="${i === readPick}">${esc(x.label)}</button>`).join("")}</div>` +
     `<div class="revs">${o.events.map(e => {
       const cls = !e.settled ? "blocked" : e.label === "no reaction" ? "none" : kindClass({status: "TRIGGERED", kind: e.label.replace(/ \(.*$/, "").replace(/ /g, "_")});
-      return `<div class="rev c-${cls}"><b>${esc(chipLabel(e.scenario, true))}</b>${esc(e.settled ? plainLabel(e.label) : "can’t tell yet")}</div>`; }).join("")}</div>` +
+      return `<div class="rev c-${cls}"><b>${esc(chipLabel(e.scenario, true))}</b>${esc(e.settled ? plainLabel(e.label) : "open item")}</div>`; }).join("")}</div>` +
     `<p><b>${o.settled} of ${o.events.length} settled.</b> Decide once; every future deal uses the same reading. ` +
     `<button class="plain" data-why="sale_60|${esc(R.ak)}">Open the agreement</button></p>` +
     `<details><summary>The whole clause 14</summary><blockquote dir="auto">${esc(q)}</blockquote></details></section>`;
@@ -1083,7 +1179,7 @@ const byName = (x, z) => AG[x[0]].name.localeCompare(AG[z[0]].name);
 const earliest = a => a.effects.map(e => e.due).filter(Boolean).sort()[0] || "9999";
 function actRow(sc, ak, a) {
   const plan = a.status !== "firm", e = a.effects[0];
-  return `<li class="act c-${GCLS[a.group]}"><span class="st"><span class="badge ${plan ? "plan c-plan" : "c-clear"}">${plan ? "▲ Plan for worst case" : "✓ Clear"}</span></span>` +
+  return `<li class="act c-${GCLS[a.group]}"><span class="st"><span class="badge ${plan ? "plan c-plan" : "c-clear"}">${a.counsel_wc ? "▲ Worst case · counsel to confirm" : plan ? "▲ Plan for worst case" : "✓ Answered"}</span></span>` +
     `<div class="what"><bdi>${esc(compose(a.effects, AG[ak].name))}</bdi>${plan ? " (worst case)" : ""}.</div>` +
     `<div class="meta">${esc(AG[ak].type)}${e.ref ? " · " + esc(clauseWord(e.ref)) : ""} ${langMark(ak, a)}</div>` +
     `<button class="plain" data-why="${esc(sc + "|" + ak)}" aria-label="Why: ${esc(AG[ak].name)}">Why?</button></li>`;
@@ -1099,43 +1195,59 @@ function actionsHtml(sc) {
   }
   return h || '<p class="note">No agreement reacts against us under this event.</p>';
 }
-function cantHtml(sc) {
-  const b = S().brief[sc];
-  if (!b.cant) return "";
-  return `<h2>Can’t tell yet (${b.cant})</h2>` + WHY_ORDER.filter(w => b.cant_by[w]).map(w =>
-    `<div class="why"><div><h4>${esc(WHY_LABEL[w])} (${b.cant_by[w].length})</h4><p class="note prose">${esc(WHY_HELP[w])}</p><div class="pills">` +
-    b.cant_by[w].map(ak => `<button data-why="${esc(sc + "|" + ak)}"><bdi>${esc(AG[ak].name)}</bdi> ${langMark(ak)}</button>`).join("") + `</div></div></div>`).join("");
+const ITEM_CLS = {document: "blocked", counsel: "counsel", check: "blocked", unreviewed: "blocked"};
+function itemHtml(sc, ak, kind) {
+  const a = S().acells[sc][ak], it = a.item, k = it.k, name = AG[ak].name;
+  const q = it.sid !== null && it.sid !== undefined ? D.sentences[k][it.sid] : "";
+  return `<div class="oitem c-${ITEM_CLS[kind]}"><div class="top"><b><bdi>${esc(name)}</bdi> ${langMark(ak, a)}</b>` +
+    `<button class="plain" data-why="${esc(sc + "|" + k)}" aria-label="Open ${esc(name)}">Open</button></div>` +
+    (it.what ? `<p class="what"><b>${OPEN[kind][2]}:</b> ${esc(it.what)}</p>` : "") +
+    (a.counsel_wc ? `<p class="wc">Worst case, if the answer goes against us: ${esc(compose(a.effects, name))}.</p>` : "") +
+    (q ? `<details><summary>Show the clause</summary>${quotes(k, [it.sid])}</details>` : "") + `</div>`;
 }
-const CX = 280, CY = 280, RR = 150;
+function openHtml(sc, id = "openitems") {
+  const b = S().brief[sc];
+  let h = `<div class="oi" id="${id}"><h2>Open items (${b.cant})</h2><p class="line">When it isn’t sure, it says exactly what is missing — it never guesses.</p>`;
+  if (!b.cant) return h + `<p class="note">None under this event.</p></div>`;
+  for (const k of OPEN_ORDER) {
+    const list = b.open_by[k];
+    if (!list.length) continue;
+    h += `<h3><span class="chip c-${ITEM_CLS[k]}">${esc(OPEN[k][0])}</span> ${list.length}</h3><p class="help">${esc(OPEN[k][1])}</p>` +
+      list.slice().sort((x, z) => AG[x].name.localeCompare(AG[z].name)).map(ak => itemHtml(sc, ak, k)).join("");
+  }
+  return h + `</div>`;
+}
+const CX = 280, CY = 280, RR = 150, OPEN_ARC = .55;
 function shapeSvg(shape, r) {
   return shape === "clear" ? `<circle class="shape" r="${r}"/>` :
-    shape === "plan" ? `<polygon class="shape" points="0,${-r * 1.2} ${r * 1.1},${r * .85} ${-r * 1.1},${r * .85}"/>` :
-    `<rect class="shape" x="${-r * .9}" y="${-r * .9}" width="${r * 1.8}" height="${r * 1.8}" rx="3"/>`;
+    `<polygon class="shape" points="0,${-r * 1.2} ${r * 1.1},${r * .85} ${-r * 1.1},${r * .85}"/>`;
 }
-const MARK = {clear: "✓", plan: "!", cant: "?"}, SHAPE_WORD = {clear: "Clear", plan: "Plan for worst case", cant: "Can’t tell yet"};
-function nodesFor(sc) {
+const MARK = {clear: "✓", plan: "!"}, SHAPE_WORD = {clear: "Answered", plan: "Worst case planned"};
+function nodesFor(sc) {        // the agreements that react; open items are one group of their own
   const cs = S().acells[sc], out = [], by = f => Object.entries(cs).filter(([, a]) => f(a)).sort(byName);
   for (const g of GROUPS) by(a => a.group === g && !a.cant).forEach(([ak, a]) => out.push({ak, a, group: g, cls: GCLS[g], shape: a.status === "firm" ? "clear" : "plan"}));
-  by(a => a.cant).forEach(([ak, a]) => out.push({ak, a, group: "cant", cls: "blocked", shape: "cant"}));
   return out;
 }
 const noneOf = sc => agKeys.filter(ak => { const a = S().acells[sc][ak]; return !a || (!a.group && !a.cant); });
-const nodeText = (n) => n.shape === "cant" ? `${AG[n.ak].name}: can’t tell yet` : compose(n.a.effects, AG[n.ak].name);
+const nodeText = n => compose(n.a.effects, AG[n.ak].name);
+const openLabel = sc => itemsOf(S().brief[sc].cant, "open item", "open items");
 function centreLines(t) {
   const out = [""];
   for (const w of t.split(" ")) { if ((out[out.length - 1] + " " + w).trim().length > 11 && out[out.length - 1]) out.push(w); else out[out.length - 1] = (out[out.length - 1] + " " + w).trim(); }
   return out;
 }
+const pt = (a, r = RR) => [CX + Math.cos(a) * r, CY + Math.sin(a) * r];
 function rippleSvg(sc, animate) {
-  const nodes = nodesFor(sc), none = noneOf(sc), groups = [...new Set(nodes.map(n => n.group))], gap = .1;
-  const step = (2 * Math.PI - groups.length * gap) / Math.max(1, nodes.length), arc = RR * step, r = Math.max(10, Math.min(20, arc * .42));
-  let s = `<svg class="ripple" viewBox="0 0 560 560" role="group" aria-label="Contracts around the event, grouped by what happens to us">`, body = "", spokes = "", ang = -Math.PI / 2, prev = "";
+  const nodes = nodesFor(sc), none = noneOf(sc), nOpen = S().brief[sc].cant, groups = [...new Set(nodes.map(n => n.group))], gap = .1;
+  const step = Math.min(.5, (2 * Math.PI - (groups.length + (nOpen ? 1 : 0)) * gap - (nOpen ? OPEN_ARC : 0)) / Math.max(1, nodes.length));
+  const arc = RR * step, r = Math.max(10, Math.min(20, arc * .42));
+  let s = `<svg class="ripple" viewBox="0 0 560 560" role="group" aria-label="Agreements that react to the event, grouped by what happens to us">`, body = "", spokes = "", ang = -Math.PI / 2, prev = "";
   for (const n of nodes) {
     if (prev && n.group !== prev) ang += gap;
     prev = n.group;
     const c = Math.cos(ang), sn = Math.sin(ang), x = +(CX + c * RR).toFixed(1), y = +(CY + sn * RR).toFixed(1), name = AG[n.ak].name, w = name.length * 6.9 + 4;
     let lb = "";
-    if (n.group !== "cant" && arc >= 16) {       // a name is drawn only when it fits beside its mark; otherwise the mark alone stands for it
+    if (arc >= 16) {       // a name is drawn only when it fits beside its mark; otherwise the mark alone stands for it
       if (Math.abs(c) < .45) { if (arc >= 50 && w <= 2 * Math.min(x, 560 - x) - 8) lb = `<text class="lb" x="0" y="${sn > 0 ? r + 15 : -r - 8}" text-anchor="middle">${esc(name)}</text>`; }
       else { const lx = c > 0 ? r + 6 : -r - 6, avail = c > 0 ? 556 - (x + lx) : x + lx - 4;
         if (w <= avail) lb = `<text class="lb" x="${lx}" y="0" text-anchor="${c > 0 ? "start" : "end"}" dominant-baseline="central">${esc(name)}</text>`; }
@@ -1144,6 +1256,12 @@ function rippleSvg(sc, animate) {
     body += `<g class="ct c-${n.cls} ${n.shape}" data-ak="${esc(n.ak)}" role="button" tabindex="0" aria-label="${esc(nodeText(n) + ". " + SHAPE_WORD[n.shape])}" transform="translate(${x},${y})">` +
       `${shapeSvg(n.shape, r)}<text class="mk" y="${n.shape === "plan" ? 3 : 0}">${MARK[n.shape]}</text>${lb}<title>${esc(nodeText(n))}</title></g>`;
     ang += step;
+  }
+  if (nOpen) {         // every open item is one labelled group on the ring
+    const a0 = nodes.length ? ang + gap : ang, a1 = a0 + OPEN_ARC, mid = (a0 + a1) / 2, [px, py] = pt(mid), label = openLabel(sc), pw = label.length * 7 + 22;
+    const [x0, y0] = pt(a0), [x1, y1] = pt(a1);
+    body += `<g class="ringbtn openbtn" data-jump="openitems" role="button" tabindex="0" aria-label="${esc(label)}. Show the list"><path class="openarc" d="M${x0.toFixed(1)},${y0.toFixed(1)} A${RR},${RR} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)}"/>` +
+      `<rect x="${(px - pw / 2).toFixed(1)}" y="${(py - 12).toFixed(1)}" width="${pw}" height="24" rx="12"/><text x="${px.toFixed(1)}" y="${py.toFixed(1)}" text-anchor="middle" dominant-baseline="central">${esc(label)}</text></g>`;
   }
   const lines = centreLines(chipLabel(sc, true));
   s += spokes + `<circle class="wave ${animate && !REDUCED.matches ? "go" : ""}" cx="${CX}" cy="${CY}" r="60"/>` +
@@ -1163,13 +1281,14 @@ function markSvg(n) {
   return `<svg class="c-${n.cls} ${n.shape}" width="40" height="40" viewBox="-22 -22 44 44" aria-hidden="true">${shapeSvg(n.shape, 15)}<text y="${n.shape === "plan" ? 3 : 0}">${MARK[n.shape]}</text></svg>`;
 }
 function marksHtml(sc) {        // phone: status marks only, grouped, no labels
-  const nodes = nodesFor(sc), none = noneOf(sc);
+  const nodes = nodesFor(sc), none = noneOf(sc), nOpen = S().brief[sc].cant;
   const btn = n => `<button data-ak="${esc(n.ak)}" aria-label="${esc(nodeText(n) + ". " + SHAPE_WORD[n.shape])}">${markSvg(n)}</button>`;
   let h = '<div class="marks">';
-  for (const g of [...GROUPS, "cant"]) {
+  for (const g of GROUPS) {
     const ns = nodes.filter(n => n.group === g);
-    if (ns.length) h += `<div class="row"><span class="chip c-${ns[0].cls}">${esc(g === "cant" ? "Can’t tell yet" : D.group_label[g])} ${ns.length}</span>${ns.map(btn).join("")}</div>`;
+    if (ns.length) h += `<div class="row"><span class="chip c-${ns[0].cls}">${esc(D.group_label[g])} ${ns.length}</span>${ns.map(btn).join("")}</div>`;
   }
+  if (nOpen) h += `<div class="row"><button class="plain" data-jump="openitems" style="line-height:1.5">${esc(openLabel(sc))}</button></div>`;
   if (none.length) h += `<div class="row"><button class="plain" data-none aria-expanded="${showNone}" style="line-height:1.5">+${none.length} no reaction</button>` +
     (showNone ? none.map(ak => `<button data-ak="${esc(ak)}" aria-label="${esc(AG[ak].name)}: no reaction">${markSvg({cls: "none", shape: "clear"})}</button>`).join("") : "") + `</div>`;
   return h + "</div>";
@@ -1177,24 +1296,69 @@ function marksHtml(sc) {        // phone: status marks only, grouped, no labels
 function keyHtml(sc) {
   const b = S().brief[sc], chips = GROUPS.filter(x => x === "we" ? b.options : b.groups[x]).map(x =>
     `<span class="chip c-${GCLS[x]}">${esc(D.group_label[x])} ${x === "we" ? b.options : b.groups[x]}</span>`);
-  if (b.cant) chips.push(`<span class="chip c-blocked">Can’t tell yet ${b.cant}</span>`);
-  return (PHONE.matches ? "" : `<div class="key">${chips.join("")}</div>`) + `<div class="key"><span>Colour: what happens.</span><span>Shape: ✓ Clear</span><span>▲ Plan for worst case</span><span>? Can’t tell yet</span></div>`;
+  if (b.cant) chips.push(`<span class="chip c-blocked">Open items ${b.cant}</span>`);
+  return (PHONE.matches ? "" : `<div class="key">${chips.join("")}</div>`) + `<div class="key"><span>Colour: what happens.</span><span>Shape: ✓ Answered</span><span>▲ Worst case planned</span><span>Dashed arc: open items</span></div>`;
+}
+// ---------------- how it decides: three real clauses ----------------
+function excerpt(text, toks, n = 280) {
+  if (text.length <= n) return text;
+  const low = text.toLowerCase(), hits = toks.map(t => low.indexOf(String(t).toLowerCase())).filter(i => i >= 0).sort((a, z) => a - z);
+  const a = Math.max(0, Math.min((hits[0] || 0) - 90, text.length - n)), cutText = text.slice(a, a + n).replace(a ? /^\S*\s/ : /^$/, "");
+  return (a ? "… " : "") + cutText.trim() + (a + n < text.length ? " …" : "");
+}
+const cap1 = t => t.charAt(0).toUpperCase() + t.slice(1);
+function decideHtml() {
+  return `<section class="panel" id="p-decide"><h2>How it decides</h2><p class="note prose">Three real clauses. The rules read the clause, test the numbers, check the exceptions and state the effect. When a word needs a judgement, they stop and ask counsel.</p><div class="strip3">` +
+    D.decide.map(c => {
+      const k = AG[c.ak].versions[0], rows = (S().rows[c.sc] || {})[k] || [], a = S().acells[c.sc][c.ak];
+      const r = rows.find(x => x.status !== "firm" || x.reactions.some(y => y.status === "TRIGGERED")) || rows[0];
+      if (!r) return "";
+      const sid = (r.sids[0] ?? Object.values(r.cite)[0]?.[0]), val = at => (S().atominfo[`${k}|${r.template}|${at}`] || {}).value;
+      const toks = Object.keys(r.cite).filter(at => r.cite[at].includes(sid)).flatMap(at => tokens(val(at)));
+      const kinds = ks => r.why.filter(w => ks.includes(w[0])).map(w => w[1]).join(" ");
+      const last = kinds(["effect", "result"]) + (a && a.counsel_wc ? ` Worst case: ${compose(a.effects, AG[c.ak].name)}.` : "");
+      return `<div class="dcard"><h3><bdi>${esc(AG[c.ak].name)}</bdi> · ${esc(chipLabel(c.sc, true))}</h3><p class="note">${esc(c.title)}</p>` +
+        (sid !== undefined ? `<blockquote dir="auto">${highlight(excerpt(D.sentences[k][sid], toks), toks)}</blockquote>` : "") +
+        `<ol><li>${esc(cap1(eventPhrase(c.sc)) + ".")}</li><li>${esc(kinds(["test", "exception"]))}</li><li>${esc(last)}</li></ol>` +
+        `<button class="plain go" data-why="${esc(c.sc + "|" + k)}" aria-label="Open ${esc(AG[c.ak].name)}">Open</button></div>`;
+    }).join("") + `</div></section>`;
+}
+// ---------------- print: the schedule for the chosen event on one page ----------------
+function printHtml(sc) {
+  const list = Object.entries(S().acells[sc]).filter(([, a]) => a.group);
+  list.sort((x, z) => GROUPS.indexOf(x[1].group) - GROUPS.indexOf(z[1].group) || earliest(x[1]).localeCompare(earliest(z[1])) || byName(x, z));
+  const b = S().brief[sc];
+  let h = `<h1>Consent and notice schedule</h1><p class="sub">${esc(cap1(eventPhrase(sc)))} · as of ${esc(fmtDate(D.as_of))} · ${esc(S().label)} · proof of concept, not legal advice</p>`;
+  for (const g of GROUPS) {
+    const items = list.filter(([, a]) => a.group === g);
+    if (items.length) h += `<h2>${esc(g === "we" ? "Options for us: we may terminate" : D.group_label[g])} (${items.length})</h2><ul>` +
+      items.map(([ak, a]) => `<li>${esc(compose(a.effects, AG[ak].name))}${a.counsel_wc ? " (worst case, for counsel to confirm)" : a.status !== "firm" ? " (worst case)" : ""}${a.effects[0].ref ? " — " + esc(clauseWord(a.effects[0].ref)) : ""}</li>`).join("") + `</ul>`;
+  }
+  if (!list.length) h += `<p>No agreement is certain to react against us under this event.</p>`;
+  h += `<h2>Open items (${b.cant})</h2>`;
+  for (const k of OPEN_ORDER) {
+    const ak = b.open_by[k];
+    if (ak.length) h += `<h2 style="font-size:11pt">${esc(OPEN[k][0])} (${ak.length})</h2><ul>` + ak.map(x => { const a = S().acells[sc][x];
+      return `<li>${esc(AG[x].name)}${a.item.what ? ": " + esc(a.item.what) : ""}${a.counsel_wc ? " (worst case: " + esc(compose(a.effects, AG[x].name)) + ")" : ""}</li>`; }).join("") + `</ul>`;
+  }
+  return h;
 }
 function rippleHtml(animate) {
   const sc = rippleSc;
-  return `<div class="top2">${scaleHtml()}${automationHtml()}</div>${proofHtml()}` +
-    `<div class="events" role="group" aria-label="Event">` + DEALS.map(s =>
+  return `${proofsHtml()}<div class="events" role="group" aria-label="Event">` + DEALS.map(s =>
       `<button data-rip="${s.id}" aria-pressed="${s.id === sc}" title="${esc(s.name)}">${esc(chipLabel(s.id))}</button>`).join("") + `</div>` +
-    `<p class="sentence">${sentence(sc)}</p><div class="ov"><div id="actions">${actionsHtml(sc)}</div>` +
-    `<div class="ripbox">${PHONE.matches ? marksHtml(sc) : rippleSvg(sc, animate)}${keyHtml(sc)}<p class="note">Select a contract to see why.</p></div><div id="cants">${cantHtml(sc)}</div></div>` +
-    `<div class="panels">${panelStake()}${panelReading()}${panelLLM()}</div>`;
+    `<p class="sentence">${sentence(sc)}</p><div class="ov"><div id="actions" class="sched"><h2>Consent and notice schedule <button class="plain" data-print>Print this schedule</button></h2>${actionsHtml(sc)}</div>` +
+    `<div class="ripbox">${PHONE.matches ? marksHtml(sc) : rippleSvg(sc, animate)}${keyHtml(sc)}<p class="note">Select an agreement to see why.</p></div><div id="cants">${openHtml(sc)}</div></div>` +
+    `<div class="panels">${decideHtml()}${effortHtml()}${panelStake()}${panelReading()}${panelLLM()}${testedHtml()}</div>`;
 }
 function bindWhy(v) { v.querySelectorAll("[data-why]").forEach(b => b.onclick = () => go("ev=" + b.dataset.why, stateName)); }
 function renderRipple(animate) {
   const v = document.getElementById("view-ripple");
   v.innerHTML = rippleHtml(animate);
+  document.getElementById("printsheet").innerHTML = printHtml(rippleSc);
   v.querySelectorAll("[data-rip]").forEach(b => b.onclick = () => go("ripple=" + b.dataset.rip, stateName));
   v.querySelectorAll("[data-state]").forEach(b => b.onclick = () => go("ripple=" + rippleSc, b.dataset.state));
+  v.querySelectorAll("[data-print]").forEach(b => b.onclick = () => window.print());
   v.querySelectorAll("[data-read]").forEach(b => b.onclick = () => { readPick = +b.dataset.read; renderRipple(false);
     document.querySelector(`#view-ripple [data-read="${readPick}"]`).focus(); });
   bindWhy(v);
@@ -1202,15 +1366,18 @@ function renderRipple(animate) {
     const open = () => go("ev=" + rippleSc + "|" + g.dataset.ak, stateName);
     g.onclick = open; g.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } };
   });
+  v.querySelectorAll("g[data-jump]").forEach(g => g.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); g.dispatchEvent(new MouseEvent("click", {bubbles: true})); } });
   v.querySelectorAll("[data-none]").forEach(g => {
     const flip = () => { showNone = !showNone; renderRipple(false); const again = document.querySelector("#view-ripple [data-none]"); if (again) again.focus(); };
     g.onclick = flip; g.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(); } };
   });
+  const row = v.querySelector(".events"), fade = () => row.classList.toggle("more", row.scrollWidth - row.clientWidth - row.scrollLeft > 4);
+  fade(); row.addEventListener("scroll", fade);
 }
 // The clock is not a deal: its answers live under For reviewers.
 function renderClock() {
   const v = document.getElementById("rv-clock"), sc = "clock_90";
-  v.innerHTML = `<h2>+90 days (dates, not a deal)</h2><p class="sentence">${sentence(sc)}</p><div class="prose">${actionsHtml(sc)}</div>${cantHtml(sc)}`;
+  v.innerHTML = `<h2>+90 days (dates, not a deal)</h2><p class="sentence">${sentence(sc).replace(/data-jump="openitems"/, 'data-jump="openitems-clock"')}</p><div class="prose">${actionsHtml(sc)}</div>${openHtml(sc, "openitems-clock")}`;
   bindWhy(v);
 }
 // Scroll only the chip row (phones), never the page, so the page still opens at the top.
@@ -1254,7 +1421,10 @@ function route() {
   document.getElementById("ev").hidden = true;
 }
 document.getElementById("meta").innerHTML = `As of ${esc(fmtDate(D.as_of))} · All agreements treated as in force · <a href="results.html">How we tested</a>`;
-document.querySelectorAll("[data-jump]").forEach(a => a.onclick = e => { e.preventDefault(); document.getElementById(a.dataset.jump).scrollIntoView(); });
+document.addEventListener("click", e => {          // links that jump to a section of the page, also those drawn later
+  const a = e.target.closest("[data-jump]"), t = a && document.getElementById(a.dataset.jump);
+  if (t) { e.preventDefault(); t.scrollIntoView(); }
+});
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.getElementById("ev").hidden) go(backTo, stateName); });
 defaultOrder(); renderTheme(); renderTop(); renderMap(); renderQueue(); renderClock();
 window.addEventListener("hashchange", route); route();

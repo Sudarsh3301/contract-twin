@@ -106,6 +106,8 @@ def portfolio_part():
                                    hidden_error_rate=round(sim["corrected"] / (sim["confirmed"] + sim["corrected"]), 3))
     out["scenarios"] = len(data["scenarios"])
     out["contracts"] = len(data["contracts"])
+    out["agreements"] = len(data["agreements"])
+    out["translations"] = out["contracts"] - out["agreements"]
     return out
 
 
@@ -274,7 +276,8 @@ def blocks(r):
                    f"blind check `{r['models']['blind']}`.",
                    f"Hand-labelled by the authors: {g['n']} scenario cases with expected outcomes, gold atoms for the clauses they use, and "
                    "the portfolio file that names our party in each contract. The same author wrote the cases and the rules.",
-                   f"Portfolio demo: {pf['contracts']} contracts, {pf['scenarios']} scenarios, {pc['outcomes']} outcomes per state."]),
+                   f"Portfolio demo: {pf['contracts']} contract files = {pf['agreements']} agreements; {pf['translations']} are Arabic versions "
+                   f"of English agreements. {pf['scenarios']} scenarios, {pc['outcomes']} outcomes per state."]),
            ("h2", "Scenario cases"),
            ("table", (["Atoms", "Correct", "Wrong firm", "Firm where we abstain", "Abstain", "Grade"],
                       [["Hand-labelled (ceiling)", f"{g['correct']}/{g['n']}", g["wrong_firm"], g["over_firm"], g["abstain"], "measured"],
