@@ -8,10 +8,12 @@
    "whose": "us",
    "triggers": [
     "ownership_threshold",
+    "competitor_stake",
     "management_change"
    ],
    "threshold_pct": 50,
    "threshold_op": "gte",
+   "competitor_threshold_pct": 5,
    "effect": "termination_right",
    "effect_holder": "them"
   },
@@ -52,6 +54,10 @@
      "(ج) حدوث تغيير في الملكية يعادل خمسين في المائة (50%) أو أكثر"
     ],
     [
+     "Art. 5-1(d)",
+     "(د) استحواذ أحد منافسي الطرف الأول على عدد من الأوراق المالية القائمة ذات حق التصويت في الشركة"
+    ],
+    [
      "Art. 5-1(e)",
      "(هـ) حدوث تغيير في أي منصب من المناصب القيادية الرئيسية في الشركة"
     ]
@@ -66,6 +72,12 @@
     [
      "Art. 5-1(c)",
      "خمسين في المائة (50%) أو أكثر"
+    ]
+   ],
+   "coc.competitor_threshold_pct": [
+    [
+     "Art. 5-1(d)",
+     "بقدر يوجب على ذلك المنافس الإفصاح عنه بموجب القاعدة (13d-1)"
     ]
    ],
    "coc.effect": [
@@ -127,15 +139,15 @@
     ]
    ]
   },
-  "_unmodelled": [
-   "Art. 5-1(d): a PPD competitor buying a VS stake large enough to need disclosure under US Rule 13d-1. No catalogue atom for a competitor-only trigger whose threshold is set by an outside rule."
-  ],
   "_differs_on_purpose": [
    "Hijri and Gregorian date in the preamble; Saudi governing law (Art. 6) instead of the source's law. Neither is a modelled atom."
   ],
   "_en_gold_gaps": [
    "cuad:VirtualScopics has only ownership_threshold; the English source also has (e) 'a change in any VS Key Leadership Position' (management_change) and (d) the competitor stake.",
    "cuad:VirtualScopics has no 'assign' group; the source has a consent-based anti-assignment clause."
+  ],
+  "_corrected": [
+   "2026-11-02: Art. 5-1(d) moved from unmodelled to the label: triggers gains competitor_stake and competitor_threshold_pct = 5 (a stake that must be disclosed under Rule 13d-1), the catalogue's competitor-stake trigger, which the English label of the same clause already uses. Checked against the Arabic text, line 35."
   ]
  },
  "ar:twin_zounds": {

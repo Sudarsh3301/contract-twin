@@ -26,9 +26,9 @@ Wrong firm means a firm answer that differs from a firm expectation. On the comp
 | One atom per step | 15 | 66 | 8 | 89 | 37/37 | 0 |
 | One reasoning-path card per step | 15 | 29 cards (67 atoms) | 8 | 44 | 37/37 | 0 |
 
-Hidden error rate of load-bearing compiled atoms on the cases: 8 of 74 atoms a reviewer confirmed or corrected were wrong (10.8%) [measured]. Compile agreement and the support check did not separate the wrong atoms from the right ones. On the portfolio, the simulated review confirmed 110 atoms and corrected 8 (6.8%) [measured].
+Hidden error rate of load-bearing compiled atoms on the cases: 8 of 74 atoms a reviewer confirmed or corrected were wrong (10.8%) [measured]. Compile agreement and the support check did not separate the wrong atoms from the right ones. On the portfolio, the simulated review confirmed 117 atoms and corrected 7 (5.6%) [measured].
 
-Portfolio: 92 reasoning-path cards before review (2.42 per contract, 207 single-atom confirmations, 63 blocking questions); 57 cards after the simulated review (1.5 per contract) [measured]. Steps count reviewer actions, not reviewer time.
+Portfolio: 92 reasoning-path cards before review (2.42 per contract, 207 single-atom confirmations, 63 blocking questions); 54 cards after the simulated review (1.42 per contract) [measured]. Steps count reviewer actions, not reviewer time.
 
 ## Portfolio outcomes
 
