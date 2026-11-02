@@ -350,6 +350,50 @@ def question_text(template: str, atom: str) -> tuple[str, str]:
     return (q, "a number" if kind == "num" or "pct" in atom or "threshold" in atom else "a date YYYY-MM-DD" if atom in ("start", "end_date") else "a value")
 
 
+# The question a lawyer is asked on the page for each atom: plain words, answered from the clause. It only rewords the
+# definition above; the compiler prompt and the allowed answers are unchanged.
+ASK = {
+    ("coc", "present"): "Does the contract have a clause that reacts to a change of control or a change in ownership?",
+    ("coc", "whose"): "Does the clause cover a change of control of our side, of the other side, or of either?",
+    ("coc", "triggers"): "Which events does the clause treat as a change of control (for example a share sale, a merger, a change in management)?",
+    ("coc", "threshold_pct"): "What share of ownership, bought by one buyer, counts as a change of control?",
+    ("coc", "threshold_op"): "Does the clause say \"more than\" that share, or \"that share or more\"?",
+    ("coc", "competitor_threshold_pct"): "What share must a competitor buy before the clause applies?",
+    ("coc", "retained_holder"): "Does the clause test what a named group (the sponsors, the original owners, the principal owners) keeps, or is there no such test?",
+    ("coc", "retained_pct"): "What share must that group keep so that the clause does not apply?",
+    ("coc", "transaction_types"): "Which kinds of deal count (merger, consolidation, asset sale, reorganization, share sale)?",
+    ("coc", "qualifying_ipo"): "Is there an exception after a qualifying IPO (a listing, possibly with a minimum raise)? If so, what is the test?",
+    ("coc", "post_ipo_threshold_pct"): "After a qualifying IPO, what share held by one person counts as a change of control?",
+    ("coc", "post_ipo_relative_to_retained"): "After a qualifying IPO, must that person also hold at least as much as the group that kept its stake?",
+    ("coc", "carve_outs"): "Which exceptions does the clause give (same management stays, a qualifying IPO, prior holders keep 50%, consent was given, the buyer is not a competitor)?",
+    ("coc", "open_texture"): "Does the clause rely on the other party's judgement, or on a size word such as \"significant\" or \"material\"?",
+    ("coc", "effects"): "What happens on a change of control, who may use it, and within how long must notice be given?",
+    ("coc", "definition_location"): "Where is the definition of change of control: in this clause, elsewhere in the contract, or in another document?",
+    ("assign", "present"): "Does the contract restrict assigning or transferring the agreement?",
+    ("assign", "restricted"): "Is assignment restricted?",
+    ("assign", "consent_needed"): "Must the other party consent before the agreement is assigned?",
+    ("assign", "deems"): "Which events does the clause treat as an assignment (for example a merger or a change of control)?",
+    ("assign", "coc_not_assignment"): "Does the contract say that a change of control is not an assignment?",
+    ("assign", "merger_exception"): "May a party assign without consent in a merger or a sale of the business?",
+    ("assign", "unless_competitor"): "Is that freedom lost if the successor is a competitor?",
+    ("term", "present"): "Does the contract state a term, an end date or a way to renew?",
+    ("term", "start"): "On what date does the term start (or does it start on signing)?",
+    ("term", "end_date"): "What fixed end date does the text state?",
+    ("term", "initial_term"): "How long is the first term?",
+    ("term", "mode"): "After the first term, does the contract renew by itself, run until someone gives notice, let one party extend, need both parties to agree, depend on other facts, or stop?",
+    ("term", "option_holder"): "Who may extend the contract: us, them, or either?",
+    ("term", "renewal_term"): "How long is each renewal?",
+    ("term", "notice"): "How much notice must be given to stop a renewal or to leave?",
+}
+
+
+def ask_text(template: str, atom: str) -> str:
+    """The plain question for one atom; for an atom without an entry, the compiler's own wording."""
+    if atom.startswith("unless_consented:"):
+        return f"Does the other party's written consent remove the \"{atom.split(':', 1)[1].replace('_', ' ')}\" effect, and only that one?"
+    return ASK.get((template, atom)) or question_text(template, atom)[0]
+
+
 def atom_keys(template: str, atom: str) -> list[str]:
     """The compiler's atom keys behind one reviewed atom."""
     if atom == "qualifying_ipo":

@@ -1,0 +1,498 @@
+[
+ {
+  "name": "overview_light_1440",
+  "hash": "ripple=sale_60",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/overview_light_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_en_light_1440",
+  "hash": "ev=sale_60|cuad:iPayment",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/drawer_en_light_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_ar_light_1440",
+  "hash": "ev=sale_60|ar:mt_ipayment",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/drawer_ar_light_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_reasoning_light_1440",
+  "hash": "ev=sale_60|cuad:RaeSystems",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "eval": "document.querySelectorAll('#ev details.reasoning').forEach(d => { d.open = true; })"
+   },
+   {
+    "wait": 900
+   },
+   {
+    "eval": "document.getElementById('reasoning').scrollIntoView()"
+   },
+   {
+    "wait": 700,
+    "shot": "t15/drawer_reasoning_light_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "to_resolve_light_1440",
+  "hash": "queue",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/to_resolve_light_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "analyst_light_1440",
+  "hash": "map",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/analyst_light_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "theme_switch_light_1440",
+  "hash": "ripple=sale_60",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "click": "[data-theme-set=light]"
+   },
+   {
+    "wait": 700,
+    "shot": "t15/theme_switch_light_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "overview_dark_1440",
+  "hash": "ripple=sale_60",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/overview_dark_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_en_dark_1440",
+  "hash": "ev=sale_60|cuad:iPayment",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/drawer_en_dark_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_ar_dark_1440",
+  "hash": "ev=sale_60|ar:mt_ipayment",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/drawer_ar_dark_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_reasoning_dark_1440",
+  "hash": "ev=sale_60|cuad:RaeSystems",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "eval": "document.querySelectorAll('#ev details.reasoning').forEach(d => { d.open = true; })"
+   },
+   {
+    "wait": 900
+   },
+   {
+    "eval": "document.getElementById('reasoning').scrollIntoView()"
+   },
+   {
+    "wait": 700,
+    "shot": "t15/drawer_reasoning_dark_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "to_resolve_dark_1440",
+  "hash": "queue",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/to_resolve_dark_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "analyst_dark_1440",
+  "hash": "map",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/analyst_dark_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "theme_switch_dark_1440",
+  "hash": "ripple=sale_60",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "click": "[data-theme-set=dark]"
+   },
+   {
+    "wait": 700,
+    "shot": "t15/theme_switch_dark_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "overview_light_390",
+  "hash": "ripple=sale_60",
+  "w": 390,
+  "h": 844,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/overview_light_390.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_en_light_390",
+  "hash": "ev=sale_60|cuad:iPayment",
+  "w": 390,
+  "h": 844,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/drawer_en_light_390.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_ar_light_390",
+  "hash": "ev=sale_60|ar:mt_ipayment",
+  "w": 390,
+  "h": 844,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/drawer_ar_light_390.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_reasoning_light_390",
+  "hash": "ev=sale_60|cuad:RaeSystems",
+  "w": 390,
+  "h": 844,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "eval": "document.querySelectorAll('#ev details.reasoning').forEach(d => { d.open = true; })"
+   },
+   {
+    "wait": 900
+   },
+   {
+    "eval": "document.getElementById('reasoning').scrollIntoView()"
+   },
+   {
+    "wait": 700,
+    "shot": "t15/drawer_reasoning_light_390.png"
+   }
+  ]
+ },
+ {
+  "name": "to_resolve_light_390",
+  "hash": "queue",
+  "w": 390,
+  "h": 844,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/to_resolve_light_390.png"
+   }
+  ]
+ },
+ {
+  "name": "analyst_light_390",
+  "hash": "map",
+  "w": 390,
+  "h": 844,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/analyst_light_390.png"
+   }
+  ]
+ },
+ {
+  "name": "theme_switch_light_390",
+  "hash": "ripple=sale_60",
+  "w": 390,
+  "h": 844,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "click": "[data-theme-set=light]"
+   },
+   {
+    "wait": 700,
+    "shot": "t15/theme_switch_light_390.png"
+   }
+  ]
+ },
+ {
+  "name": "overview_dark_390",
+  "hash": "ripple=sale_60",
+  "w": 390,
+  "h": 844,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/overview_dark_390.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_en_dark_390",
+  "hash": "ev=sale_60|cuad:iPayment",
+  "w": 390,
+  "h": 844,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/drawer_en_dark_390.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_ar_dark_390",
+  "hash": "ev=sale_60|ar:mt_ipayment",
+  "w": 390,
+  "h": 844,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/drawer_ar_dark_390.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_reasoning_dark_390",
+  "hash": "ev=sale_60|cuad:RaeSystems",
+  "w": 390,
+  "h": 844,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "eval": "document.querySelectorAll('#ev details.reasoning').forEach(d => { d.open = true; })"
+   },
+   {
+    "wait": 900
+   },
+   {
+    "eval": "document.getElementById('reasoning').scrollIntoView()"
+   },
+   {
+    "wait": 700,
+    "shot": "t15/drawer_reasoning_dark_390.png"
+   }
+  ]
+ },
+ {
+  "name": "to_resolve_dark_390",
+  "hash": "queue",
+  "w": 390,
+  "h": 844,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/to_resolve_dark_390.png"
+   }
+  ]
+ },
+ {
+  "name": "analyst_dark_390",
+  "hash": "map",
+  "w": 390,
+  "h": 844,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "wait": 700,
+    "shot": "t15/analyst_dark_390.png"
+   }
+  ]
+ },
+ {
+  "name": "theme_switch_dark_390",
+  "hash": "ripple=sale_60",
+  "w": 390,
+  "h": 844,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 700
+   },
+   {
+    "click": "[data-theme-set=dark]"
+   },
+   {
+    "wait": 700,
+    "shot": "t15/theme_switch_dark_390.png"
+   }
+  ]
+ }
+]

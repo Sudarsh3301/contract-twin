@@ -3,85 +3,92 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Portfolio Exposure Map</title>
+<title>Contract portfolio: what happens if</title>
+<link rel="icon" href="data:,">
+<script>try { const t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}</script>
 <style>
 :root {
-  --bg: #f6f5f2; --panel: #ffffff; --ink: #1d1d1b; --muted: #66645e; --line: #dcd9d2; --soft: #eeece7;
+  color-scheme: light dark;
+  --bg: #f6f5f2; --panel: #ffffff; --ink: #1d1d1b; --muted: #5e5c56; --line: #cfccc4; --soft: #eeece7;
   --termination: #b3261e; --termination-bg: #fbe3e1;
   --prepayment: #8a2d6b; --prepayment-bg: #f6dfee;
-  --consent: #a45a00; --consent-bg: #fbe9d2;
+  --consent: #8f4e00; --consent-bg: #fbe9d2;
   --notice: #1f5fa8; --notice-bg: #dde9f8;
   --deadline: #0f6e66; --deadline-bg: #d8f0ed;
   --other: #55534e; --other-bg: #e9e7e2;
-  --none: #8c8981; --none-bg: transparent;
+  --none: #5e5c56; --none-bg: transparent;
   --blocked: #4d4b46; --blocked-bg: #e2e0da;
   --counsel: #6a3fa0; --counsel-bg: #ece3f7;
-  --focus: #1f5fa8; --warn: #a45a00; --ok: #0f6e66;
+  --focus: #1f5fa8; --warn: #8f4e00; --ok: #0f6e66;
+  --vT: #0f6e66; --vF: #5e5c56; --vU: #8f4e00; --edge: #b9b5ac; --lit: #1f5fa8;
 }
+:root[data-theme="light"] { color-scheme: light; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #171716; --panel: #212120; --ink: #ecebe7; --muted: #a8a59d; --line: #3a3936; --soft: #2a2a28;
+    --bg: #171716; --panel: #212120; --ink: #ecebe7; --muted: #aaa7a0; --line: #4a4945; --soft: #2a2a28;
     --termination: #ff8a80; --termination-bg: #4a1f1c; --prepayment: #f19ad3; --prepayment-bg: #452438;
     --consent: #ffb866; --consent-bg: #47331a; --notice: #8fbaf0; --notice-bg: #1f3350;
-    --deadline: #7fd8cd; --deadline-bg: #173d39; --other: #c4c1ba; --other-bg: #34332f; --none: #77746d;
+    --deadline: #7fd8cd; --deadline-bg: #173d39; --other: #c4c1ba; --other-bg: #34332f; --none: #aaa7a0;
     --blocked: #c9c6bf; --blocked-bg: #33322f; --counsel: #c9a6f5; --counsel-bg: #36294a;
     --focus: #8fbaf0; --warn: #ffb866; --ok: #7fd8cd;
+    --vT: #7fd8cd; --vF: #aaa7a0; --vU: #ffb866; --edge: #55534e; --lit: #8fbaf0;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #171716; --panel: #212120; --ink: #ecebe7; --muted: #a8a59d; --line: #3a3936; --soft: #2a2a28;
+  color-scheme: dark;
+  --bg: #171716; --panel: #212120; --ink: #ecebe7; --muted: #aaa7a0; --line: #4a4945; --soft: #2a2a28;
   --termination: #ff8a80; --termination-bg: #4a1f1c; --prepayment: #f19ad3; --prepayment-bg: #452438;
   --consent: #ffb866; --consent-bg: #47331a; --notice: #8fbaf0; --notice-bg: #1f3350;
-  --deadline: #7fd8cd; --deadline-bg: #173d39; --other: #c4c1ba; --other-bg: #34332f; --none: #77746d;
+  --deadline: #7fd8cd; --deadline-bg: #173d39; --other: #c4c1ba; --other-bg: #34332f; --none: #aaa7a0;
   --blocked: #c9c6bf; --blocked-bg: #33322f; --counsel: #c9a6f5; --counsel-bg: #36294a;
   --focus: #8fbaf0; --warn: #ffb866; --ok: #7fd8cd;
+  --vT: #7fd8cd; --vF: #aaa7a0; --vU: #ffb866; --edge: #55534e; --lit: #8fbaf0;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-header { padding: 16px 24px 0; border-bottom: 1px solid var(--line); background: var(--panel); }
-h1 { font-size: 19px; margin: 0 0 2px; letter-spacing: -.01em; }
-h2 { font-size: 16px; margin: 20px 0 8px; }
-h3 { font-size: 14px; margin: 0 0 6px; }
-.sub { color: var(--muted); font-size: 13px; }
-.bar { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 10px; }
-.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; max-width: 100%; flex-wrap: nowrap; }
-.seg button { white-space: nowrap; }
-.seg button { font: inherit; font-weight: 600; padding: 6px 14px; border: 0; background: var(--panel); color: var(--muted); cursor: pointer; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--notice); }
+header { padding: 14px 24px 0; border-bottom: 1px solid var(--line); background: var(--panel); }
+.top { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; align-items: flex-start; }
+h1 { font-size: 22px; margin: 0 0 2px; letter-spacing: -.01em; }
+h2 { font-size: 18px; margin: 22px 0 8px; }
+h3 { font-size: 16px; margin: 0 0 6px; }
+h4 { font-size: 14px; }
+.sub { color: var(--muted); font-size: 14px; }
+.bar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: flex-end; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; max-width: 100%; flex-wrap: nowrap; scrollbar-width: thin; }
+.seg button { font: inherit; font-size: 14px; font-weight: 600; padding: 6px 14px; border: 0; background: var(--panel); color: var(--muted); cursor: pointer; white-space: nowrap; }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
-.seg button:disabled { cursor: not-allowed; opacity: .5; }
-.simnote { font-size: 12px; color: var(--warn); font-weight: 600; }
-.stats { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; margin: 8px 0 0; }
-.stats b { font-size: 15px; }
-nav { display: flex; gap: 4px; margin-top: 10px; }
-nav a { padding: 8px 14px; color: var(--muted); text-decoration: none; border-bottom: 3px solid transparent; font-weight: 600; }
+.seg button:disabled { cursor: not-allowed; opacity: .55; }
+.simnote { font-size: 13px; color: var(--warn); font-weight: 600; margin: 6px 0 0; max-width: 90ch; }
+.stats { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; margin: 0 0 10px; }
+.stats b { font-size: 16px; }
+nav { display: flex; gap: 4px; margin-top: 8px; overflow-x: auto; }
+nav a { padding: 8px 14px; color: var(--muted); text-decoration: none; border-bottom: 3px solid transparent; font-weight: 600; white-space: nowrap; }
 nav a[aria-current="page"] { color: var(--ink); border-color: var(--ink); }
 main { padding: 16px 24px 40px; }
-.summary { list-style: none; padding: 0; margin: 0 0 14px; display: grid; gap: 2px; }
-.summary li { display: grid; grid-template-columns: 250px 1fr auto; gap: 12px; padding: 5px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
-.summary .q { color: var(--muted); font-size: 12px; white-space: nowrap; }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 10px; margin: 6px 0 12px; font-size: 12px; color: var(--muted); align-items: center; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 10px; margin: 6px 0 12px; font-size: 13px; color: var(--muted); align-items: center; }
 .tablewrap { overflow: auto; max-height: calc(100vh - 120px); border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
-table.map { border-collapse: separate; border-spacing: 0; font-size: 12px; }
+table.map { border-collapse: separate; border-spacing: 0; font-size: 13px; }
 .map th, .map td { border-bottom: 1px solid var(--line); border-right: 1px solid var(--soft); padding: 0; }
-.map thead th { position: sticky; top: 0; background: var(--panel); z-index: 2; vertical-align: bottom; min-width: 126px; }
-.map th.corner { left: 0; z-index: 3; min-width: 230px; text-align: left; padding: 6px 10px; color: var(--muted); font-weight: 500; }
+.map thead th { position: sticky; top: 0; background: var(--panel); z-index: 2; vertical-align: bottom; min-width: 150px; }
+.map th.corner { left: 0; z-index: 3; min-width: 250px; text-align: left; padding: 6px 10px; color: var(--muted); font-weight: 500; }
 .map tbody th { position: sticky; left: 0; background: var(--panel); z-index: 1; text-align: left; }
 .hbtn { all: unset; cursor: pointer; display: block; padding: 6px 8px; width: 100%; box-sizing: border-box; }
 .hbtn:hover { background: var(--soft); }
-.hbtn:focus-visible, .cell:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.hbtn:focus-visible, .cell:focus-visible, button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 .hbtn .nm { font-weight: 600; display: block; }
-.hbtn .tt { color: var(--muted); display: block; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 400; }
-.cell { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 1px; width: 100%; min-height: 48px; padding: 4px 7px; border-left: 4px solid var(--c); background: var(--cbg); color: var(--c); font-weight: 600; }
+.hbtn .tt { color: var(--muted); display: block; max-width: 230px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 400; }
+.cell { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 1px; width: 100%; min-height: 52px; padding: 4px 8px; border-left: 5px solid var(--c); background: var(--cbg); color: var(--ink); font-weight: 600; }
 .cell:hover { filter: brightness(.96); }
-.cell .tag { font-size: 10px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); }
-.cell .cz { font-size: 10px; font-weight: 600; color: var(--muted); }
+.cell .tag { font-size: 12px; font-weight: 600; color: var(--muted); }
+.cell .cz { font-size: 12px; font-weight: 600; color: var(--muted); }
 .cell .cz .counsel { color: var(--counsel); }
-.cell.prov { border-left-style: dashed; }
+.cell.prov { border-left-style: dashed; background: color-mix(in srgb, var(--cbg) 45%, var(--panel)); }
 .cell.blk { background-image: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in srgb, var(--blocked) 14%, transparent) 6px 8px); }
-.cell.pending .tag::after { content: " · path unconfirmed"; }
-.cell.none { color: var(--none); font-weight: 400; }
-.cell.absent { cursor: default; color: var(--none); font-weight: 400; border-left-color: transparent; }
-.chip { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 700; border: 1px solid var(--c); color: var(--c); background: var(--cbg); white-space: nowrap; }
+.cell.pending .tag::after { content: " · not yet reviewed"; }
+.cell.none { font-weight: 400; color: var(--muted); }
+.cell.absent { cursor: default; color: var(--muted); font-weight: 400; border-left-color: transparent; }
+.chip { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 13px; font-weight: 700; border: 1px solid var(--c); color: var(--c); background: var(--cbg); white-space: nowrap; }
 .c-termination { --c: var(--termination); --cbg: var(--termination-bg); }
 .c-prepayment { --c: var(--prepayment); --cbg: var(--prepayment-bg); }
 .c-consent { --c: var(--consent); --cbg: var(--consent-bg); }
@@ -91,234 +98,386 @@ table.map { border-collapse: separate; border-spacing: 0; font-size: 12px; }
 .c-none { --c: var(--none); --cbg: var(--none-bg); }
 .c-blocked { --c: var(--blocked); --cbg: var(--blocked-bg); }
 .c-counsel { --c: var(--counsel); --cbg: var(--counsel-bg); }
-.tools { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; color: var(--muted); font-size: 12px; }
-button.plain { font: inherit; padding: 4px 10px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 6px; cursor: pointer; }
-#ev { position: fixed; top: 0; right: 0; bottom: 0; width: min(660px, 100vw); background: var(--panel); border-left: 1px solid var(--line); box-shadow: -8px 0 24px rgba(0,0,0,.12); overflow: auto; padding: 18px 22px 40px; z-index: 10; }
+.tools { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
+select { font: inherit; font-size: 14px; padding: 3px 6px; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; max-width: 100%; }
+input[type=checkbox], input[type=range] { accent-color: var(--focus); }
+button.plain { font: inherit; font-size: 14px; padding: 4px 12px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 6px; cursor: pointer; }
+button.plain:hover { background: var(--soft); }
+.warn { color: var(--warn); }
+.ok { color: var(--ok); }
+.note { color: var(--muted); font-size: 13px; }
+.prose { max-width: 72ch; }
+code { font-size: 13px; word-break: break-word; }
+blockquote { margin: 6px 0; padding: 8px 12px; border-left: 3px solid var(--line); background: var(--soft); border-radius: 0 4px 4px 0; font-family: Georgia, "Times New Roman", serif; font-size: 15px; max-width: 72ch; }
+blockquote[dir="rtl"], blockquote[dir="auto"] { unicode-bidi: plaintext; }
+blockquote[dir="rtl"] { border-left: 0; border-right: 3px solid var(--line); border-radius: 4px 0 0 4px; font-family: "Segoe UI", Tahoma, "Noto Naskh Arabic", serif; font-size: 17px; line-height: 1.8; }
+blockquote .sid { color: var(--muted); font-family: system-ui, sans-serif; font-size: 13px; }
+blockquote mark, .rg-pane mark { background: color-mix(in srgb, var(--lit) 30%, transparent); color: inherit; border-radius: 2px; padding: 0 1px; }
+details > summary { cursor: pointer; color: var(--muted); font-size: 14px; margin-top: 6px; }
+table.counts { border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); font-size: 13px; max-width: 100%; display: block; overflow-x: auto; }
+.counts th, .counts td { padding: 4px 10px; border-bottom: 1px solid var(--soft); text-align: right; }
+.counts th:first-child, .counts td:first-child { text-align: left; }
+table.atoms { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6px 0; display: block; overflow-x: auto; }
+.atoms th, .atoms td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--soft); vertical-align: top; }
+.atoms th { color: var(--muted); font-weight: 500; }
+.big { font-size: 15px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin: 10px 0 16px; max-width: 100ch; }
+.summary { list-style: none; padding: 0; margin: 0 0 14px; display: grid; gap: 2px; }
+.summary li { display: grid; grid-template-columns: 230px 1fr; gap: 12px; padding: 5px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; font-size: 13px; }
+
+/* ---------- overview ---------- */
+.events { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
+.events button { font: inherit; font-size: 14px; font-weight: 600; flex: none; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 18px; padding: 6px 14px; cursor: pointer; }
+.events button[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+.sentence { font-size: 18px; line-height: 1.5; max-width: 72ch; margin: 12px 0 16px; }
+.ov { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 560px); grid-template-areas: "a r" "c r"; grid-template-rows: auto 1fr; gap: 0 28px; align-items: start; }
+#actions { grid-area: a; } .ripbox { grid-area: r; } #cants { grid-area: c; }
+.ov h3.grp { display: flex; align-items: center; gap: 8px; margin: 18px 0 6px; font-size: 16px; }
+.ov h3.grp:first-child { margin-top: 0; }
+.acts { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.act { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 12px; align-items: center; padding: 8px 12px; background: var(--panel); border: 1px solid var(--line); border-left: 5px solid var(--c); border-radius: 8px; }
+.act .what { grid-column: 2; font-size: 16px; }
+.act .meta { grid-column: 2; font-size: 13px; color: var(--muted); }
+.act .st { grid-row: 1 / span 2; align-self: start; }
+.act button { grid-row: 1 / span 2; grid-column: 3; }
+.badge { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; padding: 1px 8px; border-radius: 12px; border: 1px solid var(--c); color: var(--c); background: var(--cbg); white-space: nowrap; }
+.badge.plan { border-style: dashed; }
+.lang { font-size: 12px; font-weight: 700; border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; color: var(--muted); white-space: nowrap; }
+.why { display: grid; gap: 10px; margin-bottom: 14px; }
+.why h4 { margin: 0 0 4px; font-size: 15px; }
+.why p { margin: 0 0 4px; }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pills button { font: inherit; font-size: 14px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 6px; padding: 3px 10px; cursor: pointer; }
+.pills button:hover { background: var(--soft); }
+.ripbox { position: sticky; top: 8px; }
+svg.ripple { width: 100%; height: auto; max-width: 560px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; display: block; }
+.ripple text { font-family: system-ui, sans-serif; font-size: 12px; fill: var(--ink); }
+.ripple .ct { cursor: pointer; }
+.ripple .ct:focus { outline: none; }
+.ripple .ct:focus .shape, .ripple .ct:hover .shape { stroke-width: 4; }
+.ripple .ct .shape { fill: var(--cbg); stroke: var(--c); stroke-width: 2.4; transition: fill .3s, stroke .3s; }
+.ripple .ct.cant .shape { stroke-dasharray: 5 3; }
+.ripple .ct text.mk { font-size: 15px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+.ripple .ct text.lb { font-size: 12px; }
+.ripple .spoke { stroke: var(--line); stroke-width: 1; }
+.ripple .ring { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 3 5; }
+.ripple .ringbtn { cursor: pointer; }
+.ripple .ringbtn rect { fill: var(--panel); stroke: var(--line); }
+.ripple .ringbtn:focus { outline: none; }
+.ripple .ringbtn:focus rect { stroke: var(--focus); stroke-width: 2.5; }
+.ripple .dotn { fill: var(--soft); stroke: var(--muted); stroke-width: 1.4; cursor: pointer; }
+.ripple .centre circle { fill: var(--soft); stroke: var(--line); }
+.ripple .centre text { fill: var(--ink); font-weight: 700; text-anchor: middle; }
+.ripple .wave { fill: none; stroke: var(--lit); stroke-width: 2; opacity: 0; }
+.ripple .wave.go { animation: wave 1.4s ease-out; }
+@keyframes wave { from { r: 60; opacity: .9; } to { r: 270; opacity: 0; } }
+.key { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 10px 0 0; font-size: 13px; color: var(--muted); }
+.key span { display: inline-flex; align-items: center; gap: 5px; }
+.marks { display: grid; gap: 10px; }
+.marks .row { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.marks button:not(.plain) { all: unset; cursor: pointer; line-height: 0; border-radius: 6px; }
+.marks button:focus-visible { outline: 2px solid var(--focus); }
+.marks svg .shape { fill: var(--cbg); stroke: var(--c); stroke-width: 2.4; }
+.marks svg.cant .shape { stroke-dasharray: 5 3; }
+.marks svg text { font: 700 15px system-ui, sans-serif; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
+
+/* ---------- drawer ---------- */
+#ev { position: fixed; top: 0; right: 0; bottom: 0; width: min(1100px, 100vw); background: var(--panel); border-left: 1px solid var(--line); box-shadow: -8px 0 24px rgba(0,0,0,.18); overflow: auto; padding: 18px 24px 40px; z-index: 10; }
 #ev[hidden] { display: none; }
-#ev .close { position: sticky; top: 0; float: right; }
-.reaction { border: 1px solid var(--line); border-left: 4px solid var(--c); border-radius: 6px; padding: 10px 12px; margin: 10px 0; }
-.kv { display: grid; grid-template-columns: 120px 1fr; gap: 2px 10px; margin: 6px 0; }
+#ev .close { position: sticky; top: 0; float: right; z-index: 2; }
+.answer { font-size: 20px; line-height: 1.45; max-width: 60ch; margin: 8px 0 6px; }
+.answer.c-x { border-left: 5px solid var(--c); padding-left: 12px; }
+.reaction { border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin: 10px 0; }
+.kv { display: grid; grid-template-columns: 140px 1fr; gap: 2px 10px; margin: 6px 0; }
 .kv dt { color: var(--muted); }
 .kv dd { margin: 0; }
 .branches { margin: 4px 0 8px; padding-left: 18px; }
 .branches li { margin: 2px 0; }
-table.atoms { width: 100%; border-collapse: collapse; font-size: 12px; margin: 6px 0; }
-.atoms th, .atoms td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--soft); vertical-align: top; }
-.atoms th { color: var(--muted); font-weight: 500; }
-.atoms code { font-size: 11px; word-break: break-word; }
-.atoms td:first-child code { white-space: nowrap; word-break: normal; }
-.warn { color: var(--warn); }
-.ok { color: var(--ok); }
-blockquote { margin: 6px 0; padding: 6px 10px; border-left: 3px solid var(--line); background: var(--soft); border-radius: 0 4px 4px 0; font-family: Georgia, "Times New Roman", serif; font-size: 13px; }
-blockquote[dir="rtl"] { border-left: 0; border-right: 3px solid var(--line); border-radius: 4px 0 0 4px; font-family: "Segoe UI", Tahoma, "Noto Naskh Arabic", serif; font-size: 15px; line-height: 1.8; }
-blockquote .sid { color: var(--muted); font-family: system-ui, sans-serif; font-size: 11px; }
-.note { color: var(--muted); font-size: 12px; }
-.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
-.counts { border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); font-size: 12px; }
-.counts th, .counts td { padding: 4px 10px; border-bottom: 1px solid var(--soft); text-align: right; }
-.counts th:first-child, .counts td:first-child { text-align: left; }
-.card { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--c); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
-.card .rank { color: var(--muted); font-weight: 600; margin-right: 6px; }
-.card .head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
-.card .head .chip { white-space: normal; text-align: center; }
-.preview { margin: 6px 0 0; padding: 0; list-style: none; font-size: 13px; }
-.preview li { padding: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.preview li b { font-weight: 600; }
-details summary { cursor: pointer; color: var(--muted); font-size: 12px; margin-top: 6px; }
-.big { font-size: 15px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin: 10px 0 16px; }
+details.reasoning { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 6px; }
+details.reasoning > summary { font-size: 16px; font-weight: 600; color: var(--ink); }
 /* ---------- reasoning graph ---------- */
-:root { --vT: #0f6e66; --vT-bg: #d8f0ed; --vF: #66645e; --vF-bg: #eeece7; --vU: #a45a00; --vU-bg: #fbe9d2; --edge: #b9b5ac; --lit: #1f5fa8; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --vT: #7fd8cd; --vT-bg: #173d39; --vF: #a8a59d; --vF-bg: #2a2a28; --vU: #ffb866; --vU-bg: #47331a; --edge: #55534e; --lit: #8fbaf0; } }
-:root[data-theme="dark"] { --vT: #7fd8cd; --vT-bg: #173d39; --vF: #a8a59d; --vF-bg: #2a2a28; --vU: #ffb866; --vU-bg: #47331a; --edge: #55534e; --lit: #8fbaf0; }
-#ev { width: min(1400px, 100vw); }
 .rg { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 8px 0 12px; background: var(--bg); }
-.rg-bar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font-size: 12px; }
+.rg-bar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font-size: 14px; }
 .rg-bar label { display: inline-flex; gap: 4px; align-items: center; color: var(--muted); }
 .rg-bar input[type=range] { width: 160px; }
-.qual { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 12px; padding: 2px 8px 2px 2px; border-radius: 12px; border: 1px solid var(--c); color: var(--c); background: var(--cbg); }
-.assumed { font-size: 12px; font-weight: 700; color: var(--warn); border: 1px dashed var(--warn); border-radius: 10px; padding: 1px 8px; }
-.rg-main { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 12px; position: relative; margin-top: 8px; }
-.rg-scroll { overflow: auto; border: 1px solid var(--soft); border-radius: 6px; background: var(--panel); max-height: 520px; }
+.qual { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; padding: 2px 10px 2px 2px; border-radius: 14px; border: 1px solid var(--c); color: var(--c); background: var(--cbg); }
+.assumed { font-size: 13px; font-weight: 700; color: var(--warn); border: 1px dashed var(--warn); border-radius: 10px; padding: 1px 8px; }
+.rg-main { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 12px; position: relative; margin-top: 8px; }
+.rg-scroll { overflow: auto; border: 1px solid var(--soft); border-radius: 6px; background: var(--panel); max-height: 560px; }
 .rg-scroll:focus-visible { outline: 2px solid var(--focus); }
-.rg-pane { font-size: 12px; border: 1px solid var(--soft); border-radius: 6px; background: var(--panel); padding: 8px 10px; max-height: 520px; overflow: auto; }
-.rg-pane h4 { margin: 0 0 4px; font-size: 13px; }
-.rg-pane mark { background: color-mix(in srgb, var(--lit) 28%, transparent); color: inherit; border-radius: 2px; padding: 0 1px; }
+.rg-pane { font-size: 14px; border: 1px solid var(--soft); border-radius: 6px; background: var(--panel); padding: 8px 10px; max-height: 560px; overflow: auto; }
+.rg-pane h4 { margin: 0 0 4px; font-size: 15px; }
 .rg-link { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
 .rg-link polyline { stroke: var(--lit); stroke-width: 1.5; stroke-dasharray: 4 3; }
 svg.graph { display: block; font-family: system-ui, sans-serif; }
 .graph .edge { fill: none; stroke: var(--edge); stroke-width: 1.4; }
 .graph .edge.lit { stroke: var(--lit); stroke-width: 1.8; stroke-dasharray: 6 4; animation: flow 1.2s linear infinite; }
 @keyframes flow { to { stroke-dashoffset: -20; } }
-.graph .node rect.box { stroke-width: 1.4; rx: 6; }
-.graph .node.vT rect.box { fill: var(--vT-bg); stroke: var(--vT); }
-.graph .node.vF rect.box { fill: var(--vF-bg); stroke: var(--vF); }
-.graph .node.vU rect.box { fill: var(--vU-bg); stroke: var(--vU); stroke-dasharray: 5 3; }
-.graph .node.pending rect.box { fill: var(--panel); stroke: var(--line); stroke-dasharray: 2 3; }
+.graph .node rect.box { stroke-width: 1.6; rx: 6; fill: var(--cbg); stroke: var(--c); }
+.graph .node.k-fact { --c: var(--notice); --cbg: var(--notice-bg); }
+.graph .node.k-atom, .graph .node.k-fork { --c: var(--deadline); --cbg: var(--deadline-bg); }
+.graph .node.k-limb { --c: var(--other); --cbg: var(--other-bg); }
+.graph .node.k-exception { --c: var(--consent); --cbg: var(--consent-bg); }
+.graph .node.k-effect { --c: var(--prepayment); --cbg: var(--prepayment-bg); }
+.graph .node.k-outcome { --c: var(--counsel); --cbg: var(--counsel-bg); }
+.graph .node.vF rect.box { stroke: var(--ink); stroke-width: 2.6; stroke-dasharray: 5 3; }
+.graph .node.vF text.t { text-decoration: line-through; }
+.graph .node.vU rect.box { stroke: var(--warn); stroke-width: 2.8; }
+.graph .node.pending rect.box { fill: var(--panel); stroke: var(--line); stroke-dasharray: 2 3; stroke-width: 1.4; }
 .graph .node.pending text { fill: var(--muted); }
-.graph .node text { fill: var(--ink); font-size: 11px; }
-.graph .node text.cap { font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; fill: var(--muted); }
-.graph .node.vT text.val { fill: var(--vT); } .graph .node.vF text.val { fill: var(--vF); } .graph .node.vU text.val { fill: var(--vU); }
-.graph .node text.val { font-weight: 700; font-size: 9px; text-transform: uppercase; }
+.graph .node text { fill: var(--ink); font-size: 12px; }
+.graph .node text.cap { font-size: 12px; font-weight: 700; fill: var(--c); }
+.graph .node text.val { font-weight: 700; font-size: 12px; fill: var(--c); }
+.graph .node.vF text.val { fill: var(--ink); }
+.graph .node.vU text.val { fill: var(--warn); }
 .graph .node { cursor: pointer; }
 .graph .node:focus { outline: none; }
-.graph .node:focus rect.box, .graph .node.sel rect.box { stroke: var(--focus); stroke-width: 3; }
+.graph .node:focus rect.box, .graph .node.sel rect.box { stroke: var(--focus); stroke-width: 3.4; stroke-dasharray: none; }
 .graph .node.lb rect.ring { fill: none; stroke: var(--ink); stroke-width: 1.4; rx: 9; }
 .graph .node.now rect.box { animation: pulse .6s ease-out; }
-@keyframes pulse { from { stroke-width: 6; } to { stroke-width: 1.4; } }
+@keyframes pulse { from { stroke-width: 6; } to { stroke-width: 1.6; } }
 .graph .pill rect { fill: var(--panel); stroke: var(--ink); rx: 8; }
 .graph .pill.done rect { fill: var(--ok); stroke: var(--ok); }
-.graph .pill text { font-size: 9px; font-weight: 700; fill: var(--ink); }
+.graph .pill text { font-size: 12px; font-weight: 700; fill: var(--ink); }
 .graph .pill.done text { fill: var(--panel); }
-.graph .diffwas { font-size: 9px; fill: var(--muted); font-style: italic; }
-.strip { display: flex; height: 26px; border-radius: 5px; overflow: hidden; border: 1px solid var(--line); margin: 4px 0 2px; }
-.strip button { all: unset; box-sizing: border-box; cursor: pointer; min-width: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--c); background: var(--cbg); border-right: 1px solid var(--panel); overflow: hidden; white-space: nowrap; }
+.graph .diffwas { font-size: 12px; fill: var(--muted); font-style: italic; }
+.flipbox { margin: 14px 0 6px; }
+.strip { display: flex; height: 34px; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); margin: 4px 0 2px; }
+.strip button { all: unset; box-sizing: border-box; cursor: pointer; min-width: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--ink); background: var(--cbg); border-right: 1px solid var(--panel); border-left: 4px solid var(--c); overflow: hidden; white-space: nowrap; }
 .strip button[aria-pressed="true"] { outline: 2px solid var(--focus); outline-offset: -2px; }
-.flip { margin: 6px 0; font-size: 12px; }
+.flip { margin: 8px 0; font-size: 14px; }
 .flip .now { font-weight: 700; }
+.flip input[type=range] { accent-color: var(--focus); width: min(360px, 100%); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.chips button { font: inherit; font-size: 12px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 12px; padding: 2px 10px; cursor: pointer; }
+.chips button { font: inherit; font-size: 13px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 12px; padding: 2px 10px; cursor: pointer; }
 .chips button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
 .valpick { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
-.valpick button { font: inherit; font-size: 11px; border: 1px solid var(--line); background: var(--soft); color: var(--ink); border-radius: 6px; padding: 2px 6px; cursor: pointer; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
-/* ---------- ripple ---------- */
-.ripple-wrap { display: grid; grid-template-columns: minmax(320px, 680px) minmax(240px, 1fr); gap: 18px; align-items: start; }
-svg.ripple { width: 100%; height: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
-.ripple .ct circle.dot { stroke-width: .012; transition: fill .35s ease, stroke .35s ease; }
-.ripple .ct.blocked circle.dot { stroke-dasharray: .01 .01; }
-.ripple .ct.provisional circle.dot { stroke-dasharray: .03 .016; }
-.ripple .ct text { font-size: .04px; fill: var(--muted); }
-.ripple .ct text.mk { font-size: .042px; font-weight: 700; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
-.ripple .ct { cursor: pointer; }
-.ripple .ct:focus { outline: none; } .ripple .ct:focus circle.dot { stroke: var(--focus) !important; stroke-width: .022; }
-.ripple .grp { font-size: .045px; font-weight: 700; fill: var(--ink); text-anchor: middle; }
-.ripple .arc { fill: none; stroke: var(--line); stroke-width: .012; }
-.ripple .wave { fill: none; stroke: var(--lit); stroke-width: .01; opacity: 0; }
-.ripple .wave.go { animation: wave 1.6s ease-out; }
-@keyframes wave { from { r: .12; opacity: .9; } to { r: 1.05; opacity: 0; } }
-.ripple .centre circle { fill: var(--ink); } .ripple .centre text { fill: var(--panel); font-size: .046px; font-weight: 700; text-anchor: middle; }
+.valpick button { font: inherit; font-size: 13px; border: 1px solid var(--line); background: var(--soft); color: var(--ink); border-radius: 6px; padding: 2px 6px; cursor: pointer; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+/* ---------- to resolve ---------- */
+.resolve { max-width: 980px; }
+.resolve .pick { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 8px; }
+.resolve select { font: inherit; font-size: 14px; padding: 4px 8px; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; max-width: 100%; }
+.item { background: var(--panel); border: 1px solid var(--line); border-left: 5px solid var(--c); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+.item .head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 10px; align-items: baseline; }
+.item .rank { color: var(--muted); font-weight: 600; margin-right: 6px; }
+.item .head .chip { white-space: normal; }
+.item .qa { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 6px; }
+.item .qa > div { flex: 1 1 320px; min-width: 0; }
+.item .ask { font-size: 17px; margin: 0 0 6px; }
+.ans { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0; }
+.ans span { border: 1px solid var(--line); border-radius: 14px; padding: 1px 12px; font-size: 14px; background: var(--soft); }
+.read { font-size: 14px; margin: 4px 0; }
 @media (prefers-reduced-motion: reduce) {
   .graph .edge.lit, .graph .node.now rect.box, .ripple .wave.go { animation: none; }
-  .ripple .ct circle.dot { transition: none; }
+  .ripple .ct .shape { transition: none; }
 }
 @media (max-width: 900px) {
-  .rg-main, .ripple-wrap { grid-template-columns: 1fr; }
+  .rg-main { grid-template-columns: 1fr; }
+  .ov { grid-template-columns: minmax(0, 1fr); grid-template-areas: "a" "r" "c"; grid-template-rows: none; }
+  .ripbox { margin-top: 20px; }
   header, main { padding-left: 16px; padding-right: 16px; }
-  .cols { grid-template-columns: 1fr; }
   .summary li { grid-template-columns: 1fr; gap: 2px; }
+  .ripbox { position: static; }
+  .bar { justify-content: flex-start; }
+}
+@media (max-width: 699px) {
+  #ev { padding: 14px 16px 40px; }
+  .act { grid-template-columns: 1fr; }
+  .act .st, .act .what, .act .meta, .act button { grid-row: auto; grid-column: 1; }
+  .kv { grid-template-columns: 1fr; }
+  .sentence { font-size: 17px; }
+  .answer { font-size: 18px; }
 }
 </style>
 </head>
 <body>
 <header>
-  <h1>Contract portfolio: scenario run</h1>
-  <div class="sub" id="meta"></div>
-  <div class="sub"><a href="results.html">Results and limits</a></div>
-  <div class="bar"><div class="seg" role="group" aria-label="Review state" id="seg"></div><span class="simnote" id="simnote"></span></div>
-  <div class="stats" id="stats"></div>
-  <nav><a href="#ripple" id="nav-ripple">Overview</a><a href="#queue" id="nav-queue">Questions</a><a href="#map" id="nav-map">Analyst view</a></nav>
+  <div class="top">
+    <div><h1>Contract portfolio: what happens if</h1><div class="sub" id="meta"></div></div>
+    <div class="bar">
+      <div class="seg" role="group" aria-label="Review state" id="seg"></div>
+      <div class="seg" role="group" aria-label="Colour theme" id="theme"></div>
+      <a href="results.html">Results and limits</a>
+    </div>
+  </div>
+  <div class="simnote" id="simnote"></div>
+  <nav><a href="#ripple" id="nav-ripple">Overview</a><a href="#queue" id="nav-queue">To resolve</a><a href="#map" id="nav-map">Analyst view</a></nav>
 </header>
 <main>
   <section id="view-map"></section>
   <section id="view-queue" hidden></section>
   <section id="view-ripple" hidden></section>
 </main>
-<aside id="ev" hidden aria-label="Evidence"></aside>
+<aside id="ev" hidden aria-label="Agreement detail"></aside>
 <script id="data" type="application/json">/*DATA*/null</script>
 <script>
 "use strict";
 const D = JSON.parse(document.getElementById("data").textContent);
 const TEMPLATE = {coc: "change of control", assign: "assignment", term: "term and renewal"};
-const STATUS = {firm: "Clear", provisional: "Plan for (worst case)", blocked: "Can’t tell yet"};
-const CAUSE_HELP = {legal_judgement: "a reading of an open standard or a rule with two readings: counsel decides",
-  missing_document: "the answer is in another instrument, a definition not located or a redacted term: get the document",
-  missing_fact: "depends on a business fact, not the text: give it as a scenario input",
-  check_extraction: "the compiler is unsure of an atom: a paralegal or analyst checks the quote below"};
+const STATUS = {firm: "Clear", provisional: "Plan for worst case", blocked: "Can’t tell yet"};
+const WHY_LABEL = {missing_document: "Document missing", missing_fact: "Fact missing", check_extraction: "Check the extraction",
+  legal_judgement: "A legal call", versions: "Language versions disagree", unclear: "Not yet clear"};
+const WHY_HELP = {missing_document: "The answer is in another document, or in a definition we do not have.",
+  missing_fact: "The answer depends on a business fact, not on the text. Give it as an input.",
+  check_extraction: "The compiler was unsure what the clause says. Someone should check the quote.",
+  legal_judgement: "The clause needs a legal reading. It is a question for counsel.",
+  versions: "The English and Arabic versions give different answers. Unknown is not false, so nothing is assumed.",
+  unclear: "The result is open for a reason the compiler did not name."};
+const WHY_ORDER = ["missing_document", "missing_fact", "check_extraction", "legal_judgement", "versions", "unclear"];
+const GROUPS = ["auto", "they", "prepay", "consent", "notify", "other", "we"];
+const GCLS = {auto: "termination", they: "termination", prepay: "prepayment", consent: "consent", notify: "notice", other: "other", we: "deadline"};
+const KIND_WORD = {service_limitation: "service limitation", deadline: "deadline", option_deadline: "option deadline", earliest_exit: "earliest exit",
+  expired: "already expired", expiry: "expiry", renewed: "renewal"};
 const SC = Object.fromEntries(D.scenarios.map(s => [s.id, s]));
-const keys = Object.keys(D.contracts);
+const AG = D.agreements, AG_OF = {};
+for (const [a, v] of Object.entries(AG)) v.versions.forEach(k => AG_OF[k] = a);
+const keys = Object.keys(D.contracts), agKeys = Object.keys(AG);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
-const NAMES = {"ar:balady_engineering": "Engineering services (Saudi form, AR)", "ar:balady_urban": "Road works (Saudi form, AR)",
-  "ar:ejari": "Dubai tenancy (Ejari, AR)", "ar:mt_dyntek": "DynTek hosting (AR translation)", "ar:mt_ipayment": "iPayment sponsorship (AR translation)",
-  "ar:twin_corio": "Corio licence (AR)", "ar:twin_virtualscopics": "VirtualScopics alliance (AR)", "ar:twin_zounds": "Zounds manufacturing (AR)",
-  "cuad:BlackBox": "BlackBox distribution", "cuad:Corio": "Corio licence and hosting", "cuad:DynTek": "DynTek hosting",
-  "cuad:EuropeanMicro": "European Micro distribution", "cuad:Gopage": "Gopage content licence", "cuad:Gpaq": "Gpaq media licence",
-  "cuad:JointCorp": "Joint Corp franchise", "cuad:Kiromic": "Kiromic joint venture", "cuad:RaeSystems": "NETTAXI co-branding",
-  "cuad:TriCity": "TriCity outsourcing", "cuad:Vertex": "Vertex marketing", "cuad:VerticalNet": "VerticalNet support",
-  "cuad:VirtualScopics": "VirtualScopics alliance", "cuad:Zounds": "Zounds manufacturing", "cuad:agape": "Agape supply",
-  "cuad:calpine": "Calpine revolving credit", "cuad:eDiets": "eDiets co-branding", "cuad:eLandia": "eLandia outsourcing",
-  "cuad:ehave": "Ehave licence", "cuad:energous": "Energous alliance", "cuad:freezetag": "Freeze Tag sponsorship",
-  "cuad:garrett": "Garrett IP agreement", "cuad:healthgate": "HealthGate hosting", "cuad:iPayment": "iPayment sponsorship",
-  "cuad:lantheus": "Lantheus credit facility", "cuad:mPhase": "mPhase co-branding", "cuad:middlebrook": "MiddleBrook promotion",
-  "cuad:sfg": "SFG software licence", "cuad:virtuoso": "Virtuoso licence (JHU)", "edgar:Amscan": "Amscan credit facility"};
-const short = k => { const m = Object.keys(NAMES).filter(p => k.startsWith(p)).sort((a, z) => z.length - a.length)[0];
-  return m ? NAMES[m] : k.startsWith("ar:") ? k.slice(3) : k.split(":")[1].split("_")[0]; };
-const SHORT_SC = {hold_merger: "New parent (merger)", hold_exchange: "New parent (share swap)", ipo_200_60: "IPO $200M",
-  ipo_100_45: "IPO $100M", sale_30: "Sell 30%", sale_50: "Sell 50%", sale_60: "Sell 60%", sale_10_comp: "Competitor buys 10%", clock_90: "+90 days"};
 const lang = k => D.contracts[k].lang;
+const nm = k => AG[AG_OF[k]].name;
+const hasPair = ak => AG[ak].versions.length > 1;
+const langMark = ak => hasPair(ak) ? '<span class="lang">EN · AR</span>' : lang(AG[ak].versions[0]) === "ar" ? '<span class="lang">AR</span>' : "";
+const verName = k => lang(k) === "ar" ? "Arabic version" : "English version";
 const who = (h, k) => ({us: `our party (${D.contracts[k].party})`, them: "counterparty", either: "either party", both: "both parties"}[h] || "-");
-const sevName = n => D.sev_name[String(n)];
+const sevName = n => ({6: "they may terminate or demand prepayment", 5: "their consent is needed", 4: "we must notify", 3: "a service limitation", 2: "a deadline", 1: "another effect", 0: "nothing"})[n];
 const sevClass = n => n >= 6 ? "termination" : n === 5 ? "consent" : n === 4 ? "notice" : n === 2 ? "deadline" : n ? "other" : "none";
 const kindClass = x => x.status !== "TRIGGERED" ? "none" :
   ({termination_right: "termination", automatic_termination: "termination", prepayment: "prepayment", consent: "consent", notice: "notice"}[x.kind] || "other");
-const causeChips = cs => cs.map(c => `<span class="chip ${c === "legal_judgement" ? "c-counsel" : "c-blocked"}">${esc(D.cause_label[c])}</span>`).join(" ");
-let stateName = D.states.review ? "review" : "compiled", view = "ripple", rowOrder = [], colOrder = [], sortNote = "", backTo = "map";
+const plural = (n, one, many) => n === 1 ? one : many;
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const fmtDate = s => { const [y, m, d] = s.split("-").map(Number); return `${d} ${MONTHS[m - 1]} ${y}`; };
+const fmtMoney = v => `$${+(v / 1e6).toFixed(1)}M`;
+const dayDiff = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5);
+let stateName = D.states.review ? "review" : "compiled", view = "ripple", rowOrder = [], colOrder = [], sortNote = "", backTo = "ripple", rippleSc = "sale_60", qEv = "", showNone = false, rippleDone = false;
 const S = () => D.states[stateName];
+const PHONE = window.matchMedia("(max-width: 699px)");
 
+// ---------------- events, in page words ----------------
+function chipLabel(sc) {
+  const e = SC[sc].events[0];
+  return e.event === "share_sale" ? (e.buyer_is_competitor ? `Competitor buys ${e.buyer_pct}%` : `Sell ${e.buyer_pct}%`) :
+    e.event === "ipo" ? `IPO ${fmtMoney(e.gross_proceeds_usd)}` :
+    e.event === "holding_insertion" ? `New parent (${e.mechanism === "merger" ? "merger" : "share swap"})` : `+${dayDiff(D.as_of, e.to)} days`;
+}
+function eventPhrase(sc) {
+  const e = SC[sc].events[0];
+  return e.event === "share_sale" ? (e.buyer_is_competitor ? `a competitor buys ${e.buyer_pct}% of us` : `${e.buyer_pct}% of us is sold to one buyer`) :
+    e.event === "ipo" ? `we list in an IPO that raises ${fmtMoney(e.gross_proceeds_usd)} and the sponsors keep ${e.sponsor_pct_after}%` :
+    e.event === "holding_insertion" ? `a new holding company is put above us by ${e.mechanism === "merger" ? "a merger" : "a share exchange"}` :
+    `the date moves forward to ${fmtDate(e.to)}`;
+}
+// "termination right (counterparty); notice (us) by 2026-11-05" -> "they may terminate; we must notify by 5 Nov 2026"
+const KIND_PL = {"termination right": ["we may terminate", "they may terminate"], "automatic termination": ["ends automatically", "ends automatically"],
+  prepayment: ["we may demand prepayment", "they may demand prepayment"], consent: ["we give consent", "their consent is needed"],
+  notice: ["we must notify", "they must notify us"], "service limitation": ["service is limited", "service is limited"]};
+function plainLabel(l) {
+  return String(l).split("; ").map(p => {
+    if (p === "no reaction") return "no reaction";
+    if (p === "blocked") return "can’t tell yet";
+    const m = p.match(/^(.*?)(?: \((us|counterparty)\))?(?: by (\d{4}-\d\d-\d\d))?$/);
+    const t = KIND_PL[m[1]] ? KIND_PL[m[1]][m[2] === "us" ? 0 : 1] : m[1];
+    return t + (m[3] ? ` by ${fmtDate(m[3])}` : "");
+  }).join("; ");
+}
+function compose(effects, name) {
+  let first = true;
+  const s = effects.map(e => {
+    const t = e.text.replace("{S}", first ? name : "they").replace("{O}", first ? name : "them") + (e.due ? (e.by ? " by " : " on ") + fmtDate(e.due) : "");
+    first = false;
+    return t;
+  }).join("; ");
+  return s.startsWith(name) ? s : s.charAt(0).toUpperCase() + s.slice(1);
+}
+const clauseWord = ref => !ref ? "" : /^\d/.test(ref) ? `clause ${ref}` : ref;
+function sentence(sc) {
+  const b = S().brief[sc], g = b.groups, parts = [];
+  if (g.auto) parts.push(g.auto === 1 ? "1 ends automatically" : `${g.auto} end automatically`);
+  if (g.they) parts.push(g.they === 1 ? "1 counterparty may terminate" : `${g.they} counterparties may terminate`);
+  if (g.prepay) parts.push(`${g.prepay} may demand prepayment`);
+  if (g.consent) parts.push(g.consent === 1 ? "1 needs their consent" : `${g.consent} need their consent`);
+  if (g.notify) parts.push(`we must notify ${g.notify}`);
+  if (g.other) parts.push(`${g.other} ${plural(g.other, "has", "have")} another effect (${b.other_kinds.map(k => KIND_WORD[k] || k).join(", ")})`);
+  const nd = b.notify_due ? `we must give notice by ${fmtDate(b.notify_due)}` : "";
+  let s = `If ${esc(eventPhrase(sc))}: ` + (b.react ? `<b>${b.react} of ${b.agreements} contracts</b> react — ${esc(parts.join(", "))}.` : `<b>no contract</b> reacts against us.`);
+  if (b.options) s += ` We hold a right to terminate ${b.options} ${plural(b.options, "contract", "contracts")}.`;
+  if (b.more) s += ` They carry ${b.more} more ${plural(b.more, "effect", "effects")}${nd ? ", and " + nd : ""}.`;
+  else if (nd) s += ` ${nd.charAt(0).toUpperCase() + nd.slice(1)}.`;
+  if (b.counsel) s += ` <a href="#queue${sfx()}">${b.counsel} ${plural(b.counsel, "question", "questions")} for counsel</a>.`;
+  return s + ` ${b.cant} can’t tell yet; ${b.none} ${plural(b.none, "has", "have")} no reaction.`;
+}
+
+// ---------------- text and quotes ----------------
 function fmt(v) {
   if (v === null || v === undefined) return "<i>unknown</i>";
   if (Array.isArray(v) && v.length && typeof v[0] === "object")
     return v.map(e => esc(`${e.effect} / ${e.effect_holder || "?"}` + (e.notice ? ` / notice ${e.notice.join(" ")}` : "") + (e.unless_consented ? " / unless consented" : ""))).join("<br>");
   return esc(JSON.stringify(v));
 }
-function quotes(k, sids) {
+function valuePlain(v) {
+  if (v === null || v === undefined) return "not stated";
+  if (v === true) return "Yes";
+  if (v === false) return "No";
+  if (Array.isArray(v) && v.length && typeof v[0] === "object") return v.map(e => `${String(e.effect).replace(/_/g, " ")} (${e.effect_holder || "?"})`).join("; ");
+  if (Array.isArray(v)) return v.map(x => String(x).replace(/_/g, " ")).join(", ") || "none";
+  if (typeof v === "object") return JSON.stringify(v);
+  return String(v).replace(/_/g, " ");
+}
+function quotes(k, sids, toks) {
   const ar = lang(k) === "ar";
-  return sids.map(sid => `<blockquote ${ar ? 'dir="rtl" lang="ar"' : ""}><span class="sid">[${sid}]</span> ${esc(D.sentences[k][sid])}</blockquote>`).join("")
-    || '<p class="note">No sentence cited.</p>';
+  return sids.map(sid => `<div class="note">sentence ${sid}</div><blockquote ${ar ? 'dir="rtl" lang="ar"' : 'dir="auto"'}>${toks ? highlight(D.sentences[k][sid], toks) : esc(D.sentences[k][sid])}</blockquote>`).join("")
+    || '<p class="note">No sentence is cited.</p>';
+}
+function quotesHi(k, r) {
+  const val = a => (S().atominfo[`${k}|${r.template}|${a}`] || {}).value;
+  return r.sids.map(sid => quotes(k, [sid], Object.keys(r.cite).filter(a => r.cite[a].includes(sid) && r.atoms.includes(a)).flatMap(a => tokens(val(a))))).join("")
+    || '<p class="note">No sentence is cited for this answer.</p>';
 }
 function atomRows(k, t, atoms, pend) {
-  return `<table class="atoms"><tr><th>atom</th><th>value</th><th>compile status</th><th>agreement</th><th>review</th></tr>` +
+  return `<table class="atoms"><tr><th>fact</th><th>value</th><th>compiler status</th><th>agreement</th><th>review</th></tr>` +
     atoms.map(a => {
       const i = S().atominfo[`${k}|${t}|${a}`] || {};
       const agree = D.atoms === "gold" ? "gold" : `${i.agree}/3 runs, support ${i.support ? "passed" : "not passed"}`;
-      const rv = i.reviewed ? '<span class="ok">reviewed</span>' : i.unsure ? '<span class="warn">answer (compiler unsure)</span>' :
+      const rv = i.reviewed ? '<span class="ok">reviewed</span>' : i.unsure ? '<span class="warn">answer needed (compiler unsure)</span>' :
         pend && pend.includes(a) ? '<span class="warn">confirm</span>' : "-";
       return `<tr><td><code>${esc(a)}</code></td><td><code>${fmt(i.value)}</code>${i.suspicious ? `<div class="warn">⚠ ${esc(i.suspicious)}</div>` : ""}</td>` +
         `<td>${esc(i.status || "")}</td><td>${agree}</td><td>${rv}</td></tr>`;
     }).join("") + "</table>";
 }
 
-// ---------------- state ----------------
+// ---------------- header ----------------
+function setTheme(t) {
+  if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+  try { t === "system" ? localStorage.removeItem("theme") : localStorage.setItem("theme", t); } catch (e) {}
+  renderTheme();
+}
+function renderTheme() {
+  const cur = document.documentElement.dataset.theme || "system";
+  document.getElementById("theme").innerHTML = ["system", "light", "dark"].map(t =>
+    `<button data-theme-set="${t}" aria-pressed="${t === cur}">${{system: "System", light: "Light", dark: "Dark"}[t]}</button>`).join("");
+  document.querySelectorAll("[data-theme-set]").forEach(b => b.onclick = () => setTheme(b.dataset.themeSet));
+}
 function renderTop() {
   document.getElementById("seg").innerHTML = Object.entries({review: "After review (simulated)", compiled: "Before review"}).map(([k, l]) =>
     `<button data-state="${k}" aria-pressed="${k === stateName}" ${D.states[k] ? "" : "disabled"}>${l}</button>`).join("");
   document.querySelectorAll("[data-state]").forEach(b => b.onclick = () => go(view, b.dataset.state));
-  const h = S().header, hl = h.hand_labels;
+  const hl = S().header.hand_labels;
   document.getElementById("simnote").textContent = stateName === "review" ?
-    `Reviewer answers simulated from hand labels; not a lawyer's review. ${hl.contracts_without} of ${keys.length} contracts have no hand labels and stay as compiled.` : "";
-  const c = h.cases;
-  document.getElementById("stats").innerHTML =
-    `<span>Across ${D.scenarios.length} events and ${keys.length} contracts: <b>${h.firm}</b> of ${h.outcomes} answers clear</span>` +
-    `<span><b>${h.provisional}</b> plan for worst case</span><span><b>${h.blocked}</b> can’t tell yet</span>` +
-    `<span><b>${h.counsel}</b> questions for counsel</span><span>Test cases: <b>${c["wrong firm"]}</b> wrong answers</span>`;
+    `Simulated review: hand labels play the reviewer. This is not a lawyer’s review. ${hl.contracts_without} of ${keys.length} contract files have no hand labels and stay as compiled.` :
+    "Before review: the answers are exactly what the compiler read, with no reviewer checks.";
 }
 
-// ---------------- exposure map ----------------
-function headline(m) {
-  const parts = [m.termination && `${m.termination} may terminate or demand prepayment`, m.consent && `${m.consent} need their consent`,
-    m.notice && `${m.notice} need our notice`].filter(Boolean);
-  return `${m.react} contract${m.react === 1 ? "" : "s"} react${parts.length ? " — " + parts.join(", ") : ""}. ` +
-    `${m.counsel} question${m.counsel === 1 ? "" : "s"} for counsel; ${m.blocked} can’t tell yet`;
-}
+// ---------------- analyst view: the exposure map and the engine numbers ----------------
+const causeChips = cs => cs.map(c => `<span class="chip ${c === "legal_judgement" ? "c-counsel" : "c-blocked"}">${esc(D.cause_label[c])}</span>`).join(" ");
 function cellHtml(id, k) {
   const cell = (S().cells[id] || {})[k];
   if (!cell) return `<td><span class="cell absent">no clause</span></td>`;
   const blk = cell.status === "blocked", prov = cell.status === "provisional";
   const cls = cell.sev ? cell.cls : blk ? "blocked" : "none";
-  const main = cell.sev ? cell.labels[0] : blk ? "Blocked" : "no reaction";
-  const more = cell.sev && cell.labels.length > 1 ? ` <span class="cz">+ ${esc(cell.labels.slice(1).join(", "))}</span>` : "";
-  const tag = prov ? `provisional · clears with ${cell.clears} question${cell.clears === 1 ? "" : "s"}` : blk ? (cell.sev ? "rest blocked" : "") : "firm";
+  const main = cell.sev ? plainLabel(cell.labels[0]) : blk ? "Can’t tell yet" : "no reaction";
+  const more = cell.sev && cell.labels.length > 1 ? ` <span class="cz">+ ${esc(plainLabel(cell.labels.slice(1).join("; ")))}</span>` : "";
+  const tag = prov ? `plan for worst case · clears with ${cell.clears} ${plural(cell.clears, "fact", "facts")}` : blk ? (cell.sev ? "rest can’t be told" : "") : "clear";
   const cz = cell.causes.map(c => `<span class="${c === "legal_judgement" ? "counsel" : ""}">${esc(D.cause_label[c])}</span>`).join(" · ");
-  return `<td><button class="cell c-${cls} ${cls === "none" ? "none" : ""} ${prov ? "prov" : ""} ${blk ? "blk" : ""} ${cell.pending ? "pending" : ""}" data-ev="${esc(id + "|" + k)}" ` +
-    `aria-label="${esc(SC[id].name)}, ${esc(short(k))}: ${esc(main)}, ${esc(STATUS[cell.status])}${cz ? ", " + esc(cell.causes.map(c => D.cause_label[c]).join(", ")) : ""}">` +
+  return `<td><button class="cell c-${cls} ${prov ? "prov" : ""} ${blk ? "blk" : ""} ${cell.pending ? "pending" : ""}" data-ev="${esc(id + "|" + k)}" ` +
+    `aria-label="${esc(SC[id].name)}, ${esc(nm(k))}: ${esc(main)}, ${esc(STATUS[cell.status])}${cz ? ", " + esc(cell.causes.map(c => D.cause_label[c]).join(", ")) : ""}">` +
     `<span>${esc(main)}${prov && cell.sev ? " (worst case)" : ""}${more}</span>${tag ? `<span class="tag">${esc(tag)}</span>` : (cell.pending ? '<span class="tag"></span>' : "")}` +
     `${cz ? `<span class="cz">${cz}</span>` : ""}</button></td>`;
 }
@@ -329,102 +488,173 @@ function defaultOrder() {
   colOrder = D.scenarios.map(s => s.id); sortNote = "";
 }
 function renderMap() {
-  const v = document.getElementById("view-map");
-  let h = `<ul class="summary">` + D.scenarios.map(s => { const m = S().summaries[s.id];
-    return `<li><b>${esc(s.name)}</b><span>${headline(m)}</span><span class="q">${m.open_questions} open questions · ${m.pending} pending · ${m.material_open} material open</span></li>`; }).join("") + `</ul>`;
-  h += `<div class="legend">${["termination", "prepayment", "consent", "notice", "deadline", "other", "none"].map(c => `<span class="chip c-${c}">${c === "termination" ? "termination right" : c === "none" ? "no reaction" : c}</span>`).join("")}` +
-    `<span>Solid edge: firm. Dashed edge: provisional, the worst reading shown. Hatched: blocked. Open because:</span>${causeChips(Object.keys(D.cause_label))}</div>`;
-  h += `<div class="tools"><span>Click a scenario to sort contracts by it; click a contract to sort scenarios by it. ${esc(sortNote)}</span><button class="plain" id="reset">Reset order</button></div>`;
-  h += `<div class="tablewrap"><table class="map"><thead><tr><th class="corner">Contract (our party)</th>` +
+  const v = document.getElementById("view-map"), st = S(), h0 = st.header, c = h0.cases, e = st.effort;
+  let h = `<p class="stats"><span>Across ${D.scenarios.length} events and ${agKeys.length} agreements (${keys.length} contract files): <b>${h0.firm}</b> of ${h0.outcomes} answers clear</span>` +
+    `<span><b>${h0.provisional}</b> plan for worst case</span><span><b>${h0.blocked}</b> can’t tell yet</span>` +
+    `<span><b>${h0.counsel}</b> need a legal call</span><span>Test cases: <b>${c["wrong firm"]}</b> wrong answers</span></p>`;
+  h += `<div class="big"><b>${e.pending_outcomes}</b> pending outcomes rest on <b>${e.single_atom_confirmations}</b> unconfirmed atoms over ${e.clauses} clauses. ` +
+    `They need <b>${e.cards}</b> reasoning-path cards instead of ${e.single_atom_confirmations} one-atom confirmations. <b>${st.questions.length}</b> atoms the compiler could not settle come first. ` +
+    `Both lists start with what could cause the most harm.</div>`;
+  h += `<table class="counts"><tr><th>Event</th><th>Clear</th><th>Plan for worst case</th><th>Can’t tell yet</th><th>Legal calls</th><th>Open facts</th><th>Pending outcomes</th><th>Material open</th></tr>` +
+    D.scenarios.map(s => { const m = st.summaries[s.id];
+      return `<tr><td>${esc(s.name)}</td><td>${m.firm}</td><td>${m.provisional}</td><td>${m.blocked}</td><td>${m.counsel}</td><td>${m.open_questions}</td><td>${m.pending}</td><td>${m.material_open}</td></tr>`; }).join("") +
+    `</table><p class="note prose">Material open: open facts and cards whose worst answer in that event is a termination right, a prepayment or a consent. Counts here are per contract file and per clause, so a translation counts as its own file.</p>`;
+  h += `<h2>Exposure map, per contract file</h2><div class="legend">${[["termination", "They may terminate"], ["prepayment", "They may demand prepayment"], ["consent", "Consent"], ["notice", "Notice"], ["deadline", "Deadline"], ["other", "Other effect"], ["blocked", "Can’t tell yet"], ["none", "No reaction"]].map(([c, l]) => `<span class="chip c-${c}">${l}</span>`).join("")}` +
+    `<span>Solid edge: clear. Dashed edge: plan for worst case. Hatched: can’t tell yet. Open because:</span>${causeChips(Object.keys(D.cause_label))}</div>`;
+  h += `<div class="tools"><span>Click an event to sort contracts by it; click a contract to sort events by it. ${esc(sortNote)}</span><button class="plain" id="reset">Reset order</button></div>`;
+  h += `<div class="tablewrap"><table class="map"><thead><tr><th class="corner">Contract file (our party)</th>` +
     colOrder.map(id => `<th scope="col"><button class="hbtn" data-col="${id}"><span class="nm">${esc(SC[id].name)}</span></button></th>`).join("") + `</tr></thead><tbody>`;
   for (const k of rowOrder) {
     const c = D.contracts[k];
-    h += `<tr><th scope="row"><button class="hbtn" data-row="${esc(k)}" title="${esc(c.title)}"><span class="nm">${esc(short(k))}` +
-      `${c.lang === "ar" ? ' <span class="chip c-other">AR</span>' : ""}</span><span class="tt"><bdi>${esc(c.party)}</bdi></span></button></th>` +
+    h += `<tr><th scope="row"><button class="hbtn" data-row="${esc(k)}" title="${esc(c.title)}"><span class="nm"><bdi>${esc(nm(k))}</bdi>` +
+      `${c.lang === "ar" ? ' <span class="lang">AR</span>' : ""}</span><span class="tt"><bdi>${esc(c.party)}</bdi> · <code>${esc(k)}</code></span></button></th>` +
       colOrder.map(id => cellHtml(id, k)).join("") + `</tr>`;
   }
   v.innerHTML = h + `</tbody></table></div>`;
   v.querySelectorAll("[data-col]").forEach(b => b.onclick = () => { const id = b.dataset.col;
     rowOrder.sort((a, z) => sevOf(id, z) - sevOf(id, a) || a.localeCompare(z)); sortNote = `Contracts sorted by “${SC[id].name}”.`; renderMap(); });
   v.querySelectorAll("[data-row]").forEach(b => b.onclick = () => { const k = b.dataset.row;
-    colOrder.sort((a, z) => sevOf(z, k) - sevOf(a, k)); sortNote = `Scenarios sorted by ${short(k)}.`; renderMap(); });
+    colOrder.sort((a, z) => sevOf(z, k) - sevOf(a, k)); sortNote = `Events sorted by ${nm(k)}.`; renderMap(); });
   v.querySelectorAll("[data-ev]").forEach(b => b.onclick = () => go("ev=" + b.dataset.ev, stateName));
   document.getElementById("reset").onclick = () => { defaultOrder(); renderMap(); };
 }
 
-// ---------------- evidence ----------------
+// ---------------- the drawer: one agreement under one event ----------------
 function reactionLines(xs, k) {
-  return xs.map(x => `<dt>${esc(x.status === "TRIGGERED" ? x.kind.replace(/_/g, " ") : x.status === "NOT_TRIGGERED" ? "no reaction" : "open")}</dt><dd>` +
-    (x.status === "TRIGGERED" ? `${esc(who(x.holder, k))} · ${esc(x.due || "no date in the clause")}<br>` : "") + `<span class="note">${esc(x.reason || "")}</span></dd>`).join("");
+  return xs.map(x => `<dt>${esc(x.status === "TRIGGERED" ? plainLabel(x.kind.replace(/_/g, " ") + (x.holder === "us" ? " (us)" : x.holder ? " (counterparty)" : "")) : x.status === "NOT_TRIGGERED" ? "no reaction" : "open")}</dt><dd>` +
+    (x.status === "TRIGGERED" ? `${esc(who(x.holder, k))} · ${x.due ? esc(fmtDate(x.due)) : "no date in the clause"}<br>` : "") + `<span class="note">${esc(x.reason || "")}</span></dd>`).join("");
+}
+function answerOf(id, ak, k) {
+  const a = S().acells[id][ak], v = a && a.versions[k], name = AG[ak].name, rows = (S().rows[id] || {})[k] || [];
+  if (!v) return ["No clause of this kind was found in this contract, so nothing reacts.", "none"];
+  if (v.effects.length) return [(v.status === "firm" ? "" : "Plan for the worst case: ") + compose(v.effects, name) + ".", GCLS[v.effects[0].group]];
+  if (v.cant) {
+    const w = WHY_ORDER.find(c => v.causes.includes(c));
+    return [`We can’t tell yet${w ? ": " + WHY_LABEL[w].toLowerCase() + ". " + WHY_HELP[w] : "."}`, "blocked"];
+  }
+  return ["No reaction: under the compiled reading, this event does not trigger the clause.", "none"];
 }
 function renderEvidence(id, k) {
-  const ev = document.getElementById("ev"), c = D.contracts[k], s = SC[id];
+  const ev = document.getElementById("ev"), ak = AG_OF[k], A = AG[ak], c = D.contracts[k], s = SC[id], a = S().acells[id][ak];
   const rows = (S().rows[id] || {})[k] || [];
-  let h = `<button class="plain close" id="close">Close</button><h2>${esc(short(k))} · ${esc(s.name)}</h2>` +
-    `<p class="sub">${esc(c.title)}<br>Our party: <bdi>${esc(c.party)}</bdi> · as of ${esc(D.as_of)} · ${esc(S().label)}</p>`;
+  const [text, cls] = answerOf(id, ak, k);
+  let h = `<button class="plain close" id="close">Close</button><h2><bdi>${esc(A.name)}</bdi> <span class="sub">· ${esc(A.type)}</span> ${langMark(ak)}</h2>` +
+    `<p class="sub">${esc(s.name)} · our party <bdi>${esc(c.party)}</bdi> · as of ${esc(fmtDate(D.as_of))} · ${esc(S().label)}</p>`;
+  if (hasPair(ak)) h += `<div class="seg" role="group" aria-label="Language version">` + A.versions.map(v =>
+    `<button data-ver="${esc(v)}" aria-pressed="${v === k}">${verName(v)}</button>`).join("") + `</div>`;
+  if (a && a.disagree) h += `<p class="warn"><b>The language versions disagree.</b> Unknown is not false, so this agreement counts as “can’t tell yet” until counsel settles it.</p>` +
+    `<ul>` + A.versions.map(v => `<li>${verName(v)}: ${esc(answerOf(id, ak, v)[0])}</li>`).join("") + `</ul>`;
+  h += `<p class="answer c-x c-${cls}"><bdi>${a && a.disagree ? esc(verName(k)) + ": " : ""}${esc(text)}</bdi></p>`;
+  const counsel = a && a.causes.includes("legal_judgement"), vs = a && a.versions[k] ? a.versions[k].status : "";
+  h += `<p>${a && a.disagree ? '<span class="chip c-blocked">Language versions disagree</span>' : a ? `<span class="chip c-${vs === "firm" ? "deadline" : vs === "provisional" ? "consent" : "blocked"}">${esc(STATUS[vs || a.status])}</span>` : ""}` +
+    `${counsel ? ' <span class="chip c-counsel">Question for counsel</span>' : ""}</p>`;
+  const open = rows.reduce((n, r) => n + r.unconfirmed.length + r.ask.length, 0);
+  if (open) h += `<p class="note prose">${open} ${plural(open, "fact behind this answer is", "facts behind this answer are")} not confirmed yet. Open “Show reasoning” to confirm or correct ${plural(open, "it", "them")}.</p>`;
+  rows.forEach((r, i) => {
+    h += `<h3>The clause: ${esc(TEMPLATE[r.template])}</h3>${quotesHi(k, r)}` +
+      (r.flips.length ? `<div class="flipbox" id="fl-${i}" aria-label="What would change this answer"></div>` : `<div id="fl-${i}"></div>`);
+  });
+  if (!rows.length) h += `<p class="note">There is no clause of this kind to quote.</p>`;
+  h += `<details class="reasoning" id="reasoning"><summary>Show reasoning</summary>`;
   for (const r of rows) {
     const top = r.status === "provisional" ? sevClass(r.worst_sev) : r.status === "blocked" ? "blocked" :
-      kindClass(r.reactions.reduce((a, x) => (x.status === "TRIGGERED" ? x : a), r.reactions[0]));
-    h += `<div class="reaction c-${top}"><h3>${esc(TEMPLATE[r.template])}: <span class="chip c-${top}">${esc(STATUS[r.status])}</span> ${causeChips(r.causes)}</h3>` +
+      kindClass(r.reactions.reduce((x, y) => (y.status === "TRIGGERED" ? y : x), r.reactions[0]));
+    h += `<div class="reaction c-${top}" id="rw-${rows.indexOf(r)}"><h3>${esc(TEMPLATE[r.template])}: <span class="chip c-${top}">${esc(STATUS[r.status])}</span> ${causeChips(r.causes)}</h3>` +
       `<div class="rg" id="rg-${rows.indexOf(r)}" aria-label="Reasoning graph for ${esc(TEMPLATE[r.template])}"></div>`;
     if (r.status === "firm") {
-      h += `<dl class="kv">${reactionLines(r.reactions, k)}</dl>` + (r.tried ? `<p class="note">Firm in every reading of the open atom${r.tried.length > 1 ? "s" : ""} ` +
-        `${r.tried.map(a => `<code>${esc(a)}</code>`).join(", ")}; the reason shows the first reading tried, not a compiled value.</p>` : "");
+      h += `<dl class="kv">${reactionLines(r.reactions, k)}</dl>` + (r.tried ? `<p class="note">Clear in every reading of the open ${plural(r.tried.length, "fact", "facts")} ` +
+        `${r.tried.map(x => `<code>${esc(x)}</code>`).join(", ")}; the reason shows the first reading tried, not a compiled value.</p>` : "");
     } else if (r.status === "provisional") {
-      h += `<p><b>Worst case for us:</b></p><dl class="kv">${reactionLines(r.worst, k)}</dl><p><b>Readings</b> (clears with ${r.clears} question${r.clears === 1 ? "" : "s"}):</p>` +
-        `<ul class="branches">${r.branches.map(b => `<li><span class="chip c-${sevClass(b.sev)}">${esc(b.label)}</span> — ${esc(b.when)}</li>`).join("")}</ul>`;
+      h += `<p><b>Worst case for us:</b></p><dl class="kv">${reactionLines(r.worst, k)}</dl><p><b>Readings</b> (clears with ${r.clears} ${plural(r.clears, "fact", "facts")}):</p>` +
+        `<ul class="branches">${r.branches.map(b => `<li><span class="chip c-${sevClass(b.sev)}">${esc(plainLabel(b.label))}</span> — ${esc(b.when)}</li>`).join("")}</ul>`;
     } else {
-      h += `<p><b>Blocked:</b> ${esc(r.missing)}</p>`;
+      h += `<p><b>Can’t tell yet:</b> ${esc(r.missing)}</p>`;
     }
-    if (r.causes.length) h += `<ul class="note">${r.causes.map(x => `<li><b>${esc(D.cause_label[x])}</b>: ${esc(CAUSE_HELP[x])}</li>`).join("")}</ul>`;
-    if (r.unconfirmed.length || r.ask.length) h += `<p class="note">Before relying on this outcome: confirm ${r.unconfirmed.map(a => `<code>${esc(a)}</code>`).join(", ") || "nothing"}` +
-      `${r.ask.length ? `; answer ${r.ask.map(a => `<code>${esc(a)}</code>`).join(", ")} (the compiler is unsure)` : ""}.</p>`;
-    h += `<h3>Atoms used</h3>` + (r.atoms.length ? atomRows(k, r.template, r.atoms, r.unconfirmed) : '<p class="note">None: no atom value changes this outcome.</p>') +
-      `<h3>Cited sentences (verbatim)</h3>${quotes(k, r.sids)}</div>`;
+    if (r.causes.length) h += `<ul class="note">${r.causes.map(x => `<li><b>${esc(D.cause_label[x])}</b>: ${esc(WHY_HELP[x])}</li>`).join("")}</ul>`;
+    if (r.unconfirmed.length || r.ask.length) h += `<p class="note">Before relying on this answer: confirm ${r.unconfirmed.map(x => `<code>${esc(x)}</code>`).join(", ") || "nothing"}` +
+      `${r.ask.length ? `; answer ${r.ask.map(x => `<code>${esc(x)}</code>`).join(", ")} (the compiler is unsure)` : ""}.</p>`;
+    h += `<h3>Facts used from the clause</h3>` + (r.atoms.length ? atomRows(k, r.template, r.atoms, r.unconfirmed) : '<p class="note">None: no fact changes this answer.</p>') + `</div>`;
   }
-  h += `<p class="note">The rules apply the compiled reading of the clause. A reaction shown here means the clause is potentially triggered under that reading; it is not a legal conclusion.</p>`;
+  h += `</details><p class="note prose">The rules apply the compiled reading of the clause. A reaction shown here means the clause is potentially triggered under that reading; it is not a legal conclusion.</p>`;
   ev.innerHTML = h; ev.hidden = false;
+  ev.querySelectorAll("[data-ver]").forEach(b => b.onclick = () => go("ev=" + id + "|" + b.dataset.ver, stateName));
   mountGraphs(id, k, rows);
+  document.getElementById("reasoning").addEventListener("toggle", e => { if (e.target.open) GV.forEach((_, i) => renderGraph(i)); });
   document.getElementById("close").onclick = () => go(backTo, stateName);
   document.getElementById("close").focus();
 }
 
-// ---------------- question queue ----------------
-function couldCause(x) { return `<span class="chip c-${sevClass(x.sev)}">could cause: ${esc(sevName(x.sev))}</span>`; }
+// ---------------- to resolve ----------------
+function answerOpts(allowed) {
+  if (/^true or false/.test(allowed) || /^"yes" or "no"/.test(allowed)) return ["Yes", "No", "Not stated"];
+  const m = allowed.match(/^"[a-z_]+"( or "[a-z_]+")+/);
+  return m ? m[0].split(" or ").map(x => x.replace(/"/g, "").replace(/_/g, " ")).concat("Not stated") : null;
+}
+const plainAllowed = a => a.replace(/^any list drawn from: /, "choose any that apply: ").replace(/^a list of effects: /, "choose the effects: ").replace(/[a-z]+(?:_[a-z]+)+/g, w => w.replace(/_/g, " "));
+const plainImpact = s => s.replace(/become firm/g, "become clear").replace(/none of (\d+) become firm/, "none of $1 becomes clear");
+const askOf = (t, a) => D.ask[`${t}|${a}`] || a;
+function counselItems(sc) {
+  const out = [];
+  for (const s of D.scenarios) {
+    if (sc && s.id !== sc) continue;
+    for (const ak of agKeys) {
+      const a = S().acells[s.id][ak];
+      if (!a || !a.causes.includes("legal_judgement")) continue;
+      const rs = a.versions && Object.keys(a.versions).flatMap(k => ((S().rows[s.id] || {})[k] || []).filter(r => r.causes.includes("legal_judgement")).map(r => ({k, r})));
+      const first = rs[0];
+      out.push({sc: s.id, ak, k: first ? first.k : AG[ak].versions[0], templates: [...new Set(rs.map(x => TEMPLATE[x.r.template]))],
+        sev: Math.max(0, ...rs.map(x => x.r.worst_sev || 0)), text: a.effects.length ? "Worst case: " + compose(a.effects, AG[ak].name) + "." : (first ? first.r.missing : "")});
+    }
+  }
+  return out.sort((x, z) => z.sev - x.sev || AG[x.ak].name.localeCompare(AG[z.ak].name));
+}
 function renderQueue() {
-  const v = document.getElementById("view-queue"), st = S(), e = st.effort;
-  let h = `<div class="big"><b>${e.pending_outcomes}</b> pending outcomes rest on <b>${e.single_atom_confirmations}</b> unconfirmed atoms over ${e.clauses} clauses. ` +
-    `They need <b>${e.cards}</b> reasoning-path cards instead of ${e.single_atom_confirmations} one-atom confirmations. <b>${st.questions.length}</b> questions to answer come first. ` +
-    `Both lists start with what could cause the most harm.</div>`;
-  h += `<table class="counts"><tr><th>Scenario</th><th>Firm</th><th>Provisional</th><th>Blocked</th><th>For counsel</th><th>Open questions</th><th>Pending outcomes</th><th>Material open</th></tr>` +
-    D.scenarios.map(s => { const m = st.summaries[s.id];
-      return `<tr><td>${esc(s.name)}</td><td>${m.firm}</td><td>${m.provisional}</td><td>${m.blocked}</td><td>${m.counsel}</td><td>${m.open_questions}</td><td>${m.pending}</td><td>${m.material_open}</td></tr>`; }).join("") +
-    `</table><p class="note">Material open: open questions and cards whose worst answer in that scenario is a termination right, a prepayment or a consent.</p>`;
-  h += `<div class="cols"><div><h2>Questions to answer (${st.questions.length})</h2><p class="note">An atom the compiler could not settle, whose answer can change a reaction. Order: what it could cause, then outcomes it makes firm, then outcomes it touches.</p>`;
-  st.questions.forEach((q, i) => {
-    h += `<div class="card c-${sevClass(q.sev)}"><div class="head"><h3><span class="rank">${i + 1}</span>${esc(short(q.contract))} · ${esc(TEMPLATE[q.template])} · <code>${esc(q.atom)}</code></h3>${couldCause(q)}</div>` +
-      `<div>${esc(q.text)}</div><div class="note">Touches ${q.pairs.length} outcome(s): ${q.pairs.map(p => esc(SC[p].name)).join("; ")}</div>` +
-      `<ul class="preview">${q.preview.map(p => `<li title="${esc(p.answers.join(", ") + " → " + p.line)}"><b>${esc(p.answers.length > 3 ? p.answers.slice(0, 3).join(", ") + ` +${p.answers.length - 3}` : p.answers.join(", "))}</b> → ${esc(p.line)}</li>`).join("")}</ul>` +
-      `<details ${i < 1 ? "open" : ""}><summary>Cited sentences and details</summary>${quotes(q.contract, q.sids)}<div class="note">Allowed: ${esc(q.allowed)}</div>` +
-      `<ul class="note">${q.preview.filter(p => p.detail).map(p => `<li>${esc(p.detail)}</li>`).join("")}</ul></details></div>`;
+  const v = document.getElementById("view-queue"), st = S(), sc = qEv === "all" ? "" : (qEv || rippleSc);
+  const inEv = x => !sc || sc in x.sev_by;
+  const qs = st.questions.filter(inEv), cards = st.cards.filter(inEv), ci = counselItems(sc), facts = qs.length + cards.length;
+  const couldCause = x => `<span class="chip c-${sevClass(x.sev)}">could lead to: ${esc(sevName(x.sev))}</span>`;
+  const nmv = k => esc(nm(k)) + (hasPair(AG_OF[k]) || lang(k) === "ar" ? ` <span class="lang">${lang(k) === "ar" ? "AR" : "EN"}</span>` : "");
+  let h = `<div class="resolve"><div class="pick"><label>Event <select id="qev">` +
+    D.scenarios.map(s => `<option value="${s.id}" ${s.id === sc ? "selected" : ""}>${esc(s.name)}</option>`).join("") + `<option value="all" ${sc ? "" : "selected"}>All events</option></select></label></div>` +
+    `<p class="prose">Two kinds of work are open. <a href="#qc${sfx()}" data-jump="qc">Questions for counsel (${ci.length})</a> need a legal call. ` +
+    `<a href="#qf${sfx()}" data-jump="qf">Facts to confirm (${facts})</a> are details of a clause that the compiler could not settle, or that someone should check against the text. Both lists start with what could cause the most harm.</p>`;
+  h += `<h2 id="qc">Questions for counsel (${ci.length})</h2>` + (ci.length ? "" : '<p class="note">None for this selection.</p>');
+  ci.forEach((x, i) => {
+    h += `<div class="item c-${sevClass(x.sev)}"><div class="head"><h3><span class="rank">${i + 1}</span>${nmv(x.k)} · ${esc(AG[x.ak].type)}${sc ? "" : " · " + esc(chipLabel(x.sc))}</h3>` +
+      `<button class="plain" data-why="${esc(x.sc + "|" + x.k)}">Open the clause</button></div>` +
+      `<p class="prose">A legal call on ${esc(x.templates.join(" and "))}. ${esc(x.text)}</p></div>`;
   });
-  h += `</div><div><h2>Reasoning-path cards (${st.cards.length})</h2><p class="note">One card per pending outcome: every atom the compiler settled that the outcome rests on, to confirm together against the same sentences. Order: what a wrong atom could cause, then weakest compile evidence.</p>`;
-  st.cards.forEach((c, i) => {
-    h += `<div class="card c-${sevClass(c.sev)}"><div class="head"><h3><span class="rank">${i + 1}</span>${esc(short(c.contract))} · ${esc(TEMPLATE[c.template])} · confirm ${c.atoms.length} atom${c.atoms.length > 1 ? "s" : ""} together</h3>${couldCause(c)}</div>` +
-      `<div class="note">Settles: ${c.outcomes.map(o => `${esc(SC[o.scenario].name)} (${esc(o.label)})`).join("; ")}` +
-      `${c.also ? `<br>Also settles, with the cards before it: ${c.also.map(o => `${esc(SC[o.scenario].name)} (${esc(o.label)})`).join("; ")}` : ""}</div>` +
-      atomRows(c.contract, c.template, c.atoms, c.atoms) +
-      `<details ${i < 1 ? "open" : ""}><summary>Cited sentences (${c.sids.length})</summary>${quotes(c.contract, c.sids)}</details></div>`;
+  h += `<h2 id="qf">Facts to confirm (${facts})</h2>` + (facts ? "" : '<p class="note">None for this selection.</p>');
+  qs.forEach((q, i) => {
+    const opts = answerOpts(q.allowed), t = q.template;
+    h += `<div class="item c-${sevClass(q.sev)}"><div class="head"><h3><span class="rank">${i + 1}</span>${nmv(q.contract)} · ${esc(TEMPLATE[t])}</h3>${couldCause(q)}</div>` +
+      `<div class="qa"><div><p class="ask">${esc(q.ask)}</p>` +
+      (opts ? `<div class="ans" aria-label="Answers">${opts.map(o => `<span>${esc(o)}</span>`).join("")}</div>` : `<p class="note">Answer: ${esc(plainAllowed(q.allowed))}</p>`) +
+      `<p class="note">Touches ${q.pairs.length} ${plural(q.pairs.length, "event", "events")}: ${q.pairs.map(p => esc(chipLabel(p))).join(", ")}</p>` +
+      `<details><summary>What each answer would change</summary><ul class="note">${q.preview.map(p => `<li><b>${esc(p.answers.slice(0, 3).join(", "))}${p.answers.length > 3 ? ` +${p.answers.length - 3}` : ""}</b> → ${esc(plainImpact(p.line))}</li>`).join("")}</ul></details>` +
+      `<details><summary>How the compiler read this</summary><p class="note prose">${esc(q.text)}</p><p class="note">Allowed answers in the compiler: ${esc(q.allowed)}</p></details></div>` +
+      `<div>${quotes(q.contract, q.sids)}</div></div></div>`;
   });
-  v.innerHTML = h + `</div></div>`;
+  cards.forEach((c, i) => {
+    h += `<div class="item c-${sevClass(c.sev)}"><div class="head"><h3><span class="rank">${qs.length + i + 1}</span>${nmv(c.contract)} · ${esc(TEMPLATE[c.template])} · check ${c.atoms.length} ${plural(c.atoms.length, "fact", "facts")}</h3>${couldCause(c)}</div>` +
+      `<div class="qa"><div>` + c.atoms.map(a => {
+        const i2 = st.atominfo[`${c.contract}|${c.template}|${a}`] || {};
+        return `<p class="ask">${esc(askOf(c.template, a))}</p><p class="read">The compiler read: <b>${esc(valuePlain(i2.value))}</b></p>`;
+      }).join("") + `<p class="note">Settles: ${c.outcomes.map(o => `${esc(chipLabel(o.scenario))} (${esc(plainLabel(o.label))})`).join("; ")}</p>` +
+      `<details><summary>How the compiler read this</summary>${atomRows(c.contract, c.template, c.atoms, c.atoms)}</details></div><div>${quotes(c.contract, c.sids)}</div></div></div>`;
+  });
+  v.innerHTML = h + `</div>`;
+  document.getElementById("qev").onchange = e => { qEv = e.target.value; renderQueue(); };
+  v.querySelectorAll("[data-why]").forEach(b => b.onclick = () => go("ev=" + b.dataset.why, stateName));
+  v.querySelectorAll("[data-jump]").forEach(a => a.onclick = e => { e.preventDefault(); document.getElementById(a.dataset.jump).scrollIntoView(); });
 }
 
 // ---------------- reasoning graph ----------------
 // Everything here selects and draws what the Python engine exported: graphs, branches, slider intervals, corrections.
 // No rule is evaluated in the browser.
-const CAP = {fact: "fact", atom: "ground", fork: "ground · open", limb: "rule", exception: "exception", effect: "effect", outcome: "conclusion"};
+const CAP = {fact: "event fact", atom: "clause fact", fork: "clause fact · open", limb: "test", exception: "exception", effect: "effect", outcome: "conclusion"};
 const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)");
-const NW = 152, NH = 52, CW = 178, RH = 74;
+const NW = 196, NH = 62, CW = 224, RH = 84;
 const confirmed = new Set();      // atoms confirmed on this page only (nothing is stored)
 const corrected = {};             // atom -> correction picked on this page only
 let GV = [];                      // view state of each graph on the open evidence panel
@@ -434,7 +664,7 @@ const shortVal = v => { const s = typeof v === "string" ? v : jv(v); return s.le
 
 function valText(st, pending) {
   if (pending) return "not yet";
-  if (st.kind === "outcome") return {T: "triggered", F: "no reaction", U: "open"}[st.value];
+  if (st.kind === "outcome") return {T: "reaction", F: "no reaction", U: "can’t tell"}[st.value];
   if (st.kind === "atom") return "stated";
   if (st.kind === "fork") return "assumed" in st.inputs ? "assumed" : "unknown";
   if (st.kind === "fact") return typeof st.inputs.value === "boolean" || st.value === "F" ? (st.value === "T" ? "yes" : "no") : "given";
@@ -463,7 +693,7 @@ function diffSteps(g) {
   const a = D.graphs[g.row.graph], o = otherRow(g, g.diff), b = o ? D.graphs[o.graph] : [];
   const bm = Object.fromEntries(b.map(s => [s.id, s])), am = Object.fromEntries(a.map(s => [s.id, s]));
   const out = a.filter(s => !bm[s.id] || bm[s.id].label !== s.label || bm[s.id].value !== s.value).map(s => ({...s, was: bm[s.id] || null, only: !bm[s.id]}));
-  return out.concat(b.filter(s => !am[s.id]).map(s => ({...s, was: s, other: true, value: "F", label: "(not in this scenario) " + s.label})));
+  return out.concat(b.filter(s => !am[s.id]).map(s => ({...s, was: s, other: true, value: "F", label: "(not in this event) " + s.label})));
 }
 function visible(g, all) {
   if (g.showAll || g.diff) return {nodes: all, hidden: 0};
@@ -488,18 +718,18 @@ const order = nodes => nodes.map((n, i) => [n, i]).sort((a, z) => a[0].layer - z
 
 function qualifier(g) {
   const r = g.row;
-  if (g.branch !== null) return ["Provisional — reading assumed", "consent"];
-  if (r.status === "blocked") return ["Blocked", "blocked"];
-  if (r.status === "provisional") return ["Provisional — worst case", "consent"];
+  if (g.branch !== null) return ["Plan for worst case — reading assumed", "consent"];
+  if (r.status === "blocked") return ["Can’t tell yet", "blocked"];
+  if (r.status === "provisional") return ["Plan for worst case", "consent"];
   const c = Object.entries(corrected).find(([key]) => key.startsWith(ck(g, "")));
   if (c) return [`Corrected (simulated): ${c[1].label}`, "notice"];
-  return pendingAtoms(g).length ? ["Firm · path unconfirmed", "consent"] : ["Firm", "deadline"];
+  return pendingAtoms(g).length ? ["Clear · not yet reviewed", "consent"] : ["Clear", "deadline"];
 }
 function ring(g) {
   const lb = lbAtoms(g), total = lb.size, done = total - pendingAtoms(g).length, f = total ? done / total : 1, C = 2 * Math.PI * 8;
   return `<svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="8" fill="none" stroke="var(--line)" stroke-width="3"/>` +
     `<circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="${(f * C).toFixed(2)} ${C.toFixed(2)}" transform="rotate(-90 11 11)"/></svg>` +
-    `<span>${esc(qualifier(g)[0])}${total ? ` · ${done} of ${total} load-bearing atoms confirmed` : ""}</span>`;
+    `<span>${esc(qualifier(g)[0])}${total ? ` · ${done} of ${total} key facts confirmed` : ""}</span>`;
 }
 function fmtNum(v, unit) {
   if (unit === "$") return v >= 1e6 ? `$${+(v / 1e6).toFixed(1)}M` : `$${Math.round(v).toLocaleString("en-US")}`;
@@ -511,7 +741,7 @@ function rangeText(iv, f) {
   const a = iv.lo === f.lo ? "" : iv.lo_in ? `from ${lo}` : `above ${lo}`, b = iv.hi === f.hi ? "" : iv.hi_in ? `up to ${hi}` : `below ${hi}`;
   return [a, b].filter(Boolean).join(" ") || "across the whole range";
 }
-const ivLabel = x => x.status === "blocked" ? "blocked" : x.label + (x.status === "provisional" ? " (provisional, worst case)" : "");
+const ivLabel = x => x.status === "blocked" ? "can’t tell yet" : plainLabel(x.label) + (x.status === "provisional" ? " (worst case)" : "");
 function flipHtml(g) {
   return g.row.flips.map((f, p) => {
     const nowI = f.intervals.findIndex(iv => (iv.lo < f.now || iv.lo_in && iv.lo === f.now) && (f.now < iv.hi || iv.hi_in && f.now === iv.hi));
@@ -520,9 +750,9 @@ function flipHtml(g) {
       `style="flex:${Math.max(0.012, (x.hi - x.lo) / span)}" title="${esc(ivLabel(x) + " " + rangeText(x, f))}" aria-label="${esc(ivLabel(x) + " " + rangeText(x, f))}">${esc(x.hi - x.lo > span * .12 ? ivLabel(x) : "")}</button>`).join("");
     return `<div class="flip"><label>${esc(f.text)}: <input type="range" data-act="flip" data-p="${p}" min="0" max="${f.intervals.length - 1}" step="1" value="${i}" ` +
       `aria-label="${esc(f.text)}, ${f.intervals.length} intervals" ${f.intervals.length < 2 ? "disabled" : ""}></label> ` +
-      `<span class="now">${esc(fmtNum(iv.at, f.unit))} → ${esc(ivLabel(iv))}</span>${i === nowI ? ' <span class="note">(this scenario)</span>' : ""}` +
-      `<div class="strip">${seg}</div><div class="note">${f.intervals.length < 2 ? "Same outcome across the whole range." :
-        "Where the outcome changes: " + esc(f.intervals.map(x => `${ivLabel(x)} ${rangeText(x, f)}`).join(" · "))}</div></div>`;
+      `<span class="now">${esc(fmtNum(iv.at, f.unit))} → ${esc(ivLabel(iv))}</span>${i === nowI ? ' <span class="note">(this event)</span>' : ""}` +
+      `<div class="strip">${seg}</div><div class="note">${f.intervals.length < 2 ? "The answer is the same across the whole range." :
+        "Where the answer changes: " + esc(f.intervals.map(x => `${ivLabel(x)} ${rangeText(x, f)}`).join(" · "))}</div></div>`;
   }).join("");
 }
 function highlight(text, tokens) {
@@ -540,27 +770,27 @@ function tokens(v) {
   return [];
 }
 function paneHtml(g, st) {
-  if (!st) return `<h4>How to read this graph</h4><p>Left to right: <b>facts</b> of the event, <b>grounds</b> (atoms of the clause, each with its quote), ` +
-    `<b>rules</b> (one test per trigger), <b>exceptions</b> checked, the <b>effect</b> and the <b>conclusion</b>. The <b>qualifier</b> above says how firm it is.</p>` +
-    `<p>Each node says true, false or unknown in words. Outlined grounds are load-bearing: another value would change the outcome.</p>` +
-    `<p class="note">Select a ground to see its clause. Arrow keys move along the trace, Enter opens the clause, Esc closes it.</p>`;
+  if (!st) return `<h4>How to read this graph</h4><p>Left to right: <b>event facts</b>, <b>clause facts</b> (each with its quote), ` +
+    `<b>tests</b> (one per trigger), <b>exceptions</b> checked, the <b>effect</b> and the <b>conclusion</b>. The label above says how sure the answer is.</p>` +
+    `<p>The colour shows the kind of step. The outline shows its value: solid is true, dashed and struck through is false, amber is unknown. Ringed clause facts are key: another value would change the answer.</p>` +
+    `<p class="note">Select a clause fact to see its clause. Arrow keys move along the trace, Enter opens the clause, Esc closes it.</p>`;
   let h = `<h4>${esc(CAP[st.kind])}: ${esc(valText(st))}</h4><p>${esc(st.label)}</p>`;
   if (st.was) h += `<p class="note">In “${esc(SC[g.diff].name)}”: ${esc(valText(st.was))} · ${esc(st.was.label)}</p>`;
   const a = st.atoms[0];
   if (!a) return h + (st.kind === "outcome" ? `<p class="note">A reaction shown here means the clause is potentially triggered under this reading; it is not a legal conclusion.</p>` : "");
   const i = S().atominfo[`${g.k}|${g.row.template}|${a}`];
-  if (i) h += `<p class="note">Compile: ${esc(i.status)}${D.atoms === "gold" ? "" : ` · agreement ${i.agree}/3 runs · support ${i.support ? "passed" : "not passed"}`}${i.reviewed ? " · reviewed" : ""}</p>`;
+  if (i) h += `<p class="note">Compiler: ${esc(i.status)}${D.atoms === "gold" ? "" : ` · agreement ${i.agree}/3 runs · support ${i.support ? "passed" : "not passed"}`}${i.reviewed ? " · reviewed" : ""}</p>`;
   if (st.kind === "fork" && Array.isArray(st.inputs.tried) && g.row.branches) {
     const vals = st.inputs.tried.filter(v => g.row.branches.some(b => b.alts.some(x => jv(x.values[a]) === jv(v))));
     h += `<p><b>Explore a reading.</b> Pick a value for <code>${esc(a)}</code>:</p><div class="valpick">` +
       vals.slice(0, 40).map(v => `<button data-act="pick" data-atom="${esc(a)}" data-v="${esc(jv(v))}" title="${esc(jv(v))}">${esc(shortVal(v))}</button>`).join("") +
       (vals.length > 40 ? `<span class="note">+${vals.length - 40} more: use the branch buttons</span>` : "") + `</div>`;
   } else if (st.kind === "fork") {
-    h += `<p class="note">The compiler could not settle this atom. Every value that matters was tried; see the branches above, or answer it in the question queue.</p>`;
+    h += `<p class="note">The compiler could not settle this fact. Every value that matters was tried; see the readings above, or answer it under To resolve.</p>`;
   }
   if (lbAtoms(g).has(a) && g.row.unconfirmed.includes(a)) {
     const done = confirmed.has(ck(g, a));
-    h += `<p><button class="plain" data-act="confirm" data-atom="${esc(a)}">${done ? "Undo confirmation" : "Confirm this atom"}</button></p>`;
+    h += `<p><button class="plain" data-act="confirm" data-atom="${esc(a)}">${done ? "Undo confirmation" : "Confirm this fact"}</button></p>`;
     const cs = (g.row.corrections || {})[a] || [];
     if (cs.length) h += `<details><summary>Correct it: what each other value would give</summary><div class="valpick">` +
       cs.map((c, j) => `<button data-act="correct" data-atom="${esc(a)}" data-j="${j}" title="${esc(jv(c.value))}">${esc(shortVal(c.value))} → ${esc(c.label)}</button>`).join("") + `</div></details>`;
@@ -585,17 +815,17 @@ function svgHtml(g) {
   }
   for (const n of nodes) {
     const p = pos[n.id], pending = rank[n.id] >= g.step, a = n.atoms[0], isLb = a && lb.has(a) && n.kind === "atom";
-    const lines = wrap(n.label, 24), val = valText(n, pending);
-    s += `<g class="node v${n.value} ${pending ? "pending" : ""} ${isLb ? "lb" : ""} ${g.sel === n.id ? "sel" : ""} ${rank[n.id] === g.step - 1 && g.step < g.n ? "now" : ""}" ` +
+    const lines = wrap(n.label, 28), val = valText(n, pending);
+    s += `<g class="node k-${n.kind} v${n.value} ${pending ? "pending" : ""} ${isLb ? "lb" : ""} ${g.sel === n.id ? "sel" : ""} ${rank[n.id] === g.step - 1 && g.step < g.n ? "now" : ""}" ` +
       `data-node="${esc(n.id)}" transform="translate(${p.x},${p.y})" role="button" tabindex="-1" aria-label="${esc(CAP[n.kind] + ", " + val + ": " + n.label)}">` +
       `<title>${esc(n.label)}</title>${isLb ? `<rect class="ring" x="-4" y="-4" width="${NW + 8}" height="${NH + 8}"/>` : ""}<rect class="box" width="${NW}" height="${NH}"/>` +
-      `<text class="cap" x="8" y="13">${esc(CAP[n.kind])}</text><text class="val" x="${NW - 8}" y="13" text-anchor="end">${esc(val)}</text>` +
-      lines.map((l, i) => `<text x="8" y="${29 + i * 13}">${esc(l)}</text>`).join("") +
-      (n.was && !n.other ? `<text class="diffwas" x="8" y="${NH + 11}">was ${esc(valText(n.was))}${n.only ? " (new here)" : ""}</text>` : "");
+      `<text class="cap" x="8" y="17">${esc(CAP[n.kind])}</text><text class="val" x="${NW - 8}" y="17" text-anchor="end">${esc(val)}</text>` +
+      lines.map((l, i) => `<text class="t" x="8" y="${36 + i * 15}">${esc(l)}</text>`).join("") +
+      (n.was && !n.other ? `<text class="diffwas" x="8" y="${NH + 14}">was ${esc(valText(n.was))}${n.only ? " (new here)" : ""}</text>` : "");
     if (isLb && g.row.unconfirmed.includes(a)) {
       const done = !pend.has(a);
-      s += `<g class="pill ${done ? "done" : ""}" data-act="confirm" data-atom="${esc(a)}" transform="translate(${NW - 70},${-21})"><rect width="66" height="15"/>` +
-        `<text x="33" y="11" text-anchor="middle">${done ? "✓ confirmed" : "confirm"}</text></g>`;
+      s += `<g class="pill ${done ? "done" : ""}" data-act="confirm" data-atom="${esc(a)}" transform="translate(${NW - 92},${-24})"><rect width="88" height="19"/>` +
+        `<text x="44" y="14" text-anchor="middle">${done ? "✓ confirmed" : "confirm"}</text></g>`;
     }
     s += `</g>`;
   }
@@ -622,21 +852,22 @@ function renderGraph(i) {
   const sel = g.sel && steps(g).find(s => s.id === g.sel);
   const others = D.scenarios.filter(s => s.id !== g.sc && otherRow(g, s.id));
   let h = `<div class="rg-bar"><span class="qual c-${qc}">${ring(g)}</span>` +
-    `<button class="plain" data-act="play">${g.timer ? "❚❚ Pause" : "▶ Play derivation"}</button>` +
+    `<button class="plain" data-act="play">${g.timer ? "❚❚ Pause" : "▶ Play through"}</button>` +
     `<label>Step <input type="range" data-act="scrub" min="0" max="${g.n}" value="${g.step}" aria-label="Derivation step"></label><span>${g.step} of ${g.n}</span>` +
     `<label><input type="checkbox" data-act="all" ${g.showAll ? "checked" : ""}> Show all steps${hidden ? ` (${hidden} hidden)` : ""}</label>` +
-    `<label>Compare with <select data-act="diff" aria-label="Compare with another scenario"><option value="">no other scenario</option>` +
+    `<label>Compare with <select data-act="diff" aria-label="Compare with another event"><option value="">no other event</option>` +
     others.map(s => `<option value="${s.id}" ${g.diff === s.id ? "selected" : ""}>${esc(s.name)}</option>`).join("") + `</select></label>` +
     pendingAtoms(g).filter(a => !steps(g).some(s => s.atoms[0] === a)).map(a => `<button class="plain" data-act="confirm" data-atom="${esc(a)}">` +
       `Confirm “${esc(a)}”${a === "present" ? " (the clause is there)" : ""}</button>`).join("") +
     (g.branch !== null ? `<span class="assumed">This reading is assumed, not confirmed</span>` : "") +
     (g.diff ? `<span class="assumed">Showing only the steps that differ from “${esc(SC[g.diff].name)}”</span>` : "") + `</div>`;
-  if (!g.diff) h += flipHtml(g);
   if (r.branches && !g.diff) h += `<div class="chips" role="group" aria-label="Readings"><button data-act="branch" data-b="-1" aria-pressed="${g.branch === null}">Open outcome</button>` +
     r.branches.map((b, j) => `<button data-act="branch" data-b="${j}" aria-pressed="${g.branch === j}">${esc(b.label)} — ${esc(b.when)}</button>`).join("") + `</div>`;
   h += `<div class="rg-main"><div class="rg-scroll" tabindex="0" aria-label="Reasoning graph. Arrow keys move along the trace; Enter opens the clause; Escape closes it.">${svg}</div>` +
     `<div class="rg-pane" aria-live="polite">${paneHtml(g, sel)}</div><svg class="rg-link" aria-hidden="true"></svg></div>`;
   el.innerHTML = h;
+  const fl = document.getElementById("fl-" + i);
+  if (fl) fl.innerHTML = g.diff || !r.flips.length ? "" : `<h3>What would change this answer</h3>` + flipHtml(g);
   if (hadFocus) el.querySelector(".rg-scroll").focus({preventScroll: true});
   connect(el, g);
 }
@@ -655,7 +886,7 @@ function graphEvents(i) {
   const el = document.getElementById("rg-" + i), g = GV[i];
   const act = e => {
     const t = e.target.closest("[data-act],[data-node]");
-    if (!t || !el.contains(t)) return;
+    if (!t || !e.currentTarget.contains(t)) return;
     const a = t.dataset.act;
     if (e.type === "click" && t.dataset.node && !a) { g.sel = g.sel === t.dataset.node ? null : t.dataset.node; return renderGraph(i); }
     if (e.type === "click" && a === "play") {
@@ -680,7 +911,8 @@ function graphEvents(i) {
     if (a === "correct" && e.type === "click") { const key = ck(g, t.dataset.atom); corrected[key] = g.row.corrections[t.dataset.atom][+t.dataset.j];
       confirmed.delete(key); return renderGraph(i); }
   };
-  ["click", "input", "change"].forEach(type => el.addEventListener(type, act));
+  [document.getElementById("rw-" + i), document.getElementById("fl-" + i)].filter(Boolean)
+    .forEach(w => ["click", "input", "change"].forEach(type => w.addEventListener(type, act)));
   el.addEventListener("keydown", e => {
     if (!e.target.classList.contains("rg-scroll")) return;
     const k = e.key, pos = g.order.indexOf(g.sel);
@@ -699,60 +931,133 @@ function mountGraphs(id, k, rows) {
   GV.forEach((_, i) => { renderGraph(i); graphEvents(i); });
 }
 
-// ---------------- ripple view ----------------
-let rippleSc = "sale_60";
-function rippleHtml() {
-  const R = D.ripple, cells = S().cells[rippleSc] || {}, m = S().summaries[rippleSc];
-  let h = `<div class="seg" role="group" aria-label="Scenario">${D.scenarios.map(s => `<button data-rip="${s.id}" aria-pressed="${s.id === rippleSc}" title="${esc(s.name)}">${esc(SHORT_SC[s.id] || s.name)}</button>`).join("")}</div>`;
-  h += `<p class="big">If this happens — <b>${esc(SC[rippleSc].name)}</b>: ${headline(m)}.</p><div class="ripple-wrap">`;
-  let s = `<svg class="ripple" viewBox="-1.36 -1.36 2.72 2.72" role="group" aria-label="Contracts around the event, by counterparty type">`;
-  for (const gr of R.groups) {
-    const a0 = gr.a0 - .05, a1 = gr.a1 + .05, r = 1.06, big = a1 - a0 > Math.PI ? 1 : 0, mid = (a0 + a1) / 2;
-    const deg = mid * 180 / Math.PI + 90, flip = Math.sin(mid) > 0;
-    s += `<path class="arc" d="M${(Math.cos(a0) * r).toFixed(4)},${(Math.sin(a0) * r).toFixed(4)} A${r},${r} 0 ${big} 1 ${(Math.cos(a1) * r).toFixed(4)},${(Math.sin(a1) * r).toFixed(4)}"/>` +
-      `<text class="grp" transform="translate(${(Math.cos(mid) * 1.13).toFixed(4)},${(Math.sin(mid) * 1.13).toFixed(4)}) rotate(${(flip ? deg + 180 : deg).toFixed(1)})" dominant-baseline="central">${esc(gr.name)}</text>`;
+// ---------------- overview: sentence, action list, ripple ----------------
+const byName = (x, z) => AG[x[0]].name.localeCompare(AG[z[0]].name);
+const earliest = a => a.effects.map(e => e.due).filter(Boolean).sort()[0] || "9999";
+function actRow(sc, ak, a) {
+  const plan = a.status !== "firm", e = a.effects[0];
+  return `<li class="act c-${GCLS[a.group]}"><span class="st"><span class="badge ${plan ? "plan" : ""}">${plan ? "▲ Plan for worst case" : "✓ Clear"}</span></span>` +
+    `<div class="what"><bdi>${esc(compose(a.effects, AG[ak].name))}</bdi>${plan ? " (worst case)" : ""}.</div>` +
+    `<div class="meta">${esc(AG[ak].type)} · ${esc(clauseWord(e.ref))} ${langMark(ak)}</div>` +
+    `<button class="plain" data-why="${esc(sc + "|" + ak)}" aria-label="Why: ${esc(AG[ak].name)}">Why?</button></li>`;
+}
+function actionsHtml(sc) {
+  const list = Object.entries(S().acells[sc]).filter(([, a]) => a.group);
+  list.sort((x, z) => GROUPS.indexOf(x[1].group) - GROUPS.indexOf(z[1].group) || earliest(x[1]).localeCompare(earliest(z[1])) || byName(x, z));
+  let h = "";
+  for (const g of GROUPS) {
+    const items = list.filter(([, a]) => a.group === g);
+    if (items.length) h += `<h3 class="grp"><span class="chip c-${GCLS[g]}">${esc(g === "we" ? "Options for us: we may terminate" : D.group_label[g])}</span> ${items.length}</h3>` +
+      `<ul class="acts">${items.map(([ak, a]) => actRow(sc, ak, a)).join("")}</ul>`;
   }
-  const spokes = Object.values(R.pos).map(([x, y]) => `<line x1="0" y1="0" x2="${x}" y2="${y}" stroke="var(--line)" stroke-width=".004"/>`).join("");
-  s += spokes + `<circle class="wave" cx="0" cy="0" r=".12"/><g class="centre"><circle r=".25"/>` +
-    wrap(SC[rippleSc].name, 14).map((l, i, a) => `<text y="${((i - (a.length - 1) / 2) * .06 + .016).toFixed(3)}">${esc(l)}</text>`).join("") + `</g>`;
-  Object.entries(R.pos).forEach(([k, [x, y]]) => {
-    const c = cells[k], cls = !c ? "none" : c.sev ? c.cls : c.status === "blocked" ? "blocked" : "none", st = c ? c.status : "none";
-    const mk = {firm: "✓", provisional: "!", blocked: "?", none: "–"}[st], ang = Math.atan2(y, x), deg = ang * 180 / Math.PI, left = Math.cos(ang) < 0;
-    const what = c ? (c.sev ? `${c.labels[0]}, ${STATUS[c.status]}` : c.status === "blocked" ? "blocked" : `no reaction, ${STATUS[c.status]}`) : "no clause for this scenario";
-    s += `<g class="ct ${st}" data-ct="${esc(k)}" data-cls="${cls}" role="button" tabindex="0" aria-label="${esc(short(k) + ": " + what)}">` +
-      `<circle class="dot" cx="${x}" cy="${y}" r=".04" style="fill:var(--panel);stroke:var(--line)"/><text class="mk" x="${x}" y="${y}">${mk}</text>` +
-      `<text transform="translate(${(Math.cos(ang) * .69).toFixed(4)},${(Math.sin(ang) * .69).toFixed(4)}) rotate(${(left ? deg + 180 : deg).toFixed(1)})" ` +
-      `text-anchor="${left ? "end" : "start"}" dominant-baseline="central">${esc(short(k).slice(0, 16))}</text><title>${esc(D.contracts[k].title)}</title></g>`;
-  });
-  s += `</svg>`;
-  const link = k => `<a href="#ev=${esc(rippleSc + "|" + k)}${sfx()}">${esc(short(k))}</a>`;
-  const react = Object.entries(cells).filter(([, c]) => c.sev).sort((a, z) => z[1].sev - a[1].sev || a[0].localeCompare(z[0]));
-  const blocked = Object.keys(cells).filter(k => !cells[k].sev && cells[k].status === "blocked").sort();
-  const prov = Object.keys(cells).filter(k => !cells[k].sev && cells[k].status === "provisional").sort();
-  h += s + `<div><div class="legend">${["termination", "consent", "notice", "deadline", "blocked", "none"].map(c => `<span class="chip c-${c}">${c === "none" ? "no reaction" : c === "termination" ? "termination right" : c}</span>`).join("")}</div>` +
-    `<p class="note">✓ clear · ! plan for the worst case · ? can’t tell yet. Select a contract to see the clause and why.</p>` +
-    `<h3>What happens (${react.length})</h3><ul>${react.map(([k, c]) => `<li>${link(k)}: ${esc(c.labels.join(", "))} <span class="note">(${esc(STATUS[c.status])})</span></li>`).join("")}</ul>` +
-    (prov.length ? `<h3>Probably nothing, still to check (${prov.length})</h3><p>${prov.map(link).join(", ")}</p>` : "") +
-    `<h3>Can’t tell yet (${blocked.length})</h3><p class="note">A document, a fact or a detail of the clause is missing; open the contract to see which.</p><p>${blocked.map(link).join(", ")}</p></div></div>`;
-  return h;
+  return h || '<p class="note">No agreement reacts against us under this event.</p>';
+}
+function cantHtml(sc) {
+  const b = S().brief[sc];
+  if (!b.cant) return "";
+  return `<h2>Can’t tell yet (${b.cant})</h2>` + WHY_ORDER.filter(w => b.cant_by[w]).map(w =>
+    `<div class="why"><div><h4>${esc(WHY_LABEL[w])} (${b.cant_by[w].length})</h4><p class="note prose">${esc(WHY_HELP[w])}</p><div class="pills">` +
+    b.cant_by[w].map(ak => `<button data-why="${esc(sc + "|" + ak)}"><bdi>${esc(AG[ak].name)}</bdi> ${langMark(ak)}</button>`).join("") + `</div></div></div>`).join("");
+}
+const CX = 280, CY = 280, RR = 150;
+function shapeSvg(shape, r) {
+  return shape === "clear" ? `<circle class="shape" r="${r}"/>` :
+    shape === "plan" ? `<polygon class="shape" points="0,${-r * 1.2} ${r * 1.1},${r * .85} ${-r * 1.1},${r * .85}"/>` :
+    `<rect class="shape" x="${-r * .9}" y="${-r * .9}" width="${r * 1.8}" height="${r * 1.8}" rx="3"/>`;
+}
+const MARK = {clear: "✓", plan: "!", cant: "?"}, SHAPE_WORD = {clear: "Clear", plan: "Plan for worst case", cant: "Can’t tell yet"};
+function nodesFor(sc) {
+  const cs = S().acells[sc], out = [], by = f => Object.entries(cs).filter(([, a]) => f(a)).sort(byName);
+  for (const g of GROUPS) by(a => a.group === g && !a.cant).forEach(([ak, a]) => out.push({ak, a, group: g, cls: GCLS[g], shape: a.status === "firm" ? "clear" : "plan"}));
+  by(a => a.cant).forEach(([ak, a]) => out.push({ak, a, group: "cant", cls: "blocked", shape: "cant"}));
+  return out;
+}
+const noneOf = sc => agKeys.filter(ak => { const a = S().acells[sc][ak]; return !a || (!a.group && !a.cant); });
+const nodeText = (n) => n.shape === "cant" ? `${AG[n.ak].name}: can’t tell yet` : compose(n.a.effects, AG[n.ak].name);
+function centreLines(t) {
+  const out = [""];
+  for (const w of t.split(" ")) { if ((out[out.length - 1] + " " + w).trim().length > 11 && out[out.length - 1]) out.push(w); else out[out.length - 1] = (out[out.length - 1] + " " + w).trim(); }
+  return out;
+}
+function rippleSvg(sc, animate) {
+  const nodes = nodesFor(sc), none = noneOf(sc), groups = [...new Set(nodes.map(n => n.group))], gap = .1;
+  const step = (2 * Math.PI - groups.length * gap) / Math.max(1, nodes.length), arc = RR * step, r = Math.max(10, Math.min(20, arc * .42));
+  let s = `<svg class="ripple" viewBox="0 0 560 560" role="group" aria-label="Contracts around the event, grouped by what happens to us">`, body = "", spokes = "", ang = -Math.PI / 2, prev = "";
+  for (const n of nodes) {
+    if (prev && n.group !== prev) ang += gap;
+    prev = n.group;
+    const c = Math.cos(ang), sn = Math.sin(ang), x = +(CX + c * RR).toFixed(1), y = +(CY + sn * RR).toFixed(1), name = AG[n.ak].name, w = name.length * 6.9 + 4;
+    let lb = "";
+    if (n.group !== "cant" && arc >= 16) {       // a name is drawn only when it fits beside its mark; otherwise the mark alone stands for it
+      if (Math.abs(c) < .45) { if (arc >= 50 && w <= 2 * Math.min(x, 560 - x) - 8) lb = `<text class="lb" x="0" y="${sn > 0 ? r + 15 : -r - 8}" text-anchor="middle">${esc(name)}</text>`; }
+      else { const lx = c > 0 ? r + 6 : -r - 6, avail = c > 0 ? 556 - (x + lx) : x + lx - 4;
+        if (w <= avail) lb = `<text class="lb" x="${lx}" y="0" text-anchor="${c > 0 ? "start" : "end"}" dominant-baseline="central">${esc(name)}</text>`; }
+    }
+    spokes += `<line class="spoke" x1="${CX}" y1="${CY}" x2="${x}" y2="${y}"/>`;
+    body += `<g class="ct c-${n.cls} ${n.shape}" data-ak="${esc(n.ak)}" role="button" tabindex="0" aria-label="${esc(nodeText(n) + ". " + SHAPE_WORD[n.shape])}" transform="translate(${x},${y})">` +
+      `${shapeSvg(n.shape, r)}<text class="mk" y="${n.shape === "plan" ? 3 : 0}">${MARK[n.shape]}</text>${lb}<title>${esc(nodeText(n))}</title></g>`;
+    ang += step;
+  }
+  const lines = centreLines(chipLabel(sc));
+  s += spokes + `<circle class="wave ${animate && !REDUCED.matches ? "go" : ""}" cx="${CX}" cy="${CY}" r="60"/>` +
+    `<g class="centre"><circle cx="${CX}" cy="${CY}" r="60"/>` + lines.map((l, i) => `<text x="${CX}" y="${CY + (i - (lines.length - 1) / 2) * 16 + 4}">${esc(l)}</text>`).join("") + `</g>`;
+  if (none.length) {
+    const label = `+${none.length} no reaction`, pw = label.length * 7 + 22;
+    s += `<g class="ringbtn" data-none role="button" tabindex="0" aria-expanded="${showNone}" aria-label="${none.length} agreements have no reaction. ${showNone ? "Hide" : "Show"} them"><circle class="ring" cx="${CX}" cy="${CY}" r="100"/>` +
+      `<rect x="${CX - pw / 2}" y="${CY + 100 - 12}" width="${pw}" height="24" rx="12"/><text x="${CX}" y="${CY + 100}" text-anchor="middle" dominant-baseline="central">${label}</text></g>`;
+    if (showNone) none.forEach((ak, i) => {
+      const a = Math.PI / 2 + .5 + (none.length === 1 ? Math.PI - .5 : i * (2 * Math.PI - 1) / (none.length - 1));
+      s += `<circle class="dotn" data-ak="${esc(ak)}" role="button" tabindex="0" cx="${(CX + Math.cos(a) * 100).toFixed(1)}" cy="${(CY + Math.sin(a) * 100).toFixed(1)}" r="8" aria-label="${esc(AG[ak].name)}: no reaction"><title>${esc(AG[ak].name)}: no reaction</title></circle>`;
+    });
+  }
+  return s + body + `</svg>`;
+}
+function markSvg(n) {
+  return `<svg class="c-${n.cls} ${n.shape}" width="40" height="40" viewBox="-22 -22 44 44" aria-hidden="true">${shapeSvg(n.shape, 15)}<text y="${n.shape === "plan" ? 3 : 0}">${MARK[n.shape]}</text></svg>`;
+}
+function marksHtml(sc) {        // phone: status marks only, grouped, no labels
+  const nodes = nodesFor(sc), none = noneOf(sc);
+  const btn = n => `<button data-ak="${esc(n.ak)}" aria-label="${esc(nodeText(n) + ". " + SHAPE_WORD[n.shape])}">${markSvg(n)}</button>`;
+  let h = '<div class="marks">';
+  for (const g of [...GROUPS, "cant"]) {
+    const ns = nodes.filter(n => n.group === g);
+    if (ns.length) h += `<div class="row"><span class="chip c-${ns[0].cls}">${esc(g === "cant" ? "Can’t tell yet" : D.group_label[g])} ${ns.length}</span>${ns.map(btn).join("")}</div>`;
+  }
+  if (none.length) h += `<div class="row"><button class="plain" data-none aria-expanded="${showNone}" style="line-height:1.5">+${none.length} no reaction</button>` +
+    (showNone ? none.map(ak => `<button data-ak="${esc(ak)}" aria-label="${esc(AG[ak].name)}: no reaction">${markSvg({cls: "none", shape: "clear"})}</button>`).join("") : "") + `</div>`;
+  return h + "</div>";
+}
+function keyHtml(sc) {
+  const b = S().brief[sc], chips = GROUPS.filter(x => x === "we" ? b.options : b.groups[x]).map(x =>
+    `<span class="chip c-${GCLS[x]}">${esc(D.group_label[x])} ${x === "we" ? b.options : b.groups[x]}</span>`);
+  if (b.cant) chips.push(`<span class="chip c-blocked">Can’t tell yet ${b.cant}</span>`);
+  return (PHONE.matches ? "" : `<div class="key">${chips.join("")}</div>`) + `<div class="key"><span>✓ Clear</span><span>▲ Plan for worst case</span><span>? Can’t tell yet</span></div>`;
+}
+function rippleHtml(animate) {
+  const sc = rippleSc;
+  return `<div class="events" role="group" aria-label="Event">` + D.scenarios.map(s =>
+      `<button data-rip="${s.id}" aria-pressed="${s.id === sc}" title="${esc(s.name)}">${esc(chipLabel(s.id))}</button>`).join("") + `</div>` +
+    `<p class="sentence">${sentence(sc)}</p><div class="ov"><div id="actions">${actionsHtml(sc)}</div>` +
+    `<div class="ripbox">${PHONE.matches ? marksHtml(sc) : rippleSvg(sc, animate)}${keyHtml(sc)}<p class="note">Select a contract to see why.</p></div><div id="cants">${cantHtml(sc)}</div></div>`;
 }
 function renderRipple(animate) {
   const v = document.getElementById("view-ripple");
-  v.innerHTML = rippleHtml();
+  v.innerHTML = rippleHtml(animate);
   v.querySelectorAll("[data-rip]").forEach(b => b.onclick = () => go("ripple=" + b.dataset.rip, stateName));
-  v.querySelectorAll("[data-ct]").forEach(g => {
-    g.onclick = () => go("ev=" + rippleSc + "|" + g.dataset.ct, stateName);
-    g.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); g.onclick(); } };
+  v.querySelectorAll("[data-why]").forEach(b => b.onclick = () => go("ev=" + b.dataset.why, stateName));
+  v.querySelectorAll("[data-ak]").forEach(g => {
+    const open = () => go("ev=" + rippleSc + "|" + g.dataset.ak, stateName);
+    g.onclick = open; g.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } };
   });
-  const light = () => v.querySelectorAll("[data-ct]").forEach((g, i) => {
-    const d = g.querySelector(".dot"), c = g.dataset.cls;
-    d.style.transitionDelay = animate && !REDUCED.matches ? `${i * 35}ms` : "0ms";
-    d.style.fill = c === "none" ? "var(--panel)" : `var(--${c}-bg)`; d.style.stroke = `var(--${c})`;
+  v.querySelectorAll("[data-none]").forEach(g => {
+    const flip = () => { showNone = !showNone; renderRipple(false); const again = document.querySelector("#view-ripple [data-none]"); if (again) again.focus(); };
+    g.onclick = flip; g.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(); } };
   });
-  if (animate && !REDUCED.matches) { v.querySelector(".wave").classList.add("go"); requestAnimationFrame(() => requestAnimationFrame(light)); } else light();
 }
+const centreChip = () => { const on = document.querySelector("#view-ripple .events [aria-pressed=true]"); if (on) on.scrollIntoView({inline: "center", block: "nearest"}); };
+PHONE.addEventListener("change", () => { if (!document.getElementById("view-ripple").hidden) renderRipple(false); });
 
-// ---------------- routing: #<view>[@review] ----------------
+// ---------------- routing: #<view>[@compiled] ----------------
 const sfx = () => stateName === "compiled" && D.states.review ? "@compiled" : "";
 function go(v, st) { location.hash = v + (st === "compiled" && D.states.review ? "@compiled" : ""); }
 function route() {
@@ -760,21 +1065,24 @@ function route() {
   const want = hsh.endsWith("@compiled") || !D.states.review ? "compiled" : "review";
   hsh = hsh.replace(/@(review|compiled)$/, "");
   const changed = want !== stateName;
-  if (changed) { stateName = want; renderTop(); renderMap(); renderQueue(); }
+  if (changed) { stateName = want; rippleDone = false; renderTop(); renderMap(); renderQueue(); }
   const ripple = hsh.startsWith("ripple");
   view = hsh.startsWith("ev=") ? backTo : hsh === "queue" ? "queue" : ripple ? "ripple" : "map";
   if (!hsh.startsWith("ev=")) backTo = view === "ripple" ? "ripple=" + rippleSc : view;
   if (ripple) {
     const want2 = hsh.split("=")[1] || rippleSc;
-    if (SC[want2] && (want2 !== rippleSc || changed || document.getElementById("view-ripple").hidden)) { rippleSc = want2; backTo = "ripple=" + rippleSc; renderRipple(true); }
+    if (SC[want2] && want2 !== rippleSc) { rippleSc = want2; rippleDone = false; if (!changed) renderQueue(); }
+    backTo = "ripple=" + rippleSc;
   }
   const tab = view.startsWith("ripple") ? "ripple" : view;
+  if (tab === "ripple" && !rippleDone) { renderRipple(true); rippleDone = true; }
   for (const t of ["map", "queue", "ripple"]) {
     document.getElementById("view-" + t).hidden = t !== tab;
     const a = document.getElementById("nav-" + t);
-    a.href = "#" + t + sfx();
+    a.href = "#" + (t === "ripple" ? "ripple" : t) + sfx();
     if (t === tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
   }
+  if (tab === "ripple") centreChip();
   if (hsh.startsWith("ev=")) {
     const i = hsh.indexOf("|"), id = hsh.slice(3, i), k = hsh.slice(i + 1);
     if (SC[id] && D.contracts[k]) { view = hsh; return renderEvidence(id, k); }
@@ -782,14 +1090,14 @@ function route() {
   GV.forEach(stopPlay);
   document.getElementById("ev").hidden = true;
 }
-document.getElementById("meta").textContent = `As of ${D.as_of} · ${D.scenarios.length} scenarios × ${keys.length} contracts · deterministic rules, no model calls`;
+document.getElementById("meta").textContent = `As of ${fmtDate(D.as_of)} · ${agKeys.length} agreements · ${D.scenarios.length} events · fixed rules, no model is called`;
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.getElementById("ev").hidden) go(backTo, stateName); });
-defaultOrder(); renderTop(); renderMap(); renderQueue();
+defaultOrder(); renderTheme(); renderTop(); renderMap(); renderQueue();
 window.addEventListener("hashchange", route); route();
 </script>
-<footer class="sub" style="margin:24px 16px;padding-top:12px;border-top:1px solid var(--line)">
+<footer class="sub" style="margin:24px 24px;padding-top:12px;border-top:1px solid var(--line)">
 Proof of concept · not legal advice · reviewed state simulated from hand labels · CUAD v1 (The Atticus Project, CC BY 4.0) ·
-EDGAR public filings · public Gulf government forms · all outcomes precomputed; no model is called by this page.
+EDGAR public filings · public Gulf government forms · all answers precomputed; no model is called by this page.
 </footer>
 </body>
 </html>

@@ -8,6 +8,12 @@
     "wait": 900
    },
    {
+    "eval": "document.querySelectorAll('#ev details.reasoning').forEach(d => { d.open = true; })"
+   },
+   {
+    "wait": 500
+   },
+   {
     "click": "#rg-0 [data-act=play]"
    },
    {
@@ -32,27 +38,33 @@
     "wait": 900
    },
    {
-    "click": "#rg-0 [data-act=flipseg][data-i='0']"
+    "eval": "document.querySelectorAll('#ev details.reasoning').forEach(d => { d.open = true; })"
+   },
+   {
+    "wait": 500
+   },
+   {
+    "click": "#fl-0 [data-act=flipseg][data-i='0']"
    },
    {
     "wait": 1800,
     "shot": "graph_flip_below.png"
    },
    {
-    "click": "#rg-0 [data-act=flipseg][data-i='1']"
+    "click": "#fl-0 [data-act=flipseg][data-i='1']"
    },
    {
     "wait": 1800,
     "shot": "graph_flip_above.png"
    },
    {
-    "click": "#rg-0 [data-act=flipseg][data-i='0']"
+    "click": "#fl-0 [data-act=flipseg][data-i='0']"
    },
    {
     "wait": 1200
    },
    {
-    "click": "#rg-0 [data-act=flipseg][data-i='1']"
+    "click": "#fl-0 [data-act=flipseg][data-i='1']"
    },
    {
     "wait": 1200
@@ -66,6 +78,12 @@
   "steps": [
    {
     "wait": 800
+   },
+   {
+    "eval": "document.querySelectorAll('#ev details.reasoning').forEach(d => { d.open = true; })"
+   },
+   {
+    "wait": 500
    },
    {
     "eval": "document.getElementById('rg-1').scrollIntoView({block:'start'})"
@@ -104,6 +122,12 @@
     "wait": 900
    },
    {
+    "eval": "document.querySelectorAll('#ev details.reasoning').forEach(d => { d.open = true; })"
+   },
+   {
+    "wait": 500
+   },
+   {
     "click": "#rg-0 [data-act=play]"
    },
    {
@@ -121,7 +145,7 @@
  {
   "name": "rec_ripple",
   "video": true,
-  "hash": "map",
+  "hash": "ripple=sale_60",
   "steps": [
    {
     "wait": 600
@@ -161,6 +185,12 @@
     "wait": 900
    },
    {
+    "eval": "document.querySelectorAll('#ev details.reasoning').forEach(d => { d.open = true; })"
+   },
+   {
+    "wait": 500
+   },
+   {
     "select": [
      "#rg-0 [data-act=diff]",
      "ipo_200_60"
@@ -181,6 +211,12 @@
     "shot": "graph_review_before.png"
    },
    {
+    "eval": "document.querySelectorAll('#ev details.reasoning').forEach(d => { d.open = true; })"
+   },
+   {
+    "wait": 500
+   },
+   {
     "eval": "for(let i=0;i<8;i++){const x=document.querySelector('#rg-0 .pill:not(.done), #rg-0 .rg-bar [data-act=confirm]'); if(!x) break; x.dispatchEvent(new MouseEvent('click',{bubbles:true}));}"
    },
    {
@@ -196,6 +232,12 @@
   "steps": [
    {
     "wait": 900
+   },
+   {
+    "eval": "document.querySelectorAll('#ev details.reasoning').forEach(d => { d.open = true; })"
+   },
+   {
+    "wait": 500
    },
    {
     "click": "#rg-0 [data-node='atom:threshold_pct']"

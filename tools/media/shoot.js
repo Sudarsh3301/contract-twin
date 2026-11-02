@@ -1,15 +1,19 @@
-// Screenshots and short recordings of the reasoning graph. Usage: node shoot.js <base url> <out dir> <plan json>
+// Screenshots and short recordings of the demo page. Usage: node shoot.js <base url> <out dir> <plan json>
+// A plan item: {name, hash, w, h (default 1500 x 900), dark, reduced, video, steps: [{click, press, focus, fill, select, range, eval, wait, shot}]}.
+// Set CHROME=1 to use the installed Chrome instead of Playwright's own browser.
 const { chromium } = require("playwright");
 const fs = require("fs");
+const path = require("path");
 const [base, outDir, planFile] = process.argv.slice(2);
 const plan = JSON.parse(fs.readFileSync(planFile, "utf8"));
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(process.env.CHROME ? { channel: "chrome" } : {});
   const errors = [];
   for (const item of plan) {
-    const ctx = await browser.newContext({ viewport: { width: 1500, height: 900 }, deviceScaleFactor: 1,
+    const size = { width: item.w || 1500, height: item.h || 900 };
+    const ctx = await browser.newContext({ viewport: size, deviceScaleFactor: 1,
       colorScheme: item.dark ? "dark" : "light", reducedMotion: item.reduced ? "reduce" : "no-preference",
-      recordVideo: item.video ? { dir: outDir + "/raw_" + item.name, size: { width: 1500, height: 900 } } : undefined });
+      recordVideo: item.video ? { dir: outDir + "/raw_" + item.name, size } : undefined });
     const page = await ctx.newPage();
     page.on("console", m => { if (m.type() === "error") errors.push(item.name + ": " + m.text()); });
     page.on("pageerror", e => errors.push(item.name + ": " + e.message));
@@ -25,7 +29,7 @@ const plan = JSON.parse(fs.readFileSync(planFile, "utf8"));
       if (s.range) await page.$eval(s.range[0], (el, v) => { el.value = v; el.dispatchEvent(new Event("input", { bubbles: true })); }, s.range[1]);
       if (s.eval) await page.evaluate(s.eval);
       if (s.wait) await page.waitForTimeout(s.wait);
-      if (s.shot) await page.screenshot({ path: outDir + "/" + s.shot, fullPage: false });
+      if (s.shot) { fs.mkdirSync(path.dirname(path.join(outDir, s.shot)), { recursive: true }); await page.screenshot({ path: path.join(outDir, s.shot), fullPage: false }); }
     }
     await ctx.close();
   }

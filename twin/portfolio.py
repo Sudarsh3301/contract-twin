@@ -163,7 +163,7 @@ class Ctx:
                 continue
             key = review.contract_key(cid, lang)
             self.contracts[key] = dict(cid=cid, title=title, lang=lang, path=path, party=comp.PORTFOLIO[cid]["our_party"],
-                                       run="main" if lang == "en" else "main_ar")
+                                       run="main" if lang == "en" else "main_ar", en=comp.PORTFOLIO[cid].get("en_src", ""))
         if self.gold:
             atoms = load_gold()
         else:
@@ -558,6 +558,7 @@ def queue(ctx: Ctx, library: list) -> list[dict]:
             detail = {}
         worst = max(by_sc.values(), default=0)
         out.append(dict(id=q.id, contract=q.contract, template=q.template, atom=q.atom, text=q.text, allowed=q.allowed,
+                        ask=review.ask_text(q.template, q.atom),
                         cited=q.cited or ctx.cited(q.contract, q.template, q.atom), pairs=q.pairs, firm_pairs=q.firm_pairs,
                         unsure=q.current is None and q.atom in review.unsure(fam),
                         preview=[dict(answers=a, line=l, detail=detail.get(l, "")) for l, a in lines.items()], sev=worst, sev_by=by_sc))
@@ -657,10 +658,10 @@ def build_state(ctx: Ctx, sents: dict, library=LIBRARY, G: Graphs | None = None)
             firm=n["firm"], firm_unconfirmed=sum(c["status"] == "firm" and c.get("pending", False) for c in mine),
             provisional=n["provisional"], blocked=n["blocked"],
             counsel=sum("legal_judgement" in c["causes"] for c in mine),
-            react=sum(c["sev"] > 0 for c in mine), consent=sum(c["cls"] == "consent" for c in mine),
-            notice=sum(c["cls"] == "notice" for c in mine), termination=sum(c["cls"] in ("termination", "prepayment") for c in mine),
             open_questions=sum(sc["id"] in q["sev_by"] for q in qs), pending=sum(sc["id"] in c["sev_by"] for c in cards),
             material_open=sum(x["sev_by"][sc["id"]] >= MATERIAL for x in items))
+    ags = agreements(ctx)
+    acells = agreement_cells(ags, rows, cs, sents)
     nl = [x for r in rows for x in r["reactions"] if x["status"] == "NEEDS_LAWYER"]
     outs = Counter(r["status"] for r in rows)
     sim = ctx.sim["stats"] if ctx.sim else {}
@@ -669,44 +670,163 @@ def build_state(ctx: Ctx, sents: dict, library=LIBRARY, G: Graphs | None = None)
                   counsel=sum("legal_judgement" in r["causes"] for r in rows), outcomes=len(rows),
                   cases=case_safety(ctx), hand_labels=sim.get("hand_labels"))
     return dict(label=STATES[ctx.state] if not ctx.gold else "Gold atoms", header=header, summaries=summaries, cells=cs, rows=rows,
-                atominfo=info, questions=qs, cards=cards, effort=card_counts(cards),
+                atominfo=info, questions=qs, cards=cards, acells=acells, brief=brief(ags, acells), effort=card_counts(cards),
                 causes={c: sum(c in x["cause"].split(",") for x in nl) for c in CAUSES},
                 main_cause={c: sum(x["cause"].split(",")[0] == c for x in nl) for c in CAUSES}, needs_lawyer=len(nl))
 
 
-GROUPS = [("Lenders", ("credit", "revolver", "loan")),
-          ("Licensors and IP owners", ("licens", "intellectual property", "intelle", "content")),
-          ("Suppliers and manufacturers", ("supply", "manufactur", "distributor")),
-          ("Service providers", ("hosting", "outsourc", "maintenance", "services", "management", "consult")),
-          ("Commercial partners", ("sponsor", "co-brand", "co_bra", "alliance", "joint venture", "promotion", "marketing", "franchise")),
-          ("Landlords and public bodies", ("lease", "tenan", "ejari", "road", "إيجار", "طرق", "عقد"))]
+# ---------------- agreements: one row per agreement, however many language versions ----------------
+# (counterparty, agreement type) by contract key prefix; the portfolio files do not record either
+NAMES = {"ar:balady_engineering": ("Balady engineering", "engineering services (Saudi form)"),
+         "ar:balady_urban": ("Balady roads", "road works (Saudi form)"), "ar:ejari": ("Ejari tenancy", "Dubai tenancy"),
+         "cuad:BlackBox": ("BlackBox", "distribution"), "cuad:Corio": ("Corio", "licence and hosting"),
+         "cuad:DynTek": ("DynTek", "hosting"), "cuad:EuropeanMicro": ("European Micro", "distribution"),
+         "cuad:Gopage": ("Gopage", "content licence"), "cuad:Gpaq": ("Gpaq", "media licence"),
+         "cuad:JointCorp": ("Joint Corp", "franchise"), "cuad:Kiromic": ("Kiromic", "joint venture"),
+         "cuad:RaeSystems": ("NETTAXI", "co-branding"), "cuad:TriCity": ("TriCity", "outsourcing"),
+         "cuad:Vertex": ("Vertex", "marketing"), "cuad:VerticalNet": ("VerticalNet", "support"),
+         "cuad:VirtualScopics": ("VirtualScopics", "alliance"), "cuad:Zounds": ("Zounds", "manufacturing"),
+         "cuad:agape": ("Agape", "supply"), "cuad:calpine": ("Calpine", "revolving credit"),
+         "cuad:eDiets": ("eDiets", "co-branding"), "cuad:eLandia": ("eLandia", "outsourcing"),
+         "cuad:ehave": ("Ehave", "licence"), "cuad:energous": ("Energous", "alliance"),
+         "cuad:freezetag": ("Freeze Tag", "sponsorship"), "cuad:garrett": ("Garrett", "IP agreement"),
+         "cuad:healthgate": ("HealthGate", "hosting"), "cuad:iPayment": ("iPayment", "sponsorship"),
+         "cuad:lantheus": ("Lantheus", "credit facility"), "cuad:mPhase": ("mPhase", "co-branding"),
+         "cuad:middlebrook": ("MiddleBrook", "promotion"), "cuad:sfg": ("SFG", "software licence"),
+         "cuad:virtuoso": ("Virtuoso", "licence (JHU)"), "edgar:Amscan": ("Amscan", "credit facility")}
 
 
-def group_of(title: str) -> str:
-    """Counterparty type, read from the agreement type in the title (the portfolio files do not record it)."""
-    t = title.lower()
-    return next((g for g, words in GROUPS if any(w in t for w in words)), "Other counterparties")
+def agreement_name(key: str) -> tuple[str, str]:
+    m = max((p for p in NAMES if key.startswith(p)), key=len, default="")
+    return NAMES[m] if m else (key.split(":")[-1], "agreement")
 
 
-def ripple(ctx: Ctx, library: list) -> dict:
-    """Fixed positions for the ripple view: the event at the centre, contracts on a ring in one arc per counterparty
-    type. Positions do not move between scenarios, so a change of scenario shows as a change of colour only."""
-    import math
-    by = {}
+def agreements(ctx: Ctx) -> dict:
+    """agreement key (the English contract's key) -> name, type and its language versions. A translation whose `en_src`
+    names an English contract of the portfolio is a version of that agreement; any other Arabic contract stands alone."""
+    out = {}
     for k in sorted(ctx.contracts):
-        by.setdefault(group_of(ctx.contracts[k]["title"]), []).append(k)
-    names = [g for g, _ in GROUPS + [("Other counterparties", ())] if g in by]
-    n, gap, i, pos, groups = len(ctx.contracts), 0.9, 0, {}, []
-    step = (2 * math.pi - gap * len(names) / 4) / max(n, 1)
-    angle = -math.pi / 2
-    for g in names:
-        a0 = angle
-        for k in by[g]:
-            pos[k] = [round(math.cos(angle) * 0.62, 4), round(math.sin(angle) * 0.62, 4)]
-            angle += step
-        groups.append(dict(name=g, contracts=by[g], a0=round(a0, 4), a1=round(angle - step, 4)))
-        angle += gap / 4
-    return dict(groups=groups, pos=pos)
+        en = ctx.contracts[k]["en"]
+        if en and en in ctx.contracts:
+            continue
+        name, kind = agreement_name(k)
+        out[k] = dict(name=name, type=kind, versions=[k] + sorted(a for a, c in ctx.contracts.items() if c["en"] == k))
+    assert sorted(v for a in out.values() for v in a["versions"]) == sorted(ctx.contracts), "every contract is in one agreement"
+    return out
+
+
+# What happens to us, by kind and holder. Order = rank in the action list (the first group that applies to an agreement wins).
+GROUP_ORDER = ["auto", "they", "prepay", "consent", "notify", "other", "we"]
+GROUP_LABEL = {"auto": "Ends automatically", "they": "They may terminate", "prepay": "They may demand prepayment",
+               "consent": "Their consent needed", "notify": "We must notify", "other": "Other effect", "we": "We may terminate"}
+# {S}: the name as subject (later "they"), {O}: the name as object (later "them")
+EFFECT_TEXT = {"automatic_termination": "{S} ends automatically", "termination_right": "{S} may terminate",
+               "prepayment": "{S} may demand prepayment", "consent": "we need {O}'s consent", "notice": "we must notify {O}",
+               "service_limitation": "{S} may limit its service", "deadline": "a deadline falls under the agreement",
+               "option_deadline": "an option deadline falls under the agreement", "earliest_exit": "the earliest exit date is reached",
+               "expired": "the agreement has expired", "expiry": "the agreement expires", "renewed": "the agreement renews"}
+BY_KINDS = {"notice", "deadline", "option_deadline"}        # "by <date>" rather than "on <date>"
+
+
+def effect_group(kind: str, holder: str) -> str:
+    if kind == "automatic_termination":
+        return "auto"
+    if kind == "termination_right":
+        return "we" if holder == "us" else "they"
+    if kind == "prepayment":
+        return "other" if holder == "us" else "prepay"
+    if kind == "consent":
+        return "consent"
+    if kind == "notice" and holder in ("us", "either", "both"):
+        return "notify"
+    return "other"
+
+
+def effect_text(kind: str, holder: str) -> str:
+    return "we may terminate {O}" if kind == "termination_right" and holder == "us" else EFFECT_TEXT.get(kind, kind.replace("_", " "))
+
+
+SECTION = re.compile(r"(?:Section|Sec\.|Article|Clause|§)\s*(\d{1,2}(?:\.\d{1,2}){0,3})|(\d{1,2}(?:\.\d{1,2}){1,3})\.?(?=\s)|(\d{1,2})\.(?=\s)")
+
+
+def clause_ref(text: str, sid: int) -> str:
+    """The clause number a cited sentence starts with ('12.3'), else its sentence number."""
+    m = SECTION.match(text.lstrip())
+    return next(g for g in m.groups() if g) if m else f"sentence {sid}"
+
+
+STATUS_RANK = {"firm": 0, "provisional": 1, "blocked": 2}
+WHY_OPEN = ["missing_document", "missing_fact", "check_extraction", "legal_judgement"]      # the order a reason is chosen in
+
+
+def agreement_cells(ags: dict, rows: list[dict], cs: dict, sents: dict) -> dict:
+    """Per scenario and agreement: what happens to us. Effects come from the triggered reactions on the map (firm ones, or
+    the worst case of a provisional outcome), grouped by kind and holder; an agreement counts once, under its most severe
+    group. Two language versions that give different answers make the agreement 'versions disagree' (unknown is not false)."""
+    by = {}
+    for r in rows:
+        by.setdefault((r["scenario"], r["contract"]), []).append(r)
+    out = {}
+    for sc, cells_ in cs.items():
+        out[sc] = {}
+        for ak, a in ags.items():
+            vers = {}
+            for k in a["versions"]:
+                if k not in cells_:
+                    continue
+                effs, seen = [], set()
+                for r in by[(sc, k)]:
+                    for x in shown(r):
+                        if x["status"] != "TRIGGERED" or (x["kind"], x["holder"], x["due"]) in seen:
+                            continue
+                        seen.add((x["kind"], x["holder"], x["due"]))
+                        sid = r["sids"][0] if r["sids"] else None
+                        effs.append(dict(kind=x["kind"], holder=x["holder"], due=x["due"], group=effect_group(x["kind"], x["holder"]),
+                                         text=effect_text(x["kind"], x["holder"]), by=x["kind"] in BY_KINDS, template=r["template"],
+                                         sid=sid, ref=clause_ref(sents[k][str(sid)], sid) if sid is not None else ""))
+                effs.sort(key=lambda e: (GROUP_ORDER.index(e["group"]), e["due"] or "9999", e["kind"]))
+                c = cells_[k]
+                vers[k] = dict(status=c["status"], effects=effs, causes=c["causes"], cant=not effs and c["status"] == "blocked",
+                               answer=[sorted({e["group"] for e in effs}), not effs and c["status"] == "blocked"])
+            if not vers:
+                continue
+            ks = list(vers)
+            disagree = len({json.dumps(vers[k]["answer"]) for k in ks}) > 1
+            p = vers[ks[0]]
+            causes = [c for c in CAUSES if any(c in vers[k]["causes"] for k in ks)]
+            why = "versions" if disagree else next((c for c in WHY_OPEN if c in causes), "unclear") if p["cant"] else ""
+            out[sc][ak] = dict(status=max((v["status"] for v in vers.values()), key=STATUS_RANK.get),
+                               effects=[] if disagree else p["effects"], group=p["effects"][0]["group"] if p["effects"] and not disagree else "",
+                               cant=disagree or p["cant"], why=why, causes=causes, disagree=disagree,
+                               versions={k: dict(status=v["status"], effects=v["effects"], cant=v["cant"], causes=v["causes"]) for k, v in vers.items()})
+    return out
+
+
+def brief(ags: dict, acells: dict) -> dict:
+    """Per scenario: the counts the event sentence states. react = agreements that expose us (every group but 'we may
+    terminate'); options = those where only we hold a right; cant = unknown (not false); none = the rest."""
+    out = {}
+    for sc, cs in acells.items():
+        n = Counter(a["group"] for a in cs.values() if a["group"])
+        react = sum(n[g] for g in GROUP_ORDER[:-1])
+        cant = {}
+        for ak, a in cs.items():
+            if a["cant"]:
+                cant.setdefault(a["why"], []).append(ak)
+        notify = [e["due"] for a in cs.values() for e in a["effects"] if e["group"] == "notify" and e["due"]]      # in any position
+        out[sc] = dict(agreements=len(ags), react=react, groups={g: n[g] for g in GROUP_ORDER[:-1]}, options=n["we"],
+                       more=sum(len(a["effects"]) - 1 for a in cs.values() if a["effects"]),
+                       other_kinds=sorted({a["effects"][0]["kind"] for a in cs.values() if a["group"] == "other"}),
+                       notify_due=min(notify, default=""), counsel=sum("legal_judgement" in a["causes"] for a in cs.values()),
+                       cant=sum(len(v) for v in cant.values()), cant_by={k: sorted(v) for k, v in sorted(cant.items())},
+                       none=len(ags) - react - n["we"] - sum(len(v) for v in cant.values()))
+    return out
+
+
+def ask_table(states: dict) -> dict:
+    """The plain question for every (template, atom) a reviewer is asked about in any state."""
+    return {f"{x['template']}|{a}": review.ask_text(x["template"], a)
+            for st in states.values() for x in st["questions"] + st["cards"] for a in x.get("atoms", [x.get("atom")])}
 
 
 def build(atoms_kind="compiled", library=LIBRARY) -> dict:
@@ -718,9 +838,10 @@ def build(atoms_kind="compiled", library=LIBRARY) -> dict:
         ctx = Ctx(atoms_kind, name)
         states[name] = build_state(ctx, sents, library, G)
     return dict(as_of=D, atoms=atoms_kind, sentences=sents, states=states, graphs=dict(sorted(G.all.items())),
-                ripple=ripple(ctx, library),
+                agreements=agreements(ctx), ask=ask_table(states),
                 scenarios=[dict(id=sc["id"], name=sc["name"], templates=sc["templates"], events=sc["events"]) for sc in library],
-                contracts={k: dict(title=c["title"], party=c["party"], lang=c["lang"]) for k, c in sorted(ctx.contracts.items())},
+                contracts={k: dict(title=c["title"], party=c["party"], lang=c["lang"], en=c["en"]) for k, c in sorted(ctx.contracts.items())},
+                group_label=GROUP_LABEL,
                 cause_label=CAUSE_LABEL, sev_name={str(k): v for k, v in SEV_NAME.items()})
 
 
@@ -756,7 +877,8 @@ def write(data: dict, out: Path) -> None:
             (d / f"schedule_{sc['id']}.csv").write_bytes(schedule_csv(data, st, sc["id"]).encode("utf-8-sig"))
         exposure = dict(as_of=data["as_of"], atoms=data["atoms"], state=st["label"], header=st["header"],
                         scenarios=data["scenarios"], contracts=data["contracts"], cells=st["cells"],
-                        graphs="graphs.json (in the page folder): reasoning graph per id", ripple=data["ripple"],
+                        graphs="graphs.json (in the page folder): reasoning graph per id", agreements=data["agreements"],
+                        acells=st["acells"], brief=st["brief"],
                         outcomes=[{k: r[k] for k in r if k not in ("sids", "atoms", "tried")} for r in st["rows"]])
         (d / "exposure.json").write_bytes(json.dumps(exposure, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8"))
     (out / "graphs.json").write_bytes(json.dumps(data["graphs"], ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8"))
@@ -989,6 +1111,10 @@ def check(out: Path) -> None:
                               when=[dict(values={"transaction_types": t}, reading="") for t in tt])
     br = describe([rd("", [["asset_sale"], []]), rd("termination_right", [["merger"], ["merger", "asset_sale"]])])
     assert [b["when"] for b in br] == ["transaction_types leaves out merger", "transaction_types includes merger"], br
+    assert [effect_group(k, h) for k, h in [("termination_right", "us"), ("termination_right", "them"), ("notice", "us"), ("notice", "them"),
+                                          ("prepayment", "them"), ("service_limitation", "them")]] == ["we", "they", "notify", "other", "prepay", "other"]
+    assert clause_ref("12.3 Change of Control. If", 4) == "12.3" and clause_ref("Section 5(a) The", 9) == "5" and clause_ref("This agreement", 7) == "sentence 7"
+    assert clause_ref("5 days after", 3) == "sentence 3" and clause_ref("2007 was", 3) == "sentence 3"
     assert not SIMULATED.exists() or json.loads(SIMULATED.read_text(encoding="utf-8"))["reviews"], "the simulated set is not empty"
     data = build()
     for name, st in data["states"].items():
@@ -1006,6 +1132,14 @@ def check(out: Path) -> None:
                 assert items[0]["sev"] == 6, "the first item could cause a termination right or a prepayment"
         assert not any(a in review.unsure(ctx.atoms[c["contract"]][c["template"]]) and (c["contract"], c["template"], a) not in ctx.done
                        for c in st["cards"] for a in c["atoms"]), "a confirm card holds only atoms the compiler settled"
+        for sc, bf in st["brief"].items():          # the groups of the event sentence add up to what it says reacts
+            assert sum(bf["groups"].values()) == bf["react"], (name, sc, bf)
+            assert bf["react"] + bf["options"] + bf["cant"] + bf["none"] == bf["agreements"] == len(data["agreements"]), (name, sc, bf)
+            assert sum(len(v) for v in bf["cant_by"].values()) == bf["cant"], (name, sc, bf)
+            for ak, a in st["acells"][sc].items():
+                assert a["group"] == (a["effects"][0]["group"] if a["effects"] else ""), (sc, ak)
+                assert not (a["cant"] and a["group"]), (sc, ak)
+        print(f"{name}: group counts add up to the reacting agreements for all {len(st['brief'])} events ({len(data['agreements'])} agreements)")
         print(f"{name}: {len(nl)} open reactions, causes {st['causes']}; {sum(r['status'] == 'provisional' for r in st['rows'])} "
               f"provisional worst cases match readings(); cases {st['header']['cases']}")
     if "review" in data["states"]:
