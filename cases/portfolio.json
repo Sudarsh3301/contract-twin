@@ -2,8 +2,9 @@
  "_note": "Which party is 'us' in each contract: the party whose corporate events the scenarios simulate. A portfolio input chosen by us, not extracted. Role names follow the contract's own wording; check them against the parties clause.",
  "contracts": {
   "raesystemsinc_20001114_10_q_ex_10_57_2631790_ex_10_57_co_bra": {
-   "our_party": "RAE Systems",
-   "src": "cuad:RaeSystems"
+   "our_party": "NETTAXI",
+   "src": "cuad:RaeSystems",
+   "note": "Parties are NETTAXI and SpinRecords.com; RAE Systems is only the filer"
   },
   "virtualscopics_inc_11_12_2010_ex_10_1_strategic_alliance_agr": {
    "our_party": "VirtualScopics (VS)",
@@ -30,8 +31,9 @@
    "src": "cuad:mPhase"
   },
   "verticalnetinc_04_01_2002_ex_10_19_maintenance_and_support_a": {
-   "our_party": "VerticalNet",
-   "src": "cuad:VerticalNet"
+   "our_party": "Vert (VerticalNet, Inc. and VerticalNet Enterprises LLC)",
+   "src": "cuad:VerticalNet",
+   "note": "Counterparty is Converge, Inc."
   },
   "gopagecorp_20140221_10_k_ex_10_1_8432966_ex_10_1_content_lic": {
    "our_party": "Licensee",
@@ -121,5 +123,6 @@
    "our_party": "the filing company named in the file title",
    "src": null
   }
- }
+ },
+ "_checked": "2026-11-02: role names checked against each contract's parties clause; 2 fixed (RaeSystems, VerticalNet)"
 }
