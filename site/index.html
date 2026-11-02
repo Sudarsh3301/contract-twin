@@ -44,7 +44,8 @@ h2 { font-size: 16px; margin: 20px 0 8px; }
 h3 { font-size: 14px; margin: 0 0 6px; }
 .sub { color: var(--muted); font-size: 13px; }
 .bar { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 10px; }
-.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; max-width: 100%; flex-wrap: nowrap; }
+.seg button { white-space: nowrap; }
 .seg button { font: inherit; font-weight: 600; padding: 6px 14px; border: 0; background: var(--panel); color: var(--muted); cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
 .seg button:disabled { cursor: not-allowed; opacity: .5; }
@@ -214,7 +215,7 @@ svg.ripple { width: 100%; height: auto; background: var(--panel); border: 1px so
   <div class="sub"><a href="results.html">Results and limits</a></div>
   <div class="bar"><div class="seg" role="group" aria-label="Review state" id="seg"></div><span class="simnote" id="simnote"></span></div>
   <div class="stats" id="stats"></div>
-  <nav><a href="#map" id="nav-map">Exposure map</a><a href="#ripple" id="nav-ripple">Ripple view</a><a href="#queue" id="nav-queue">Question queue</a></nav>
+  <nav><a href="#ripple" id="nav-ripple">Overview</a><a href="#queue" id="nav-queue">Questions</a><a href="#map" id="nav-map">Analyst view</a></nav>
 </header>
 <main>
   <section id="view-map"></section>
@@ -227,7 +228,7 @@ svg.ripple { width: 100%; height: auto; background: var(--panel); border: 1px so
 "use strict";
 const D = JSON.parse(document.getElementById("data").textContent);
 const TEMPLATE = {coc: "change of control", assign: "assignment", term: "term and renewal"};
-const STATUS = {firm: "Firm", provisional: "Provisional (worst case)", blocked: "Blocked"};
+const STATUS = {firm: "Clear", provisional: "Plan for (worst case)", blocked: "Can’t tell yet"};
 const CAUSE_HELP = {legal_judgement: "a reading of an open standard or a rule with two readings: counsel decides",
   missing_document: "the answer is in another instrument, a definition not located or a redacted term: get the document",
   missing_fact: "depends on a business fact, not the text: give it as a scenario input",
@@ -235,7 +236,23 @@ const CAUSE_HELP = {legal_judgement: "a reading of an open standard or a rule wi
 const SC = Object.fromEntries(D.scenarios.map(s => [s.id, s]));
 const keys = Object.keys(D.contracts);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
-const short = k => k.startsWith("ar:") ? k.slice(3) : k.split(":")[1].split("_")[0];
+const NAMES = {"ar:balady_engineering": "Engineering services (Saudi form, AR)", "ar:balady_urban": "Road works (Saudi form, AR)",
+  "ar:ejari": "Dubai tenancy (Ejari, AR)", "ar:mt_dyntek": "DynTek hosting (AR translation)", "ar:mt_ipayment": "iPayment sponsorship (AR translation)",
+  "ar:twin_corio": "Corio licence (AR)", "ar:twin_virtualscopics": "VirtualScopics alliance (AR)", "ar:twin_zounds": "Zounds manufacturing (AR)",
+  "cuad:BlackBox": "BlackBox distribution", "cuad:Corio": "Corio licence and hosting", "cuad:DynTek": "DynTek hosting",
+  "cuad:EuropeanMicro": "European Micro distribution", "cuad:Gopage": "Gopage content licence", "cuad:Gpaq": "Gpaq media licence",
+  "cuad:JointCorp": "Joint Corp franchise", "cuad:Kiromic": "Kiromic joint venture", "cuad:RaeSystems": "NETTAXI co-branding",
+  "cuad:TriCity": "TriCity outsourcing", "cuad:Vertex": "Vertex marketing", "cuad:VerticalNet": "VerticalNet support",
+  "cuad:VirtualScopics": "VirtualScopics alliance", "cuad:Zounds": "Zounds manufacturing", "cuad:agape": "Agape supply",
+  "cuad:calpine": "Calpine revolving credit", "cuad:eDiets": "eDiets co-branding", "cuad:eLandia": "eLandia outsourcing",
+  "cuad:ehave": "Ehave licence", "cuad:energous": "Energous alliance", "cuad:freezetag": "Freeze Tag sponsorship",
+  "cuad:garrett": "Garrett IP agreement", "cuad:healthgate": "HealthGate hosting", "cuad:iPayment": "iPayment sponsorship",
+  "cuad:lantheus": "Lantheus credit facility", "cuad:mPhase": "mPhase co-branding", "cuad:middlebrook": "MiddleBrook promotion",
+  "cuad:sfg": "SFG software licence", "cuad:virtuoso": "Virtuoso licence (JHU)", "edgar:Amscan": "Amscan credit facility"};
+const short = k => { const m = Object.keys(NAMES).filter(p => k.startsWith(p)).sort((a, z) => z.length - a.length)[0];
+  return m ? NAMES[m] : k.startsWith("ar:") ? k.slice(3) : k.split(":")[1].split("_")[0]; };
+const SHORT_SC = {hold_merger: "New parent (merger)", hold_exchange: "New parent (share swap)", ipo_200_60: "IPO $200M",
+  ipo_100_45: "IPO $100M", sale_30: "Sell 30%", sale_50: "Sell 50%", sale_60: "Sell 60%", sale_10_comp: "Competitor buys 10%", clock_90: "+90 days"};
 const lang = k => D.contracts[k].lang;
 const who = (h, k) => ({us: `our party (${D.contracts[k].party})`, them: "counterparty", either: "either party", both: "both parties"}[h] || "-");
 const sevName = n => D.sev_name[String(n)];
@@ -243,7 +260,7 @@ const sevClass = n => n >= 6 ? "termination" : n === 5 ? "consent" : n === 4 ? "
 const kindClass = x => x.status !== "TRIGGERED" ? "none" :
   ({termination_right: "termination", automatic_termination: "termination", prepayment: "prepayment", consent: "consent", notice: "notice"}[x.kind] || "other");
 const causeChips = cs => cs.map(c => `<span class="chip ${c === "legal_judgement" ? "c-counsel" : "c-blocked"}">${esc(D.cause_label[c])}</span>`).join(" ");
-let stateName = "compiled", view = "map", rowOrder = [], colOrder = [], sortNote = "", backTo = "map";
+let stateName = D.states.review ? "review" : "compiled", view = "ripple", rowOrder = [], colOrder = [], sortNote = "", backTo = "map";
 const S = () => D.states[stateName];
 
 function fmt(v) {
@@ -271,7 +288,7 @@ function atomRows(k, t, atoms, pend) {
 
 // ---------------- state ----------------
 function renderTop() {
-  document.getElementById("seg").innerHTML = Object.entries({compiled: "Compiled (no review)", review: "After review (simulated)"}).map(([k, l]) =>
+  document.getElementById("seg").innerHTML = Object.entries({review: "After review (simulated)", compiled: "Before review"}).map(([k, l]) =>
     `<button data-state="${k}" aria-pressed="${k === stateName}" ${D.states[k] ? "" : "disabled"}>${l}</button>`).join("");
   document.querySelectorAll("[data-state]").forEach(b => b.onclick = () => go(view, b.dataset.state));
   const h = S().header, hl = h.hand_labels;
@@ -279,15 +296,17 @@ function renderTop() {
     `Reviewer answers simulated from hand labels; not a lawyer's review. ${hl.contracts_without} of ${keys.length} contracts have no hand labels and stay as compiled.` : "";
   const c = h.cases;
   document.getElementById("stats").innerHTML =
-    `<span><b>${h.cards_answered}</b> cards answered</span><span><b>${h.questions_answered}</b> questions answered</span>` +
-    `<span><b>${h.firm}</b> of ${h.outcomes} outcomes firm</span><span><b>${h.provisional}</b> provisional</span><span><b>${h.blocked}</b> blocked</span>` +
-    `<span><b>${h.counsel}</b> decisions for counsel</span>` +
-    `<span>Scenario cases: <b>${c["wrong firm"]}</b> wrong firm, ${c.correct} correct, ${c.pending} pending, ${c.abstain} open</span>`;
+    `<span>Across ${D.scenarios.length} events and ${keys.length} contracts: <b>${h.firm}</b> of ${h.outcomes} answers clear</span>` +
+    `<span><b>${h.provisional}</b> plan for worst case</span><span><b>${h.blocked}</b> can’t tell yet</span>` +
+    `<span><b>${h.counsel}</b> questions for counsel</span><span>Test cases: <b>${c["wrong firm"]}</b> wrong answers</span>`;
 }
 
 // ---------------- exposure map ----------------
 function headline(m) {
-  return `${m.firm} firm${m.firm_unconfirmed ? ` (${m.firm_unconfirmed} with path unconfirmed)` : ""}, ${m.provisional} provisional (worst case), ${m.blocked} blocked; ${m.counsel} decision${m.counsel === 1 ? "" : "s"} for counsel`;
+  const parts = [m.termination && `${m.termination} may terminate or demand prepayment`, m.consent && `${m.consent} need their consent`,
+    m.notice && `${m.notice} need our notice`].filter(Boolean);
+  return `${m.react} contract${m.react === 1 ? "" : "s"} react${parts.length ? " — " + parts.join(", ") : ""}. ` +
+    `${m.counsel} question${m.counsel === 1 ? "" : "s"} for counsel; ${m.blocked} can’t tell yet`;
 }
 function cellHtml(id, k) {
   const cell = (S().cells[id] || {})[k];
@@ -684,8 +703,8 @@ function mountGraphs(id, k, rows) {
 let rippleSc = "sale_60";
 function rippleHtml() {
   const R = D.ripple, cells = S().cells[rippleSc] || {}, m = S().summaries[rippleSc];
-  let h = `<div class="seg" role="group" aria-label="Scenario">${D.scenarios.map(s => `<button data-rip="${s.id}" aria-pressed="${s.id === rippleSc}">${esc(s.name)}</button>`).join("")}</div>`;
-  h += `<p class="big"><b>${esc(SC[rippleSc].name)}</b>: ${headline(m)}. ${m.react} contracts react.</p><div class="ripple-wrap">`;
+  let h = `<div class="seg" role="group" aria-label="Scenario">${D.scenarios.map(s => `<button data-rip="${s.id}" aria-pressed="${s.id === rippleSc}" title="${esc(s.name)}">${esc(SHORT_SC[s.id] || s.name)}</button>`).join("")}</div>`;
+  h += `<p class="big">If this happens — <b>${esc(SC[rippleSc].name)}</b>: ${headline(m)}.</p><div class="ripple-wrap">`;
   let s = `<svg class="ripple" viewBox="-1.36 -1.36 2.72 2.72" role="group" aria-label="Contracts around the event, by counterparty type">`;
   for (const gr of R.groups) {
     const a0 = gr.a0 - .05, a1 = gr.a1 + .05, r = 1.06, big = a1 - a0 > Math.PI ? 1 : 0, mid = (a0 + a1) / 2;
@@ -698,7 +717,7 @@ function rippleHtml() {
     wrap(SC[rippleSc].name, 14).map((l, i, a) => `<text y="${((i - (a.length - 1) / 2) * .06 + .016).toFixed(3)}">${esc(l)}</text>`).join("") + `</g>`;
   Object.entries(R.pos).forEach(([k, [x, y]]) => {
     const c = cells[k], cls = !c ? "none" : c.sev ? c.cls : c.status === "blocked" ? "blocked" : "none", st = c ? c.status : "none";
-    const mk = {firm: "F", provisional: "P", blocked: "B", none: "–"}[st], ang = Math.atan2(y, x), deg = ang * 180 / Math.PI, left = Math.cos(ang) < 0;
+    const mk = {firm: "✓", provisional: "!", blocked: "?", none: "–"}[st], ang = Math.atan2(y, x), deg = ang * 180 / Math.PI, left = Math.cos(ang) < 0;
     const what = c ? (c.sev ? `${c.labels[0]}, ${STATUS[c.status]}` : c.status === "blocked" ? "blocked" : `no reaction, ${STATUS[c.status]}`) : "no clause for this scenario";
     s += `<g class="ct ${st}" data-ct="${esc(k)}" data-cls="${cls}" role="button" tabindex="0" aria-label="${esc(short(k) + ": " + what)}">` +
       `<circle class="dot" cx="${x}" cy="${y}" r=".04" style="fill:var(--panel);stroke:var(--line)"/><text class="mk" x="${x}" y="${y}">${mk}</text>` +
@@ -706,15 +725,15 @@ function rippleHtml() {
       `text-anchor="${left ? "end" : "start"}" dominant-baseline="central">${esc(short(k).slice(0, 16))}</text><title>${esc(D.contracts[k].title)}</title></g>`;
   });
   s += `</svg>`;
-  const link = k => `<a href="#ev=${esc(rippleSc + "|" + k)}${stateName === "review" ? "@review" : ""}">${esc(short(k))}</a>`;
+  const link = k => `<a href="#ev=${esc(rippleSc + "|" + k)}${sfx()}">${esc(short(k))}</a>`;
   const react = Object.entries(cells).filter(([, c]) => c.sev).sort((a, z) => z[1].sev - a[1].sev || a[0].localeCompare(z[0]));
   const blocked = Object.keys(cells).filter(k => !cells[k].sev && cells[k].status === "blocked").sort();
   const prov = Object.keys(cells).filter(k => !cells[k].sev && cells[k].status === "provisional").sort();
   h += s + `<div><div class="legend">${["termination", "consent", "notice", "deadline", "blocked", "none"].map(c => `<span class="chip c-${c}">${c === "none" ? "no reaction" : c === "termination" ? "termination right" : c}</span>`).join("")}</div>` +
-    `<p class="note">Letter in each dot: F firm, P provisional (worst case), B blocked. Dashed ring: provisional; dotted ring: blocked. Select a contract to open its reasoning graph.</p>` +
-    `<h3>React (${react.length})</h3><ul>${react.map(([k, c]) => `<li>${link(k)}: ${esc(c.labels.join(", "))} <span class="note">(${esc(STATUS[c.status])})</span></li>`).join("")}</ul>` +
-    (prov.length ? `<h3>Provisional, no reaction in the worst case (${prov.length})</h3><p>${prov.map(link).join(", ")}</p>` : "") +
-    `<h3>Blocked (${blocked.length})</h3><p class="note">A document, a fact or an atom is missing; the reasoning graph shows which.</p><p>${blocked.map(link).join(", ")}</p></div></div>`;
+    `<p class="note">✓ clear · ! plan for the worst case · ? can’t tell yet. Select a contract to see the clause and why.</p>` +
+    `<h3>What happens (${react.length})</h3><ul>${react.map(([k, c]) => `<li>${link(k)}: ${esc(c.labels.join(", "))} <span class="note">(${esc(STATUS[c.status])})</span></li>`).join("")}</ul>` +
+    (prov.length ? `<h3>Probably nothing, still to check (${prov.length})</h3><p>${prov.map(link).join(", ")}</p>` : "") +
+    `<h3>Can’t tell yet (${blocked.length})</h3><p class="note">A document, a fact or a detail of the clause is missing; open the contract to see which.</p><p>${blocked.map(link).join(", ")}</p></div></div>`;
   return h;
 }
 function renderRipple(animate) {
@@ -734,11 +753,12 @@ function renderRipple(animate) {
 }
 
 // ---------------- routing: #<view>[@review] ----------------
-function go(v, st) { location.hash = v + (st === "review" ? "@review" : ""); }
+const sfx = () => stateName === "compiled" && D.states.review ? "@compiled" : "";
+function go(v, st) { location.hash = v + (st === "compiled" && D.states.review ? "@compiled" : ""); }
 function route() {
-  let hsh = decodeURIComponent(location.hash.slice(1)) || "map";
-  const want = hsh.endsWith("@review") && D.states.review ? "review" : "compiled";
-  hsh = hsh.replace(/@review$/, "");
+  let hsh = decodeURIComponent(location.hash.slice(1)) || "ripple";
+  const want = hsh.endsWith("@compiled") || !D.states.review ? "compiled" : "review";
+  hsh = hsh.replace(/@(review|compiled)$/, "");
   const changed = want !== stateName;
   if (changed) { stateName = want; renderTop(); renderMap(); renderQueue(); }
   const ripple = hsh.startsWith("ripple");
@@ -752,7 +772,7 @@ function route() {
   for (const t of ["map", "queue", "ripple"]) {
     document.getElementById("view-" + t).hidden = t !== tab;
     const a = document.getElementById("nav-" + t);
-    a.href = "#" + t + (stateName === "review" ? "@review" : "");
+    a.href = "#" + t + sfx();
     if (t === tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
   }
   if (hsh.startsWith("ev=")) {
