@@ -19,6 +19,7 @@
   --none: #5e5c56; --none-bg: transparent;
   --blocked: #4d4b46; --blocked-bg: #e2e0da;
   --counsel: #6a3fa0; --counsel-bg: #ece3f7;
+  --clear: #1b6b3a; --clear-bg: #dcf0e3; --plan: #8a5a00; --plan-bg: #fbeccd; --option: #3d5a73; --option-bg: #e1e9f0;
   --focus: #1f5fa8; --warn: #8f4e00; --ok: #0f6e66;
   --vT: #0f6e66; --vF: #5e5c56; --vU: #8f4e00; --edge: #b9b5ac; --lit: #1f5fa8;
 }
@@ -30,6 +31,7 @@
     --consent: #ffb866; --consent-bg: #47331a; --notice: #8fbaf0; --notice-bg: #1f3350;
     --deadline: #7fd8cd; --deadline-bg: #173d39; --other: #c4c1ba; --other-bg: #34332f; --none: #aaa7a0;
     --blocked: #c9c6bf; --blocked-bg: #33322f; --counsel: #c9a6f5; --counsel-bg: #36294a;
+  --clear: #7fd8a0; --clear-bg: #17382a; --plan: #ffc766; --plan-bg: #47381a; --option: #9fc0dc; --option-bg: #26343f;
     --focus: #8fbaf0; --warn: #ffb866; --ok: #7fd8cd;
     --vT: #7fd8cd; --vF: #aaa7a0; --vU: #ffb866; --edge: #55534e; --lit: #8fbaf0;
   }
@@ -41,6 +43,7 @@
   --consent: #ffb866; --consent-bg: #47331a; --notice: #8fbaf0; --notice-bg: #1f3350;
   --deadline: #7fd8cd; --deadline-bg: #173d39; --other: #c4c1ba; --other-bg: #34332f; --none: #aaa7a0;
   --blocked: #c9c6bf; --blocked-bg: #33322f; --counsel: #c9a6f5; --counsel-bg: #36294a;
+  --clear: #7fd8a0; --clear-bg: #17382a; --plan: #ffc766; --plan-bg: #47381a; --option: #9fc0dc; --option-bg: #26343f;
   --focus: #8fbaf0; --warn: #ffb866; --ok: #7fd8cd;
   --vT: #7fd8cd; --vF: #aaa7a0; --vU: #ffb866; --edge: #55534e; --lit: #8fbaf0;
 }
@@ -49,7 +52,7 @@ body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 syste
 a { color: var(--notice); }
 header { padding: 14px 24px 0; border-bottom: 1px solid var(--line); background: var(--panel); }
 .top { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; align-items: flex-start; }
-h1 { font-size: 22px; margin: 0 0 2px; letter-spacing: -.01em; }
+h1 { font-size: 28px; line-height: 1.2; margin: 0 0 4px; letter-spacing: -.015em; max-width: 30ch; }
 h2 { font-size: 18px; margin: 22px 0 8px; }
 h3 { font-size: 16px; margin: 0 0 6px; }
 h4 { font-size: 14px; }
@@ -59,7 +62,7 @@ h4 { font-size: 14px; }
 .seg button { font: inherit; font-size: 14px; font-weight: 600; padding: 6px 14px; border: 0; background: var(--panel); color: var(--muted); cursor: pointer; white-space: nowrap; }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
 .seg button:disabled { cursor: not-allowed; opacity: .55; }
-.simnote { font-size: 13px; color: var(--warn); font-weight: 600; margin: 6px 0 0; max-width: 90ch; }
+.simnote { font-size: 13px; color: var(--muted); margin: 6px 0 0; max-width: 90ch; }
 .stats { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; margin: 0 0 10px; }
 .stats b { font-size: 16px; }
 nav { display: flex; gap: 4px; margin-top: 8px; overflow-x: auto; }
@@ -98,6 +101,9 @@ table.map { border-collapse: separate; border-spacing: 0; font-size: 13px; }
 .c-none { --c: var(--none); --cbg: var(--none-bg); }
 .c-blocked { --c: var(--blocked); --cbg: var(--blocked-bg); }
 .c-counsel { --c: var(--counsel); --cbg: var(--counsel-bg); }
+.c-clear { --c: var(--clear); --cbg: var(--clear-bg); }
+.c-plan { --c: var(--plan); --cbg: var(--plan-bg); }
+.c-option { --c: var(--option); --cbg: var(--option-bg); }
 .tools { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
 select { font: inherit; font-size: 14px; padding: 3px 6px; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; max-width: 100%; }
 input[type=checkbox], input[type=range] { accent-color: var(--focus); }
@@ -125,6 +131,50 @@ table.atoms { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6
 .summary li { display: grid; grid-template-columns: 230px 1fr; gap: 12px; padding: 5px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; font-size: 13px; }
 
 /* ---------- overview ---------- */
+.top2 { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; margin: 0 0 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+.card h2 { margin: 0 0 8px; font-size: 16px; }
+.scale { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.sc { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--bg); min-width: 0; }
+.sc .n { font-weight: 700; font-size: 15px; }
+.sc .n small { font-weight: 400; font-size: 13px; color: var(--muted); }
+.sc .row { display: flex; justify-content: space-between; gap: 6px; font-size: 14px; margin-top: 4px; }
+.sc .row b { font-size: 16px; }
+.sc .twin b { color: var(--clear); }
+.sc .tag { font-size: 12px; font-weight: 700; color: var(--plan); }
+.scnote { margin: 10px 0 0; font-size: 14px; }
+.abar { display: flex; height: 30px; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); margin: 10px 0 6px; }
+.abar span { display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--ink); background: var(--cbg); min-width: 2px; overflow: hidden; }
+.abar span + span { border-left: 2px solid var(--panel); }
+.alegend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 14px; }
+.alegend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: var(--c); margin-right: 5px; vertical-align: -1px; }
+.delta { font-weight: 700; font-size: 15px; color: var(--clear); }
+.acard .seg { margin: 0 0 4px; }
+.proof { margin: 0 0 14px; font-size: 15px; font-weight: 600; }
+.panels { display: grid; gap: 16px; margin-top: 28px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px 16px; }
+.panel h2 { margin: 0 0 4px; font-size: 18px; }
+.stakebar { position: relative; height: 18px; margin: 18px 6px 4px; background: var(--soft); border: 1px solid var(--line); border-radius: 9px; }
+.stakebar i { position: absolute; top: -6px; width: 6px; height: 28px; margin-left: -3px; border-radius: 3px; background: var(--c); }
+.axis { display: flex; justify-content: space-between; margin: 0 0 8px; font-size: 13px; color: var(--muted); }
+.marklist { list-style: none; margin: 6px 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 10px; }
+.marklist li { display: flex; align-items: center; gap: 6px; font-size: 15px; }
+.marklist button, .rbtns button { font: inherit; font-size: 14px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 6px; padding: 3px 10px; cursor: pointer; }
+.marklist button { border-left: 5px solid var(--c); }
+.marklist button:hover, .rbtns button:hover { background: var(--soft); }
+.rbtns { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.rbtns button { font-weight: 600; padding: 6px 14px; }
+.rbtns button[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+.revs { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; margin: 6px 0; }
+.rev { border: 1px solid var(--line); border-left: 5px solid var(--c); background: var(--cbg); border-radius: 6px; padding: 6px 8px; font-size: 14px; min-width: 0; }
+.rev b { display: block; font-size: 13px; color: var(--muted); font-weight: 600; }
+.cases { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 8px; }
+.case h3 { font-size: 16px; margin: 0 0 4px; }
+.run { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; padding: 6px 0; border-top: 1px solid var(--soft); font-size: 14px; }
+.run .why { grid-column: 2; color: var(--muted); font-size: 13px; margin: 0; display: block; }
+.twinbox { border: 1px solid var(--clear); border-left: 5px solid var(--clear); border-radius: 6px; padding: 8px 12px; margin: 8px 0; background: var(--clear-bg); }
+.langnote { font-size: 14px; color: var(--muted); margin: 4px 0; }
+.rvnav { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 0 10px; font-size: 14px; }
 .events { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
 .events button { font: inherit; font-size: 14px; font-weight: 600; flex: none; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 18px; padding: 6px 14px; cursor: pointer; }
 .events button[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
@@ -279,7 +329,16 @@ svg.graph { display: block; font-family: system-ui, sans-serif; }
   .ripbox { position: static; }
   .bar { justify-content: flex-start; }
 }
+@media (max-width: 899px) {
+  .top2 { grid-template-columns: minmax(0, 1fr); }
+  .cases { grid-template-columns: minmax(0, 1fr); }
+  .revs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  h1 { font-size: 24px; }
+}
 @media (max-width: 699px) {
+  .scale { grid-template-columns: minmax(0, 1fr); }
+  .revs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  h1 { font-size: 22px; }
   #ev { padding: 14px 16px 40px; }
   .act { grid-template-columns: 1fr; }
   .act .st, .act .what, .act .meta, .act button { grid-row: auto; grid-column: 1; }
@@ -292,20 +351,20 @@ svg.graph { display: block; font-family: system-ui, sans-serif; }
 <body>
 <header>
   <div class="top">
-    <div><h1>Contract portfolio: what happens if</h1><div class="sub" id="meta"></div></div>
-    <div class="bar">
-      <div class="seg" role="group" aria-label="Review state" id="seg"></div>
-      <div class="seg" role="group" aria-label="Colour theme" id="theme"></div>
-      <a href="results.html">Results and limits</a>
-    </div>
+    <div><h1>Run a deal against every contract. Compile once, answer every scenario.</h1><div class="sub" id="meta"></div></div>
+    <div class="bar"><div class="seg" role="group" aria-label="Colour theme" id="theme"></div></div>
   </div>
-  <div class="simnote" id="simnote"></div>
-  <nav><a href="#ripple" id="nav-ripple">Overview</a><a href="#queue" id="nav-queue">To resolve</a><a href="#map" id="nav-map">Analyst view</a></nav>
+  <nav><a href="#ripple" id="nav-ripple">Overview</a><a href="#reviewers" id="nav-reviewers">For reviewers</a></nav>
 </header>
 <main>
-  <section id="view-map"></section>
-  <section id="view-queue" hidden></section>
-  <section id="view-ripple" hidden></section>
+  <section id="view-ripple"></section>
+  <section id="view-reviewers" hidden>
+    <div class="simnote" id="simnote"></div>
+    <p class="rvnav"><a href="#queue" data-jump="rv-queue">To resolve</a><a href="#map" data-jump="rv-clock">+90 days</a><a href="#map" data-jump="rv-map">Exposure map and per-event table</a></p>
+    <div id="rv-queue"></div>
+    <div id="rv-clock"></div>
+    <div id="rv-map"></div>
+  </section>
 </main>
 <aside id="ev" hidden aria-label="Agreement detail"></aside>
 <script id="data" type="application/json">/*DATA*/null</script>
@@ -324,7 +383,9 @@ const WHY_HELP = {missing_document: "The answer is in another document, or in a 
   unclear: "The result is open for a reason the compiler did not name."};
 const WHY_ORDER = ["missing_document", "missing_fact", "check_extraction", "legal_judgement", "versions", "unclear"];
 const GROUPS = ["auto", "they", "prepay", "consent", "notify", "other", "we"];
-const GCLS = {auto: "termination", they: "termination", prepay: "prepayment", consent: "consent", notify: "notice", other: "other", we: "deadline"};
+const GCLS = {auto: "termination", they: "termination", prepay: "prepayment", consent: "consent", notify: "notice", other: "other", we: "option"};
+const STATUS_CLS = {firm: "clear", provisional: "plan", blocked: "blocked"};
+const DEALS = D.scenarios.filter(s => s.templates.join() !== "term");      // the clock is not a deal: it lives under For reviewers
 const KIND_WORD = {service_limitation: "service limitation", deadline: "deadline", option_deadline: "option deadline", earliest_exit: "earliest exit",
   expired: "already expired", expiry: "expiry", renewed: "renewal"};
 const SC = Object.fromEntries(D.scenarios.map(s => [s.id, s]));
@@ -335,7 +396,7 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;",
 const lang = k => D.contracts[k].lang;
 const nm = k => AG[AG_OF[k]].name;
 const hasPair = ak => AG[ak].versions.length > 1;
-const langMark = ak => hasPair(ak) ? '<span class="lang">EN · AR</span>' : lang(AG[ak].versions[0]) === "ar" ? '<span class="lang">AR</span>' : "";
+const langMark = (ak, a) => hasPair(ak) ? `<span class="lang"${a && a.note ? ` title="${esc(a.note)}"` : ""}>EN · AR${a && a.note ? ": Arabic can’t tell" : ""}</span>` : lang(AG[ak].versions[0]) === "ar" ? '<span class="lang">AR</span>' : "";
 const verName = k => lang(k) === "ar" ? "Arabic version" : "English version";
 const who = (h, k) => ({us: `our party (${D.contracts[k].party})`, them: "counterparty", either: "either party", both: "both parties"}[h] || "-");
 const sevName = n => ({6: "they may terminate or demand prepayment", 5: "their consent is needed", 4: "we must notify", 3: "a service limitation", 2: "a deadline", 1: "another effect", 0: "nothing"})[n];
@@ -352,15 +413,15 @@ const S = () => D.states[stateName];
 const PHONE = window.matchMedia("(max-width: 699px)");
 
 // ---------------- events, in page words ----------------
-function chipLabel(sc) {
+function chipLabel(sc, short) {
   const e = SC[sc].events[0];
-  return e.event === "share_sale" ? (e.buyer_is_competitor ? `Competitor buys ${e.buyer_pct}%` : `Sell ${e.buyer_pct}%`) :
-    e.event === "ipo" ? `IPO ${fmtMoney(e.gross_proceeds_usd)}` :
+  return e.event === "share_sale" ? (e.buyer_is_competitor ? `Competitor buys ${e.buyer_pct}%` : `Sell ${e.buyer_pct}%${short ? "" : " + new management"}`) :
+    e.event === "ipo" ? `IPO ${fmtMoney(e.gross_proceeds_usd)}${short ? "" : ` · sponsors keep ${e.sponsor_pct_after}%`}` :
     e.event === "holding_insertion" ? `New parent (${e.mechanism === "merger" ? "merger" : "share swap"})` : `+${dayDiff(D.as_of, e.to)} days`;
 }
 function eventPhrase(sc) {
   const e = SC[sc].events[0];
-  return e.event === "share_sale" ? (e.buyer_is_competitor ? `a competitor buys ${e.buyer_pct}% of us` : `${e.buyer_pct}% of us is sold to one buyer`) :
+  return e.event === "share_sale" ? (e.buyer_is_competitor ? `a competitor buys ${e.buyer_pct}% of us` : `${e.buyer_pct}% of us is sold to one buyer and management changes`) :
     e.event === "ipo" ? `we list in an IPO that raises ${fmtMoney(e.gross_proceeds_usd)} and the sponsors keep ${e.sponsor_pct_after}%` :
     e.event === "holding_insertion" ? `a new holding company is put above us by ${e.mechanism === "merger" ? "a merger" : "a share exchange"}` :
     `the date moves forward to ${fmtDate(e.to)}`;
@@ -387,7 +448,7 @@ function compose(effects, name) {
   }).join("; ");
   return s.startsWith(name) ? s : s.charAt(0).toUpperCase() + s.slice(1);
 }
-const clauseWord = ref => !ref ? "" : /^\d/.test(ref) ? `clause ${ref}` : ref;
+const clauseWord = ref => ref ? "§" + ref : "";
 function sentence(sc) {
   const b = S().brief[sc], g = b.groups, parts = [];
   if (g.auto) parts.push(g.auto === 1 ? "1 ends automatically" : `${g.auto} end automatically`);
@@ -456,9 +517,6 @@ function renderTheme() {
   document.querySelectorAll("[data-theme-set]").forEach(b => b.onclick = () => setTheme(b.dataset.themeSet));
 }
 function renderTop() {
-  document.getElementById("seg").innerHTML = Object.entries({review: "After review (simulated)", compiled: "Before review"}).map(([k, l]) =>
-    `<button data-state="${k}" aria-pressed="${k === stateName}" ${D.states[k] ? "" : "disabled"}>${l}</button>`).join("");
-  document.querySelectorAll("[data-state]").forEach(b => b.onclick = () => go(view, b.dataset.state));
   const hl = S().header.hand_labels;
   document.getElementById("simnote").textContent = stateName === "review" ?
     `Simulated review: hand labels play the reviewer. This is not a lawyer’s review. ${hl.contracts_without} of ${keys.length} contract files have no hand labels and stay as compiled.` :
@@ -488,7 +546,7 @@ function defaultOrder() {
   colOrder = D.scenarios.map(s => s.id); sortNote = "";
 }
 function renderMap() {
-  const v = document.getElementById("view-map"), st = S(), h0 = st.header, c = h0.cases, e = st.effort;
+  const v = document.getElementById("rv-map"), st = S(), h0 = st.header, c = h0.cases, e = st.effort;
   let h = `<p class="stats"><span>Across ${D.scenarios.length} events and ${agKeys.length} agreements (${keys.length} contract files): <b>${h0.firm}</b> of ${h0.outcomes} answers clear</span>` +
     `<span><b>${h0.provisional}</b> plan for worst case</span><span><b>${h0.blocked}</b> can’t tell yet</span>` +
     `<span><b>${h0.counsel}</b> need a legal call</span><span>Test cases: <b>${c["wrong firm"]}</b> wrong answers</span></p>`;
@@ -534,6 +592,16 @@ function answerOf(id, ak, k) {
   }
   return ["No reaction: under the compiled reading, this event does not trigger the clause.", "none"];
 }
+// What the engine says for one clause: for the event itself, or for the slider interval the reader has picked (`iv`).
+function rxHtml(r, k, iv) {
+  const st = iv ? iv.status : r.status, rs = iv ? iv.rx : st === "firm" ? r.reactions : r.worst;
+  const at = iv ? `<p class="note">At ${esc(fmtNum(iv.at, r.flips.find(f => f.intervals.includes(iv)).unit))} (picked on the slider):</p>` : "";
+  if (st === "firm") return at + `<dl class="kv">${reactionLines(rs, k)}</dl>` + (!iv && r.tried ? `<p class="note">Clear in every reading of the open ${plural(r.tried.length, "fact", "facts")} ` +
+    `${r.tried.map(x => `<code>${esc(x)}</code>`).join(", ")}; the reason shows the first reading tried, not a compiled value.</p>` : "");
+  if (st === "provisional") return at + `<p><b>Worst case for us:</b></p><dl class="kv">${reactionLines(rs, k)}</dl>` + (iv ? "" : `<p><b>Readings</b> (clears with ${r.clears} ${plural(r.clears, "fact", "facts")}):</p>` +
+    `<ul class="branches">${r.branches.map(b => `<li><span class="chip c-${sevClass(b.sev)}">${esc(plainLabel(b.label))}</span> — ${esc(b.when)}</li>`).join("")}</ul>`);
+  return at + `<p><b>Can’t tell yet:</b> ${esc(iv ? "the answer is open at this value." : r.missing)}</p>`;
+}
 function renderEvidence(id, k) {
   const ev = document.getElementById("ev"), ak = AG_OF[k], A = AG[ak], c = D.contracts[k], s = SC[id], a = S().acells[id][ak];
   const rows = (S().rows[id] || {})[k] || [];
@@ -544,9 +612,10 @@ function renderEvidence(id, k) {
     `<button data-ver="${esc(v)}" aria-pressed="${v === k}">${verName(v)}</button>`).join("") + `</div>`;
   if (a && a.disagree) h += `<p class="warn"><b>The language versions disagree.</b> Unknown is not false, so this agreement counts as “can’t tell yet” until counsel settles it.</p>` +
     `<ul>` + A.versions.map(v => `<li>${verName(v)}: ${esc(answerOf(id, ak, v)[0])}</li>`).join("") + `</ul>`;
+  if (a && a.note) h += `<p class="langnote">${esc(a.note)} The English text is the agreement of record, so its answer stands.</p>`;
   h += `<p class="answer c-x c-${cls}"><bdi>${a && a.disagree ? esc(verName(k)) + ": " : ""}${esc(text)}</bdi></p>`;
   const counsel = a && a.causes.includes("legal_judgement"), vs = a && a.versions[k] ? a.versions[k].status : "";
-  h += `<p>${a && a.disagree ? '<span class="chip c-blocked">Language versions disagree</span>' : a ? `<span class="chip c-${vs === "firm" ? "deadline" : vs === "provisional" ? "consent" : "blocked"}">${esc(STATUS[vs || a.status])}</span>` : ""}` +
+  h += `<p>${a && a.disagree ? '<span class="chip c-blocked">Language versions disagree</span>' : a ? `<span class="chip c-${STATUS_CLS[vs || a.status]}">${esc(STATUS[vs || a.status])}</span>` : ""}` +
     `${counsel ? ' <span class="chip c-counsel">Question for counsel</span>' : ""}</p>`;
   const open = rows.reduce((n, r) => n + r.unconfirmed.length + r.ask.length, 0);
   if (open) h += `<p class="note prose">${open} ${plural(open, "fact behind this answer is", "facts behind this answer are")} not confirmed yet. Open “Show reasoning” to confirm or correct ${plural(open, "it", "them")}.</p>`;
@@ -559,17 +628,9 @@ function renderEvidence(id, k) {
   for (const r of rows) {
     const top = r.status === "provisional" ? sevClass(r.worst_sev) : r.status === "blocked" ? "blocked" :
       kindClass(r.reactions.reduce((x, y) => (y.status === "TRIGGERED" ? y : x), r.reactions[0]));
-    h += `<div class="reaction c-${top}" id="rw-${rows.indexOf(r)}"><h3>${esc(TEMPLATE[r.template])}: <span class="chip c-${top}">${esc(STATUS[r.status])}</span> ${causeChips(r.causes)}</h3>` +
+    h += `<div class="reaction c-${top}" id="rw-${rows.indexOf(r)}"><h3>${esc(TEMPLATE[r.template])}: <span class="chip c-${STATUS_CLS[r.status]}">${esc(STATUS[r.status])}</span> ${causeChips(r.causes)}</h3>` +
       `<div class="rg" id="rg-${rows.indexOf(r)}" aria-label="Reasoning graph for ${esc(TEMPLATE[r.template])}"></div>`;
-    if (r.status === "firm") {
-      h += `<dl class="kv">${reactionLines(r.reactions, k)}</dl>` + (r.tried ? `<p class="note">Clear in every reading of the open ${plural(r.tried.length, "fact", "facts")} ` +
-        `${r.tried.map(x => `<code>${esc(x)}</code>`).join(", ")}; the reason shows the first reading tried, not a compiled value.</p>` : "");
-    } else if (r.status === "provisional") {
-      h += `<p><b>Worst case for us:</b></p><dl class="kv">${reactionLines(r.worst, k)}</dl><p><b>Readings</b> (clears with ${r.clears} ${plural(r.clears, "fact", "facts")}):</p>` +
-        `<ul class="branches">${r.branches.map(b => `<li><span class="chip c-${sevClass(b.sev)}">${esc(plainLabel(b.label))}</span> — ${esc(b.when)}</li>`).join("")}</ul>`;
-    } else {
-      h += `<p><b>Can’t tell yet:</b> ${esc(r.missing)}</p>`;
-    }
+    h += `<div id="rx-${rows.indexOf(r)}">${rxHtml(r, k, null)}</div>`;
     if (r.causes.length) h += `<ul class="note">${r.causes.map(x => `<li><b>${esc(D.cause_label[x])}</b>: ${esc(WHY_HELP[x])}</li>`).join("")}</ul>`;
     if (r.unconfirmed.length || r.ask.length) h += `<p class="note">Before relying on this answer: confirm ${r.unconfirmed.map(x => `<code>${esc(x)}</code>`).join(", ") || "nothing"}` +
       `${r.ask.length ? `; answer ${r.ask.map(x => `<code>${esc(x)}</code>`).join(", ")} (the compiler is unsure)` : ""}.</p>`;
@@ -609,7 +670,7 @@ function counselItems(sc) {
   return out.sort((x, z) => z.sev - x.sev || AG[x.ak].name.localeCompare(AG[z.ak].name));
 }
 function renderQueue() {
-  const v = document.getElementById("view-queue"), st = S(), sc = qEv === "all" ? "" : (qEv || rippleSc);
+  const v = document.getElementById("rv-queue"), st = S(), sc = qEv === "all" ? "" : (qEv || rippleSc);
   const inEv = x => !sc || sc in x.sev_by;
   const qs = st.questions.filter(inEv), cards = st.cards.filter(inEv), ci = counselItems(sc), facts = qs.length + cards.length;
   const couldCause = x => `<span class="chip c-${sevClass(x.sev)}">could lead to: ${esc(sevName(x.sev))}</span>`;
@@ -718,12 +779,12 @@ const order = nodes => nodes.map((n, i) => [n, i]).sort((a, z) => a[0].layer - z
 
 function qualifier(g) {
   const r = g.row;
-  if (g.branch !== null) return ["Plan for worst case — reading assumed", "consent"];
+  if (g.branch !== null) return ["Plan for worst case — reading assumed", "plan"];
   if (r.status === "blocked") return ["Can’t tell yet", "blocked"];
-  if (r.status === "provisional") return ["Plan for worst case", "consent"];
+  if (r.status === "provisional") return ["Plan for worst case", "plan"];
   const c = Object.entries(corrected).find(([key]) => key.startsWith(ck(g, "")));
   if (c) return [`Corrected (simulated): ${c[1].label}`, "notice"];
-  return pendingAtoms(g).length ? ["Clear · not yet reviewed", "consent"] : ["Clear", "deadline"];
+  return pendingAtoms(g).length ? ["Clear · not yet reviewed", "clear"] : ["Clear", "clear"];
 }
 function ring(g) {
   const lb = lbAtoms(g), total = lb.size, done = total - pendingAtoms(g).length, f = total ? done / total : 1, C = 2 * Math.PI * 8;
@@ -866,6 +927,8 @@ function renderGraph(i) {
   h += `<div class="rg-main"><div class="rg-scroll" tabindex="0" aria-label="Reasoning graph. Arrow keys move along the trace; Enter opens the clause; Escape closes it.">${svg}</div>` +
     `<div class="rg-pane" aria-live="polite">${paneHtml(g, sel)}</div><svg class="rg-link" aria-hidden="true"></svg></div>`;
   el.innerHTML = h;
+  const rx = document.getElementById("rx-" + i);
+  if (rx) rx.innerHTML = rxHtml(r, g.k, g.flip && !g.diff ? r.flips[g.flip.p].intervals[g.flip.i] : null);
   const fl = document.getElementById("fl-" + i);
   if (fl) fl.innerHTML = g.diff || !r.flips.length ? "" : `<h3>What would change this answer</h3>` + flipHtml(g);
   if (hadFocus) el.querySelector(".rg-scroll").focus({preventScroll: true});
@@ -931,14 +994,94 @@ function mountGraphs(id, k, rows) {
   GV.forEach((_, i) => { renderGraph(i); graphEvents(i); });
 }
 
+// ---------------- first screen: scale, automation, proof ----------------
+const usd = v => v >= 1000 ? "$" + Math.round(v).toLocaleString("en-US") : "$" + (+v.toFixed(2)).toFixed(2);
+function scaleHtml() {
+  const sc = D.scale, rt = D.runtime;
+  return `<div class="card"><h2>Scale: compile once, then run any number of scenarios</h2><div class="scale">` + sc.cards.map(c =>
+    `<div class="sc"><div class="n">${c.contracts.toLocaleString("en-US")} contracts <small>· ${c.scenarios} scenarios</small></div>` +
+    `<div class="row twin"><span>Compile once</span><b>${usd(c.twin_usd)}</b></div>` +
+    `<div class="row"><span>Direct read, 1 run</span><b>${usd(c.direct_1)}</b></div>` +
+    `<div class="row"><span>Direct read, vote of 3</span><b>${usd(c.direct_3)}</b></div>` +
+    (c.projected ? '<div class="tag">projected</div>' : "") + `</div>`).join("") + `</div>` +
+    `<p class="scnote"><b>Same answer every run.</b> The rules give identical answers every time. A direct read changed its status on ${D.proof.cases - +sc.status_same.split("/")[0]} of ${D.proof.cases} test cases across 3 runs.` +
+    (rt.median_ms ? ` <b>Re-run the whole portfolio in ${rt.median_ms} ms</b> (${rt.events} events, ${rt.agreements} agreements, rules on compiled answers).` : "") + `</p></div>`;
+}
+const AUTO = [["answered", "answered automatically", "clear"], ["plan", "plan for the worst case", "plan"], ["person", "need a person", "blocked"]];
+function automationHtml() {
+  const a = D.states[stateName].automation, other = D.states[stateName === "review" ? "compiled" : "review"];
+  const gain = D.states.review ? D.states.review.automation.answered - D.states.compiled.automation.answered : 0;
+  return `<div class="card acard"><h2>Automation: ${a.total} outcomes (${agKeys.length} agreements × ${DEALS.length} deals)</h2>` +
+    `<div class="seg" role="group" aria-label="Review state">` + [["compiled", "Before review"], ["review", "After review (simulated)"]].map(([k, l]) =>
+      `<button data-state="${k}" aria-pressed="${k === stateName}" ${D.states[k] ? "" : "disabled"}>${l}</button>`).join("") + `</div>` +
+    `<div class="abar" role="img" aria-label="${AUTO.map(([k, l]) => `${a[k]} ${l}`).join(", ")}">` + AUTO.map(([k, , c]) =>
+      `<span class="c-${c}" style="flex:${a[k]}">${a[k] / a.total > .08 ? a[k] : ""}</span>`).join("") + `</div>` +
+    `<div class="alegend">` + AUTO.map(([k, l, c]) => `<span class="c-${c}"><i></i><b>${a[k]}</b> ${l}</span>`).join("") + `</div>` +
+    `<p class="scnote">${stateName === "review" ? `<span class="delta">+${gain} answered</span> after review <span class="note">· review simulated from hand labels</span>` :
+      `Review adds <span class="delta">+${gain} answered</span> <span class="note">(simulated)</span>`}</p></div>`;
+}
+function proofHtml() {
+  const p = D.proof;
+  return `<p class="proof">${p.wrong_firm} wrong answers on ${p.cases} test cases · unsure cases go to a person, never guessed · 0 model calls on this page</p>`;
+}
+
+// ---------------- three panels ----------------
+function panelStake() {
+  const st = S().stake, m = st.marks;
+  const groups = [...new Set(m.map(x => x.at))];
+  const word = x => `${x.from_ ? "from" : "above"} ${+x.at.toFixed(2)}%`;
+  return `<section class="panel" id="p-stake"><h2>Where the stake size matters</h2>` +
+    `<p class="note prose">One buyer takes a share of us. These are the sizes at which a counterparty’s right appears, in agreements that are clear on both sides of the mark.</p>` +
+    `<div class="stakebar" aria-hidden="true">${groups.map(g => `<i class="c-${kindClass({status: "TRIGGERED", kind: m.find(x => x.at === g).kind})}" style="left:${g}%"></i>`).join("")}</div>` +
+    `<div class="axis" aria-hidden="true"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>` +
+    (m.length ? `<ul class="marklist">${m.map(x => `<li><b>${word(x)}</b> <button class="c-${kindClass({status: "TRIGGERED", kind: x.kind})}" data-why="sale_60|${esc(x.ak)}">${esc(x.text)}</button></li>`).join("")}</ul>` :
+      '<p class="note">No agreement is clear on both sides of a mark in this view.</p>') +
+    `<p class="note prose">${st.other.length ? `Every other clear answer is the same at any size. ${st.other.length} more ${plural(st.other.length, "agreement changes", "agreements change")} with size but ${plural(st.other.length, "is", "are")} not clear on both sides, or ${plural(st.other.length, "is", "are")} our own right: ${esc(st.other.join(", "))}.` :
+      "Every other agreement reacts the same at any size."}</p></section>`;
+}
+let readPick = 2;
+function panelReading() {
+  const R = D.reading, o = R.options[readPick], q = R.quote, at = q.indexOf("(e) is subject");
+  const short = q.slice(at);
+  return `<section class="panel" id="p-read"><h2>You choose the reading; the twin applies it to every deal</h2>` +
+    `<p class="prose"><b><bdi>${esc(R.name)}</bdi></b> ${esc(R.type)}, clause ${esc(R.clause)}:</p><blockquote dir="auto">… ${esc(short)}</blockquote>` +
+    `<p class="note prose">The contract does not define change of control. Before review this question is open. Pick what it means here.</p>` +
+    `<div class="rbtns" role="group" aria-label="Reading of change of control">${R.options.map((x, i) => `<button data-read="${i}" aria-pressed="${i === readPick}">${esc(x.label)}</button>`).join("")}</div>` +
+    `<div class="revs">${o.events.map(e => {
+      const cls = !e.settled ? "blocked" : e.label === "no reaction" ? "none" : kindClass({status: "TRIGGERED", kind: e.label.replace(/ \(.*$/, "").replace(/ /g, "_")});
+      return `<div class="rev c-${cls}"><b>${esc(chipLabel(e.scenario, true))}</b>${esc(e.settled ? plainLabel(e.label) : "can’t tell yet")}</div>`; }).join("")}</div>` +
+    `<p><b>${o.settled} of ${o.events.length} settled.</b> Decide once; every future deal uses the same reading. ` +
+    `<button class="plain" data-why="sale_60|${esc(R.ak)}">Open the agreement</button></p>` +
+    `<details><summary>The whole clause 14</summary><blockquote dir="auto">${esc(q)}</blockquote></details></section>`;
+}
+function llmAnswer(x) {
+  if (x.status === "NOT_TRIGGERED") return "Nothing is due";
+  if (x.status === "NEEDS_LAWYER") return "Needs a lawyer";
+  return x.reactions.map(r => r.kind === "option_deadline" ? `Notice due ${fmtDate(r.due)}` :
+    r.kind === "consent" ? `Consent needed (held by ${r.holder === "us" ? "us" : "the counterparty"})` : r.kind.replace(/_/g, " ")).join("; ");
+}
+function panelLLM() {
+  const when = {N06: "the date is 1 Mar 2000", R16: "a competitor buys 60% of us"};
+  return `<section class="panel" id="p-llm"><h2>Same answer every time</h2><p class="note prose">The same model read the same sentences three times. The rules read them once.</p><div class="cases">` +
+    D.llm.cases.map(c => {
+      const twin = c.twin.status === "TRIGGERED" ? `Notice due ${fmtDate(c.twin.due)}` : "Question for counsel: is a share sale an assignment at all?";
+      const ev = c.id === "N06" ? "clock_90" : "sale_10_comp";
+      return `<div class="case"><h3>${esc(c.title)}</h3><p class="note">Case ${c.id}: ${esc(when[c.id])}.</p>` +
+        Object.entries(c.quotes).map(([sid, t]) => `<blockquote dir="auto">${esc(t)}</blockquote>`).join("") +
+        `<div class="twinbox"><b>Twin, every run:</b> ${esc(twin)}<br><span class="note">${esc(c.twin.reason)}</span></div>` +
+        c.runs.map((x, i) => `<div class="run"><span><b>Run ${i + 1}:</b> ${esc(llmAnswer(x))}</span><span class="chip c-${x.outcome === "correct" ? "clear" : "plan"}">${x.outcome === "correct" ? "matches the test case" : "differs from the test case"}</span>` +
+          `<span class="why">${esc(x.reasoning)}</span></div>`).join("") +
+        `<p class="note"><button class="plain" data-why="${ev}|${esc(c.contract)}">Open ${esc(nm(c.contract))} under “${esc(chipLabel(ev, true))}”</button> (a related event in the portfolio)</p></div>`; }).join("") + `</div></section>`;
+}
+
 // ---------------- overview: sentence, action list, ripple ----------------
 const byName = (x, z) => AG[x[0]].name.localeCompare(AG[z[0]].name);
 const earliest = a => a.effects.map(e => e.due).filter(Boolean).sort()[0] || "9999";
 function actRow(sc, ak, a) {
   const plan = a.status !== "firm", e = a.effects[0];
-  return `<li class="act c-${GCLS[a.group]}"><span class="st"><span class="badge ${plan ? "plan" : ""}">${plan ? "▲ Plan for worst case" : "✓ Clear"}</span></span>` +
+  return `<li class="act c-${GCLS[a.group]}"><span class="st"><span class="badge ${plan ? "plan c-plan" : "c-clear"}">${plan ? "▲ Plan for worst case" : "✓ Clear"}</span></span>` +
     `<div class="what"><bdi>${esc(compose(a.effects, AG[ak].name))}</bdi>${plan ? " (worst case)" : ""}.</div>` +
-    `<div class="meta">${esc(AG[ak].type)} · ${esc(clauseWord(e.ref))} ${langMark(ak)}</div>` +
+    `<div class="meta">${esc(AG[ak].type)}${e.ref ? " · " + esc(clauseWord(e.ref)) : ""} ${langMark(ak, a)}</div>` +
     `<button class="plain" data-why="${esc(sc + "|" + ak)}" aria-label="Why: ${esc(AG[ak].name)}">Why?</button></li>`;
 }
 function actionsHtml(sc) {
@@ -998,7 +1141,7 @@ function rippleSvg(sc, animate) {
       `${shapeSvg(n.shape, r)}<text class="mk" y="${n.shape === "plan" ? 3 : 0}">${MARK[n.shape]}</text>${lb}<title>${esc(nodeText(n))}</title></g>`;
     ang += step;
   }
-  const lines = centreLines(chipLabel(sc));
+  const lines = centreLines(chipLabel(sc, true));
   s += spokes + `<circle class="wave ${animate && !REDUCED.matches ? "go" : ""}" cx="${CX}" cy="${CY}" r="60"/>` +
     `<g class="centre"><circle cx="${CX}" cy="${CY}" r="60"/>` + lines.map((l, i) => `<text x="${CX}" y="${CY + (i - (lines.length - 1) / 2) * 16 + 4}">${esc(l)}</text>`).join("") + `</g>`;
   if (none.length) {
@@ -1031,20 +1174,26 @@ function keyHtml(sc) {
   const b = S().brief[sc], chips = GROUPS.filter(x => x === "we" ? b.options : b.groups[x]).map(x =>
     `<span class="chip c-${GCLS[x]}">${esc(D.group_label[x])} ${x === "we" ? b.options : b.groups[x]}</span>`);
   if (b.cant) chips.push(`<span class="chip c-blocked">Can’t tell yet ${b.cant}</span>`);
-  return (PHONE.matches ? "" : `<div class="key">${chips.join("")}</div>`) + `<div class="key"><span>✓ Clear</span><span>▲ Plan for worst case</span><span>? Can’t tell yet</span></div>`;
+  return (PHONE.matches ? "" : `<div class="key">${chips.join("")}</div>`) + `<div class="key"><span>Colour: what happens.</span><span>Shape: ✓ Clear</span><span>▲ Plan for worst case</span><span>? Can’t tell yet</span></div>`;
 }
 function rippleHtml(animate) {
   const sc = rippleSc;
-  return `<div class="events" role="group" aria-label="Event">` + D.scenarios.map(s =>
+  return `<div class="top2">${scaleHtml()}${automationHtml()}</div>${proofHtml()}` +
+    `<div class="events" role="group" aria-label="Event">` + DEALS.map(s =>
       `<button data-rip="${s.id}" aria-pressed="${s.id === sc}" title="${esc(s.name)}">${esc(chipLabel(s.id))}</button>`).join("") + `</div>` +
     `<p class="sentence">${sentence(sc)}</p><div class="ov"><div id="actions">${actionsHtml(sc)}</div>` +
-    `<div class="ripbox">${PHONE.matches ? marksHtml(sc) : rippleSvg(sc, animate)}${keyHtml(sc)}<p class="note">Select a contract to see why.</p></div><div id="cants">${cantHtml(sc)}</div></div>`;
+    `<div class="ripbox">${PHONE.matches ? marksHtml(sc) : rippleSvg(sc, animate)}${keyHtml(sc)}<p class="note">Select a contract to see why.</p></div><div id="cants">${cantHtml(sc)}</div></div>` +
+    `<div class="panels">${panelStake()}${panelReading()}${panelLLM()}</div>`;
 }
+function bindWhy(v) { v.querySelectorAll("[data-why]").forEach(b => b.onclick = () => go("ev=" + b.dataset.why, stateName)); }
 function renderRipple(animate) {
   const v = document.getElementById("view-ripple");
   v.innerHTML = rippleHtml(animate);
   v.querySelectorAll("[data-rip]").forEach(b => b.onclick = () => go("ripple=" + b.dataset.rip, stateName));
-  v.querySelectorAll("[data-why]").forEach(b => b.onclick = () => go("ev=" + b.dataset.why, stateName));
+  v.querySelectorAll("[data-state]").forEach(b => b.onclick = () => go("ripple=" + rippleSc, b.dataset.state));
+  v.querySelectorAll("[data-read]").forEach(b => b.onclick = () => { readPick = +b.dataset.read; renderRipple(false);
+    document.querySelector(`#view-ripple [data-read="${readPick}"]`).focus(); });
+  bindWhy(v);
   v.querySelectorAll("[data-ak]").forEach(g => {
     const open = () => go("ev=" + rippleSc + "|" + g.dataset.ak, stateName);
     g.onclick = open; g.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } };
@@ -1053,6 +1202,12 @@ function renderRipple(animate) {
     const flip = () => { showNone = !showNone; renderRipple(false); const again = document.querySelector("#view-ripple [data-none]"); if (again) again.focus(); };
     g.onclick = flip; g.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(); } };
   });
+}
+// The clock is not a deal: its answers live under For reviewers.
+function renderClock() {
+  const v = document.getElementById("rv-clock"), sc = "clock_90";
+  v.innerHTML = `<h2>+90 days (dates, not a deal)</h2><p class="sentence">${sentence(sc)}</p><div class="prose">${actionsHtml(sc)}</div>${cantHtml(sc)}`;
+  bindWhy(v);
 }
 const centreChip = () => { const on = document.querySelector("#view-ripple .events [aria-pressed=true]"); if (on) on.scrollIntoView({inline: "center", block: "nearest"}); };
 PHONE.addEventListener("change", () => { if (!document.getElementById("view-ripple").hidden) renderRipple(false); });
@@ -1065,24 +1220,26 @@ function route() {
   const want = hsh.endsWith("@compiled") || !D.states.review ? "compiled" : "review";
   hsh = hsh.replace(/@(review|compiled)$/, "");
   const changed = want !== stateName;
-  if (changed) { stateName = want; rippleDone = false; renderTop(); renderMap(); renderQueue(); }
+  if (changed) { stateName = want; rippleDone = false; renderTop(); renderMap(); renderQueue(); renderClock(); }
   const ripple = hsh.startsWith("ripple");
-  view = hsh.startsWith("ev=") ? backTo : hsh === "queue" ? "queue" : ripple ? "ripple" : "map";
-  if (!hsh.startsWith("ev=")) backTo = view === "ripple" ? "ripple=" + rippleSc : view;
+  const seen = hsh.startsWith("ev=") ? backTo : ripple ? "ripple" : hsh;
+  if (!hsh.startsWith("ev=")) backTo = ripple ? "ripple=" + rippleSc : hsh;
   if (ripple) {
     const want2 = hsh.split("=")[1] || rippleSc;
-    if (SC[want2] && want2 !== rippleSc) { rippleSc = want2; rippleDone = false; if (!changed) renderQueue(); }
+    if (DEALS.some(s => s.id === want2) && want2 !== rippleSc) { rippleSc = want2; rippleDone = false; if (!changed) renderQueue(); }
     backTo = "ripple=" + rippleSc;
   }
-  const tab = view.startsWith("ripple") ? "ripple" : view;
+  const tab = seen.startsWith("ripple") ? "ripple" : "reviewers";
   if (tab === "ripple" && !rippleDone) { renderRipple(true); rippleDone = true; }
-  for (const t of ["map", "queue", "ripple"]) {
+  for (const t of ["ripple", "reviewers"]) {
     document.getElementById("view-" + t).hidden = t !== tab;
     const a = document.getElementById("nav-" + t);
-    a.href = "#" + (t === "ripple" ? "ripple" : t) + sfx();
+    a.href = "#" + t + sfx();
     if (t === tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
   }
   if (tab === "ripple") centreChip();
+  if (!hsh.startsWith("ev=") && (hsh === "queue" || hsh === "map")) document.getElementById(hsh === "queue" ? "rv-queue" : "rv-map").scrollIntoView();
+  view = seen;
   if (hsh.startsWith("ev=")) {
     const i = hsh.indexOf("|"), id = hsh.slice(3, i), k = hsh.slice(i + 1);
     if (SC[id] && D.contracts[k]) { view = hsh; return renderEvidence(id, k); }
@@ -1090,14 +1247,14 @@ function route() {
   GV.forEach(stopPlay);
   document.getElementById("ev").hidden = true;
 }
-document.getElementById("meta").textContent = `As of ${fmtDate(D.as_of)} · ${agKeys.length} agreements · ${D.scenarios.length} events · fixed rules, no model is called`;
+document.getElementById("meta").innerHTML = `As of ${esc(fmtDate(D.as_of))} · All agreements treated as in force · <a href="results.html">How we tested</a>`;
+document.querySelectorAll("[data-jump]").forEach(a => a.onclick = e => { e.preventDefault(); document.getElementById(a.dataset.jump).scrollIntoView(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.getElementById("ev").hidden) go(backTo, stateName); });
-defaultOrder(); renderTheme(); renderTop(); renderMap(); renderQueue();
+defaultOrder(); renderTheme(); renderTop(); renderMap(); renderQueue(); renderClock();
 window.addEventListener("hashchange", route); route();
 </script>
 <footer class="sub" style="margin:24px 24px;padding-top:12px;border-top:1px solid var(--line)">
-Proof of concept · not legal advice · reviewed state simulated from hand labels · CUAD v1 (The Atticus Project, CC BY 4.0) ·
-EDGAR public filings · public Gulf government forms · all answers precomputed; no model is called by this page.
+Proof of concept · not legal advice · review simulated from hand labels · <a href="results.html#sources">sources</a>
 </footer>
 </body>
 </html>

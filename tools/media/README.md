@@ -8,6 +8,7 @@ python -m twin.portfolio                         # build out/portfolio/
 python -m http.server 8000 -d out/portfolio      # the graphs load JSON, so serve over HTTP
 node tools/media/shoot.js http://localhost:8000 out/portfolio/media tools/media/plan_rec.json   # reasoning-graph shots and recordings
 node tools/media/shoot.js http://localhost:8000 out/portfolio/media tools/media/plan_ux.json    # overview, drawer, To resolve, analyst: light and dark, 1440 and 390 px
+node tools/media/shoot.js http://localhost:8000 out/portfolio/media tools/media/plan_t16.json   # first screen, drawer, three panels, For reviewers, stake slider: light and dark, 1440 and 390 px
 node tools/media/a11y.js  http://localhost:8000            # keyboard and reduced-motion checks
 node tools/media/a11y.js  http://localhost:8000 audit      # contrast (4.5:1), text size (12 px), page width, engine words on the first screen
 ```

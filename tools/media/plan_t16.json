@@ -1,0 +1,460 @@
+[
+ {
+  "name": "first_light_1440",
+  "hash": "ripple=sale_60",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "wait": 600,
+    "shot": "t16/first_screen_light_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_light_1440",
+  "hash": "ev=sale_60|cuad:DynTek",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "wait": 600,
+    "shot": "t16/drawer_dyntek_light_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "panels_light_1440",
+  "hash": "ripple=sale_60",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "eval": "document.querySelector('#p-stake').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/panel1_stake_light_1440.png"
+   },
+   {
+    "eval": "document.querySelector('#p-read').scrollIntoView()"
+   },
+   {
+    "click": "[data-read=\"0\"]"
+   },
+   {
+    "eval": "document.querySelector('#p-read').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/panel2_reading_light_1440.png"
+   },
+   {
+    "eval": "document.querySelector('#p-llm').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/panel3_llm_light_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "reviewers_light_1440",
+  "hash": "reviewers",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "wait": 600,
+    "shot": "t16/for_reviewers_light_1440.png"
+   },
+   {
+    "eval": "document.getElementById('rv-clock').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/for_reviewers_clock_light_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "first_dark_1440",
+  "hash": "ripple=sale_60",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "wait": 600,
+    "shot": "t16/first_screen_dark_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_dark_1440",
+  "hash": "ev=sale_60|cuad:DynTek",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "wait": 600,
+    "shot": "t16/drawer_dyntek_dark_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "panels_dark_1440",
+  "hash": "ripple=sale_60",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "eval": "document.querySelector('#p-stake').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/panel1_stake_dark_1440.png"
+   },
+   {
+    "eval": "document.querySelector('#p-read').scrollIntoView()"
+   },
+   {
+    "click": "[data-read=\"0\"]"
+   },
+   {
+    "eval": "document.querySelector('#p-read').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/panel2_reading_dark_1440.png"
+   },
+   {
+    "eval": "document.querySelector('#p-llm').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/panel3_llm_dark_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "reviewers_dark_1440",
+  "hash": "reviewers",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "wait": 600,
+    "shot": "t16/for_reviewers_dark_1440.png"
+   },
+   {
+    "eval": "document.getElementById('rv-clock').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/for_reviewers_clock_dark_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "first_light_390",
+  "hash": "ripple=sale_60",
+  "w": 390,
+  "h": 844,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "wait": 600,
+    "shot": "t16/first_screen_light_390.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_light_390",
+  "hash": "ev=sale_60|cuad:DynTek",
+  "w": 390,
+  "h": 844,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "wait": 600,
+    "shot": "t16/drawer_dyntek_light_390.png"
+   }
+  ]
+ },
+ {
+  "name": "panels_light_390",
+  "hash": "ripple=sale_60",
+  "w": 390,
+  "h": 844,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "eval": "document.querySelector('#p-stake').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/panel1_stake_light_390.png"
+   },
+   {
+    "eval": "document.querySelector('#p-read').scrollIntoView()"
+   },
+   {
+    "click": "[data-read=\"0\"]"
+   },
+   {
+    "eval": "document.querySelector('#p-read').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/panel2_reading_light_390.png"
+   },
+   {
+    "eval": "document.querySelector('#p-llm').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/panel3_llm_light_390.png"
+   }
+  ]
+ },
+ {
+  "name": "reviewers_light_390",
+  "hash": "reviewers",
+  "w": 390,
+  "h": 844,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "wait": 600,
+    "shot": "t16/for_reviewers_light_390.png"
+   },
+   {
+    "eval": "document.getElementById('rv-clock').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/for_reviewers_clock_light_390.png"
+   }
+  ]
+ },
+ {
+  "name": "first_dark_390",
+  "hash": "ripple=sale_60",
+  "w": 390,
+  "h": 844,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "wait": 600,
+    "shot": "t16/first_screen_dark_390.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_dark_390",
+  "hash": "ev=sale_60|cuad:DynTek",
+  "w": 390,
+  "h": 844,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "wait": 600,
+    "shot": "t16/drawer_dyntek_dark_390.png"
+   }
+  ]
+ },
+ {
+  "name": "panels_dark_390",
+  "hash": "ripple=sale_60",
+  "w": 390,
+  "h": 844,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "eval": "document.querySelector('#p-stake').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/panel1_stake_dark_390.png"
+   },
+   {
+    "eval": "document.querySelector('#p-read').scrollIntoView()"
+   },
+   {
+    "click": "[data-read=\"0\"]"
+   },
+   {
+    "eval": "document.querySelector('#p-read').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/panel2_reading_dark_390.png"
+   },
+   {
+    "eval": "document.querySelector('#p-llm').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/panel3_llm_dark_390.png"
+   }
+  ]
+ },
+ {
+  "name": "reviewers_dark_390",
+  "hash": "reviewers",
+  "w": 390,
+  "h": 844,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "wait": 600,
+    "shot": "t16/for_reviewers_dark_390.png"
+   },
+   {
+    "eval": "document.getElementById('rv-clock').scrollIntoView()"
+   },
+   {
+    "wait": 600,
+    "shot": "t16/for_reviewers_clock_dark_390.png"
+   }
+  ]
+ },
+ {
+  "name": "slider_light",
+  "hash": "ev=sale_60|cuad:DynTek",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "eval": "document.querySelectorAll('#ev details.reasoning').forEach(d=>{d.open=true})"
+   },
+   {
+    "wait": 900
+   },
+   {
+    "eval": "document.querySelector('.flipbox').scrollIntoView()"
+   },
+   {
+    "range": [
+     ".flip input[type=range]",
+     0
+    ]
+   },
+   {
+    "wait": 600,
+    "shot": "t16/dyntek_slider_10_light.png"
+   },
+   {
+    "range": [
+     ".flip input[type=range]",
+     1
+    ]
+   },
+   {
+    "wait": 600,
+    "shot": "t16/dyntek_slider_60_light.png"
+   }
+  ]
+ },
+ {
+  "name": "slider_dark",
+  "hash": "ev=sale_60|cuad:DynTek",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 900
+   },
+   {
+    "eval": "document.querySelectorAll('#ev details.reasoning').forEach(d=>{d.open=true})"
+   },
+   {
+    "wait": 900
+   },
+   {
+    "eval": "document.querySelector('.flipbox').scrollIntoView()"
+   },
+   {
+    "range": [
+     ".flip input[type=range]",
+     0
+    ]
+   },
+   {
+    "wait": 600,
+    "shot": "t16/dyntek_slider_10_dark.png"
+   },
+   {
+    "range": [
+     ".flip input[type=range]",
+     1
+    ]
+   },
+   {
+    "wait": 600,
+    "shot": "t16/dyntek_slider_60_dark.png"
+   }
+  ]
+ }
+]

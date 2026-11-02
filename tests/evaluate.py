@@ -414,7 +414,7 @@ def html(bs):
         if k in ("h1", "h2"):
             body.append(f"<{k}>{inline(p)}</{k}>")
         elif k == "p":
-            body.append(f"<p>{inline(p)}</p>")
+            body.append(f"<p{' id=sources' if p.startswith('Total spend') else ''}>{inline(p)}</p>")
         elif k == "ul":
             body.append("<ul>" + "".join(f"<li>{inline(x)}</li>" for x in p) + "</ul>")
         elif k == "table":
@@ -423,8 +423,7 @@ def html(bs):
                         "".join("<tr>" + "".join(f"<td>{inline(str(x))}</td>" for x in r) + "</tr>" for r in rows) + "</table></div>")
         elif k == "code":
             body.append(f"<pre>{h.escape(p)}</pre>")
-    foot = ("Proof of concept · not legal advice · reviewed state simulated from hand labels · CUAD v1 (The Atticus Project, CC BY 4.0) · "
-            "SEC EDGAR public filings · public Gulf government forms")
+    foot = "Proof of concept · not legal advice · review simulated from hand labels · <a href=#sources>sources</a>"
     return ("<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'>"
             "<title>Contract twin results</title><style>:root{color-scheme:light dark;--bg:#fff;--fg:#1c1c1c;--mu:#555;--ln:#d6d6d6}"
             "@media(prefers-color-scheme:dark){:root{--bg:#161616;--fg:#e8e8e8;--mu:#aaa;--ln:#3a3a3a}}"
@@ -433,7 +432,7 @@ def html(bs):
             "table{border-collapse:collapse;margin:.5rem 0;font-size:.92rem}th,td{border:1px solid var(--ln);padding:.3rem .6rem;text-align:left;vertical-align:top}"
             "code,pre{font:.88rem ui-monospace,monospace}pre{overflow-x:auto;border:1px solid var(--ln);padding:.7rem}footer{color:var(--mu);font-size:.85rem;margin-top:2rem}"
             "a{color:inherit}</style></head><body><main><p><a href=index.html>&larr; Back to the demo</a></p>" + "".join(body) +
-            f"<footer>{h.escape(foot)}</footer></main></body></html>\n")
+            f"<footer>{foot}</footer></main></body></html>\n")
 
 
 def readme_table(r):

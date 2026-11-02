@@ -3,6 +3,7 @@
     python -m twin.portfolio simulate        # hand labels play the reviewer -> out/portfolio/reviews_simulated.json
     python -m twin.portfolio [--out out/portfolio/] [--atoms compiled|gold]   # both states: exports + index.html
     python -m twin.portfolio check           # determinism, verbatim citations, causes, worst cases, queue order
+    python -m twin.portfolio runtime         # time to run every event over the portfolio from compiled atoms -> out/eval/runtime.json
     python -m twin.portfolio measure         # reviewer effort on the scenario cases: reasoning-path cards vs single atoms
 
 Two states: "compiled" (compiled atoms with the stored reviews) and "review" (the same plus the simulated review set, kept
@@ -319,10 +320,16 @@ def flips(sc: dict, t: str, fam: dict, G: Graphs) -> list[dict]:
                 o = g.pop("o")
                 at = cur if (g["lo"] < cur or g["lo_in"] and g["lo"] == cur) and (cur < g["hi"] or g["hi_in"] and cur == g["hi"]) \
                     else nice(g["lo"], g["hi"], g["lo_in"], g["hi_in"])
-                shown_rs = o["reactions"] if o["status"] == "firm" else o["worst"] or o["reactions"]
-                ivs.append(dict(lo=g["lo"], hi=g["hi"], lo_in=g["lo_in"], hi_in=g["hi_in"], at=at, status=g["sig"][0],
-                                label="; ".join(g["sig"][1]) or "blocked", sev=sev_all(shown_rs) if o["status"] != "blocked" else 0,
-                                graph=G.add(o["reactions"])))
+                at_o = outcome(t, fam, state_of(with_param(sc, param, at)))     # the graph and the text show the value the slider shows
+                assert sig(at_o) == g["sig"], (param, at, g["sig"], sig(at_o))
+                shown_rs = at_o["reactions"] if at_o["status"] == "firm" else at_o["worst"] or at_o["reactions"]
+                iv = dict(lo=g["lo"], hi=g["hi"], lo_in=g["lo_in"], hi_in=g["hi_in"], at=at, status=g["sig"][0],
+                          label="; ".join(g["sig"][1]) or "blocked", sev=sev_all(shown_rs) if at_o["status"] != "blocked" else 0,
+                          graph=G.add(at_o["reactions"]))
+                if len(segs) > 1:
+                    iv["rx"] = [dict(status=r.status, kind=r.kind, holder=r.holder, due=str(r.due) if r.due else "", reason=plain(r.reason))
+                                for r in shown_rs]
+                ivs.append(iv)
             out.append(dict(param=param, text=text, unit=unit, now=cur, lo=lo, hi=hi, intervals=ivs))
     return out
 
@@ -671,6 +678,7 @@ def build_state(ctx: Ctx, sents: dict, library=LIBRARY, G: Graphs | None = None)
                   cases=case_safety(ctx), hand_labels=sim.get("hand_labels"))
     return dict(label=STATES[ctx.state] if not ctx.gold else "Gold atoms", header=header, summaries=summaries, cells=cs, rows=rows,
                 atominfo=info, questions=qs, cards=cards, acells=acells, brief=brief(ags, acells), effort=card_counts(cards),
+                automation=automation(ags, acells), stake=stake(ags, rows),
                 causes={c: sum(c in x["cause"].split(",") for x in nl) for c in CAUSES},
                 main_cause={c: sum(x["cause"].split(",")[0] == c for x in nl) for c in CAUSES}, needs_lawyer=len(nl))
 
@@ -694,6 +702,10 @@ NAMES = {"ar:balady_engineering": ("Balady engineering", "engineering services (
          "cuad:lantheus": ("Lantheus", "credit facility"), "cuad:mPhase": ("mPhase", "co-branding"),
          "cuad:middlebrook": ("MiddleBrook", "promotion"), "cuad:sfg": ("SFG", "software licence"),
          "cuad:virtuoso": ("Virtuoso", "licence (JHU)"), "edgar:Amscan": ("Amscan", "credit facility")}
+
+
+def version_name(key: str) -> str:
+    return "Arabic version" if key.startswith("ar:") else "English version"
 
 
 def agreement_name(key: str) -> tuple[str, str]:
@@ -750,9 +762,9 @@ SECTION = re.compile(r"(?:Section|Sec\.|Article|Clause|§)\s*(\d{1,2}(?:\.\d{1,2
 
 
 def clause_ref(text: str, sid: int) -> str:
-    """The clause number a cited sentence starts with ('12.3'), else its sentence number."""
+    """The clause number a cited sentence starts with ('12.3'), else nothing: the quote itself is one click away."""
     m = SECTION.match(text.lstrip())
-    return next(g for g in m.groups() if g) if m else f"sentence {sid}"
+    return next(g for g in m.groups() if g) if m else ""
 
 
 STATUS_RANK = {"firm": 0, "provisional": 1, "blocked": 2}
@@ -762,7 +774,8 @@ WHY_OPEN = ["missing_document", "missing_fact", "check_extraction", "legal_judge
 def agreement_cells(ags: dict, rows: list[dict], cs: dict, sents: dict) -> dict:
     """Per scenario and agreement: what happens to us. Effects come from the triggered reactions on the map (firm ones, or
     the worst case of a provisional outcome), grouped by kind and holder; an agreement counts once, under its most severe
-    group. Two language versions that give different answers make the agreement 'versions disagree' (unknown is not false)."""
+    group. The English text is the agreement of record. A translation that cannot tell beside a record that can is a note on
+    the agreement; two versions that both answer and differ make it 'versions disagree' (unknown is not false)."""
     by = {}
     for r in rows:
         by.setdefault((r["scenario"], r["contract"]), []).append(r)
@@ -791,13 +804,23 @@ def agreement_cells(ags: dict, rows: list[dict], cs: dict, sents: dict) -> dict:
             if not vers:
                 continue
             ks = list(vers)
-            disagree = len({json.dumps(vers[k]["answer"]) for k in ks}) > 1
-            p = vers[ks[0]]
+            rec = ks[0]                      # the English text is the agreement of record
+            firm_ans = {json.dumps(vers[k]["answer"]) for k in ks if not vers[k]["cant"]}
+            disagree = len(firm_ans) > 1       # only two answers that both say something and differ
+            p = vers[rec]
+            cant = disagree or p["cant"]
             causes = [c for c in CAUSES if any(c in vers[k]["causes"] for k in ks)]
-            why = "versions" if disagree else next((c for c in WHY_OPEN if c in causes), "unclear") if p["cant"] else ""
-            out[sc][ak] = dict(status=max((v["status"] for v in vers.values()), key=STATUS_RANK.get),
+            rec_causes = [c for c in CAUSES if c in p["causes"]]
+            why = "versions" if disagree else next((c for c in WHY_OPEN if c in rec_causes), "unclear") if p["cant"] else ""
+            note = ""
+            for k in ks[1:]:                  # a translation that cannot tell, beside a record that can: shown as a note
+                if vers[k]["cant"] != p["cant"] and not disagree:
+                    miss = " ".join(r.get("missing", "") for r in by[(sc, k)] if r["status"] == "blocked")
+                    note = f"{version_name(k)}: can't tell — " + ("the threshold was lost in translation." if "threshold_pct" in miss
+                                                            else "the translation does not settle it.")
+            out[sc][ak] = dict(status=max((v["status"] for v in vers.values()), key=STATUS_RANK.get) if disagree else p["status"],
                                effects=[] if disagree else p["effects"], group=p["effects"][0]["group"] if p["effects"] and not disagree else "",
-                               cant=disagree or p["cant"], why=why, causes=causes, disagree=disagree,
+                               cant=cant, why=why, causes=causes, disagree=disagree, note=note,
                                versions={k: dict(status=v["status"], effects=v["effects"], cant=v["cant"], causes=v["causes"]) for k, v in vers.items()})
     return out
 
@@ -823,6 +846,167 @@ def brief(ags: dict, acells: dict) -> dict:
     return out
 
 
+# ---------------- the first screen and the three panels ----------------
+RESULTS = ROOT / "out" / "eval" / "results.json"
+RUNTIME = ROOT / "out" / "eval" / "runtime.json"
+DEAL = [sc["id"] for sc in LIBRARY if sc["templates"] != ["term"]]          # the 8 deal events (the clock is not a deal)
+
+
+def automation(ags: dict, acells: dict) -> dict:
+    """All outcomes of the agreements in the deal events: answered (clear, nothing left open), plan for the worst case, or
+    needs a person (can't tell). An agreement without a clause of the kind counts as answered: nothing reacts."""
+    n = Counter()
+    for sc in DEAL:
+        for ak in ags:
+            a = acells[sc].get(ak)
+            n["person" if a and a["cant"] else "plan" if a and a["status"] != "firm" else "answered"] += 1
+    return dict(answered=n["answered"], plan=n["plan"], person=n["person"], total=len(DEAL) * len(ags))
+
+
+def stake(ags: dict, rows: list[dict]) -> dict:
+    """Where the size of a share sale changes an answer: the points on 0-100% (from the sale's slider intervals, English text)
+    where two neighbouring intervals are both clear, differ, and one of them is something the counterparty holds. Agreements
+    that also change with size but are not clear on both sides, or are our own right, are listed apart."""
+    rec = {a["versions"][0]: ak for ak, a in ags.items()}
+    any_ = {k: ak for ak, a in ags.items() for k in a["versions"]}
+    marks, changing = [], set()
+    for r in rows:
+        if r["scenario"] != "sale_60":
+            continue
+        for f in r["flips"]:
+            ivs = f["intervals"]
+            if f["param"] != "buyer_pct" or len(ivs) < 2:
+                continue
+            changing.add(any_[r["contract"]])
+            for lo, hi in zip(ivs, ivs[1:]):
+                if lo["status"] == hi["status"] == "firm" and lo["label"] != hi["label"] and r["contract"] in rec \
+                        and "(counterparty)" in lo["label"] + hi["label"]:
+                    x = hi["rx"][0] if hi["label"] != "no reaction" else lo["rx"][0]
+                    name = ags[rec[r["contract"]]]["name"]
+                    marks.append(dict(ak=rec[r["contract"]], at=lo["hi"], from_=hi["lo_in"], kind=x["kind"],
+                                      text=effect_text(x["kind"], x["holder"]).replace("{S}", name).replace("{O}", name),
+                                      goes_away=hi["label"] == "no reaction"))
+    marks.sort(key=lambda m: (m["at"], ags[m["ak"]]["name"]))
+    return dict(marks=marks, other=sorted(ags[a]["name"] for a in changing - {m["ak"] for m in marks}),
+                steady=len(ags) - len(changing))
+
+
+READINGS = [("Any merger or stock transfer counts", ["transaction_type"]), ("Only a change in management counts", ["management_change"]),
+            ("Leave it to counsel", None)]
+
+
+def reading_panel(ctx: Ctx, ags: dict) -> dict:
+    """One open question of one agreement (the sponsorship agreement whose change-of-control test the contract does not
+    define), and what each answer to it gives for each deal event. Compiled atoms only: the question is open before review."""
+    key = next(k for k in ags if k.startswith("cuad:freezetag"))
+    q = next(x for x in review.questions(ctx.atoms, LIBRARY, ctx.con, run="main", reviews=ctx.reviews)
+             if x.contract == key and x.template == "coc" and x.atom == "triggers")
+    offered = [p["answer"] for p in q.preview]
+    out = []
+    for label_, ans in READINGS:
+        assert ans is None or ans in offered, (ans, offered)
+        atoms = ctx.atoms if ans is None else review.apply_reviews(ctx.atoms, [dict(contract_id=key, template="coc", atom="triggers", value=ans)])
+        evs = []
+        for sc in LIBRARY:
+            if sc["id"] not in DEAL:
+                continue
+            os_ = [outcome(t, atoms[key][t], state_of(sc)) for t in sc["templates"] if t in atoms[key]]
+            firm_ = all(o["status"] == "firm" for o in os_)
+            lbls = sorted({label(r) for o in os_ for r in o["reactions"] if r.status == "TRIGGERED"})
+            evs.append(dict(scenario=sc["id"], settled=firm_, label="; ".join(lbls) or ("no reaction" if firm_ else "blocked")))
+        out.append(dict(label=label_, atom=ans, events=evs, settled=sum(e["settled"] for e in evs)))
+    sid, text = next((sid, t) for sid, t in ctx.cited(key, "coc", "triggers") if "change of control" in t)
+    return dict(ak=key, name=ags[key]["name"], type=ags[key]["type"], clause="14(iii)(e)", sid=sid, quote=text,
+                ask=review.ask_text("coc", "triggers"), options=out)
+
+
+LLM_CASES = {"N06": dict(src="cuad:DynTek", templates=["term"], title="DynTek extension: when is notice due?"),
+             "R16": dict(src="cuad:Corio", templates=["coc", "assign"], title="Corio: a competitor buys 60% of us")}
+
+
+def first_sentences(text: str, cap: int = 230) -> str:
+    out = ""
+    for part in re.split(r"(?<=[.;])\s+", text):
+        if out and len(out) + len(part) > cap:
+            break
+        out = (out + " " + part).strip()
+    return out
+
+
+def llm_panel(ctx: Ctx) -> dict:
+    """Two scenario cases: three runs of the same direct reading beside what the rules give on the compiled atoms."""
+    base = {c["id"]: c for c in json.loads((ROOT / "out" / "baseline.json").read_text(encoding="utf-8"))["cases"]}
+    cases = {c["id"]: c for c in json.loads((ROOT / "cases" / "scenario_cases.json").read_text(encoding="utf-8"))["cases"]}
+    out = []
+    for cid, meta in LLM_CASES.items():
+        c, key = cases[cid], next(k for k in ctx.contracts if k.startswith(meta["src"]))
+        s = state_of(dict(events=c["scenario"]))
+        rs, quotes = [], {}
+        for t in meta["templates"]:
+            fam = ctx.atoms[key].get(t)
+            if fam is None:
+                continue
+            o = outcome(t, fam, s)
+            rs += [(t, r) for r in o["reactions"]]
+            quotes[t] = {str(sid): text for a in (review.load_bearing(t, fam, s) if o["status"] == "firm" else review.logical_atoms(t, fam))
+                         for sid, text in ctx.cited(key, t, a)}
+        trig = [(t, r) for t, r in rs if r.status == "TRIGGERED"]
+        legal = [(t, r) for t, r in rs if r.status == "NEEDS_LAWYER" and r.cause == "legal_judgement"]
+        assert (cid == "N06" and trig and trig[0][1].due) or (cid == "R16" and legal and not trig), (cid, rs)
+        head_t, head = (trig or legal)[0]
+        runs = [dict(status=r["answer"]["status"], outcome=r["outcome"], reasoning=first_sentences(r["answer"]["reasoning"]),
+                     reactions=[dict(kind=x["kind"], holder=x["holder"], due=x["due"] or "") for x in r["answer"]["reactions"]])
+                for r in base[cid]["runs"]]
+        out.append(dict(id=cid, title=meta["title"], expected=c["expected"]["status"], contract=key,
+                        twin=dict(status=head.status, kind=head.kind, due=str(head.due) if head.due else "", cause=head.cause,
+                                  reason=plain(head.reason)),
+                        runs=runs, quotes=dict(sorted(quotes[head_t].items(), key=lambda kv: int(kv[0]))[:3])))
+    return dict(cases=out)
+
+
+def scale_cards(res: dict) -> dict:
+    """The cost cards: what compiling the portfolio once costs against reading every contract again for every scenario with
+    a direct model call (one run, and the vote of three runs). Unit prices come from the measured baseline run."""
+    b = res["baseline"]
+    cards = []
+    for n in (30, 1000, 10000):
+        reads = n * 100 * b["per_call_usd"]
+        cards.append(dict(contracts=n, scenarios=100, twin_usd=round(n * b["compile_per_contract_usd"], 2), direct_1=round(reads, 2),
+                          direct_3=round(3 * reads, 2), projected=n > 1000))
+    return dict(cards=cards, per_call_usd=b["per_call_usd"], compile_per_contract_usd=b["compile_per_contract_usd"],
+                status_same=b["agreement"]["same_status"], break_even=b["break_even_scenarios"])
+
+
+def proof_line(res: dict) -> dict:
+    c = res["cases"]["compiled"]
+    return dict(cases=c["n"], wrong_firm=c["wrong_firm"], sent_to_person=c["abstain"], correct=c["correct"])
+
+
+def measure_runtime() -> dict:
+    """Time to run every scenario over the whole portfolio from compiled atoms already in memory: the rules for every contract,
+    every clause kind and every event, memo cleared. Median of 5, in milliseconds. Written for the page to quote."""
+    import statistics
+    import time
+    ctx = Ctx(state="compiled")
+    times, n = [], 0
+    for _ in range(5):
+        _OUTCOMES.clear()
+        t0, n = time.perf_counter(), 0
+        for sc in LIBRARY:
+            s = state_of(sc)
+            for key in ctx.contracts:
+                for t in sc["templates"]:
+                    fam = ctx.atoms.get(key, {}).get(t)
+                    if fam is not None:
+                        _outcome(t, fam, s)
+                        n += 1
+        times.append((time.perf_counter() - t0) * 1000)
+    res = dict(median_ms=round(statistics.median(times)), runs_ms=[round(x) for x in times], outcomes=n, events=len(LIBRARY),
+               agreements=len(agreements(ctx)), contract_files=len(ctx.contracts))
+    RUNTIME.write_bytes(json.dumps(res, indent=1, sort_keys=True).encode("utf-8"))
+    return res
+
+
 def ask_table(states: dict) -> dict:
     """The plain question for every (template, atom) a reviewer is asked about in any state."""
     return {f"{x['template']}|{a}": review.ask_text(x["template"], a)
@@ -833,12 +1017,20 @@ def build(atoms_kind="compiled", library=LIBRARY) -> dict:
     """Everything the exports and the page need, from deterministic runs of each state."""
     names = ["compiled"] if atoms_kind == "gold" else ["compiled"] + (["review"] if SIMULATED.exists() else [])
     _OUTCOMES.clear()               # every build computes from scratch, so two builds are a real determinism check
-    sents, states, ctx, G = {}, {}, None, Graphs()
+    sents, states, ctx, G, first = {}, {}, None, Graphs(), None
     for name in names:
         ctx = Ctx(atoms_kind, name)
+        first = first or ctx
         states[name] = build_state(ctx, sents, library, G)
+    ags = agreements(ctx)
+    res = json.loads(RESULTS.read_text(encoding="utf-8"))
+    reading = reading_panel(first, ags)
+    llm = llm_panel(first)
+    for key, sid, text in [(reading["ak"], reading["sid"], reading["quote"])] + [(c["contract"], sid, t) for c in llm["cases"] for sid, t in c["quotes"].items()]:
+        sents.setdefault(key, {})[str(sid)] = text
     return dict(as_of=D, atoms=atoms_kind, sentences=sents, states=states, graphs=dict(sorted(G.all.items())),
-                agreements=agreements(ctx), ask=ask_table(states),
+                agreements=ags, ask=ask_table(states), scale=scale_cards(res), proof=proof_line(res),
+                runtime=json.loads(RUNTIME.read_text(encoding="utf-8")) if RUNTIME.exists() else {}, reading=reading, llm=llm,
                 scenarios=[dict(id=sc["id"], name=sc["name"], templates=sc["templates"], events=sc["events"]) for sc in library],
                 contracts={k: dict(title=c["title"], party=c["party"], lang=c["lang"], en=c["en"]) for k, c in sorted(ctx.contracts.items())},
                 group_label=GROUP_LABEL,
@@ -878,7 +1070,7 @@ def write(data: dict, out: Path) -> None:
         exposure = dict(as_of=data["as_of"], atoms=data["atoms"], state=st["label"], header=st["header"],
                         scenarios=data["scenarios"], contracts=data["contracts"], cells=st["cells"],
                         graphs="graphs.json (in the page folder): reasoning graph per id", agreements=data["agreements"],
-                        acells=st["acells"], brief=st["brief"],
+                        acells=st["acells"], brief=st["brief"], automation=st["automation"], stake=st["stake"],
                         outcomes=[{k: r[k] for k in r if k not in ("sids", "atoms", "tried")} for r in st["rows"]])
         (d / "exposure.json").write_bytes(json.dumps(exposure, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8"))
     (out / "graphs.json").write_bytes(json.dumps(data["graphs"], ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8"))
@@ -1095,6 +1287,12 @@ def graph_errors(data: dict, ctx: Ctx, st: dict) -> tuple[list[str], dict]:
                     n["slider probes"] += 1
                 if not iv["lo"] <= iv["at"] <= iv["hi"]:
                     errs.append(f"{where}: slider value outside its interval")
+                at_o = _outcome(r["template"], fam, state_of(with_param(sc, f["param"], iv["at"])))
+                outcome_ok(iv["graph"], at_o["reactions"], f"{where} {f['param']}={iv['at']}")     # the graph is the one of the value shown
+                if "rx" in iv:
+                    shown_ = at_o["reactions"] if at_o["status"] == "firm" else at_o["worst"] or at_o["reactions"]
+                    if [(x["status"], x["kind"], x["holder"]) for x in iv["rx"]] != [(x.status, x.kind, x.holder) for x in shown_]:
+                        errs.append(f"{where} {f['param']}={iv['at']}: the text of the interval differs from the engine")
             n["sliders"] += 1
     return errs, n
 
@@ -1113,8 +1311,8 @@ def check(out: Path) -> None:
     assert [b["when"] for b in br] == ["transaction_types leaves out merger", "transaction_types includes merger"], br
     assert [effect_group(k, h) for k, h in [("termination_right", "us"), ("termination_right", "them"), ("notice", "us"), ("notice", "them"),
                                           ("prepayment", "them"), ("service_limitation", "them")]] == ["we", "they", "notify", "other", "prepay", "other"]
-    assert clause_ref("12.3 Change of Control. If", 4) == "12.3" and clause_ref("Section 5(a) The", 9) == "5" and clause_ref("This agreement", 7) == "sentence 7"
-    assert clause_ref("5 days after", 3) == "sentence 3" and clause_ref("2007 was", 3) == "sentence 3"
+    assert clause_ref("12.3 Change of Control. If", 4) == "12.3" and clause_ref("Section 5(a) The", 9) == "5" and clause_ref("This agreement", 7) == ""
+    assert clause_ref("5 days after", 3) == "" and clause_ref("2007 was", 3) == "" and clause_ref("14. Termination: Before", 48) == "14"
     assert not SIMULATED.exists() or json.loads(SIMULATED.read_text(encoding="utf-8"))["reviews"], "the simulated set is not empty"
     data = build()
     for name, st in data["states"].items():
@@ -1139,9 +1337,18 @@ def check(out: Path) -> None:
             for ak, a in st["acells"][sc].items():
                 assert a["group"] == (a["effects"][0]["group"] if a["effects"] else ""), (sc, ak)
                 assert not (a["cant"] and a["group"]), (sc, ak)
+        au = st["automation"]
+        assert au["answered"] + au["plan"] + au["person"] == au["total"] == len(DEAL) * len(data["agreements"]), au
+        for sc, cs_ in st["acells"].items():      # two versions disagree only when both answer, and they differ
+            for ak, a in cs_.items():
+                assert not a["disagree"] or all(not v["cant"] for v in a["versions"].values()), (sc, ak)
+        assert all(m["ak"] in data["agreements"] for m in st["stake"]["marks"])
+        print(f"{name}: automation {au}; stake marks {[(m['at'], data['agreements'][m['ak']]['name']) for m in st['stake']['marks']]}")
         print(f"{name}: group counts add up to the reacting agreements for all {len(st['brief'])} events ({len(data['agreements'])} agreements)")
         print(f"{name}: {len(nl)} open reactions, causes {st['causes']}; {sum(r['status'] == 'provisional' for r in st['rows'])} "
               f"provisional worst cases match readings(); cases {st['header']['cases']}")
+    assert [o["settled"] for o in data["reading"]["options"]] == [8, 8, 0], [o["settled"] for o in data["reading"]["options"]]
+    assert all(c["twin"]["status"] in ("TRIGGERED", "NEEDS_LAWYER") for c in data["llm"]["cases"])
     if "review" in data["states"]:
         assert data["states"]["review"]["header"]["cases"]["wrong firm"] == 0, "after review: no wrong firm answer on the cases"
     with tempfile.TemporaryDirectory() as tmp:
@@ -1162,20 +1369,17 @@ SITE_FILES = ["index.html", "graphs.json", "results.html"]
 
 
 def site(src: Path, dst: Path):
-    """Copy what the hosted demo needs into `dst`: the page, the graph data it loads, the results page and the current
-    media. Nothing else (no schedules, caches, databases or old screenshots)."""
+    """Copy what the hosted demo needs into `dst`: the page, the graph data it loads and the results page. Nothing else (no
+    schedules, caches, databases or screenshots: no page links to them)."""
     import shutil
     missing = [f for f in SITE_FILES if not (src / f).exists()]
     if missing:
         raise SystemExit(f"build first (python -m twin.portfolio; python -m tests.evaluate): missing {missing}")
     if dst.exists():
         shutil.rmtree(dst)
-    (dst / "media").mkdir(parents=True)
+    dst.mkdir(parents=True)
     for f in SITE_FILES:
         shutil.copy2(src / f, dst / f)
-    for f in sorted((src / "media").glob("*")):
-        if f.suffix in (".png", ".mp4"):
-            shutil.copy2(f, dst / "media" / f.name)
     files = sorted(p for p in dst.rglob("*") if p.is_file())
     for p in files:
         print(f"{p.stat().st_size / 1e6:6.2f} MB  {p.relative_to(dst).as_posix()}")
@@ -1184,7 +1388,7 @@ def site(src: Path, dst: Path):
 
 def main():
     ap = argparse.ArgumentParser(prog="python -m twin.portfolio")
-    ap.add_argument("cmd", nargs="?", default="run", choices=["run", "check", "measure", "simulate", "site"])
+    ap.add_argument("cmd", nargs="?", default="run", choices=["run", "check", "measure", "simulate", "site", "runtime"])
     ap.add_argument("--out", default="out/portfolio/")
     ap.add_argument("--atoms", default="compiled", choices=["compiled", "gold"])
     a = ap.parse_args()
@@ -1194,6 +1398,8 @@ def main():
         return check(out)
     if a.cmd == "site":
         return site(out, ROOT / "site")
+    if a.cmd == "runtime":
+        return print(measure_runtime())
     if a.cmd == "simulate":
         return print(simulate())
     if a.cmd == "measure":
