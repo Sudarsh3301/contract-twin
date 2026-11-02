@@ -176,6 +176,7 @@ table.atoms { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6
 .langnote { font-size: 14px; color: var(--muted); margin: 4px 0; }
 .rvnav { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 0 10px; font-size: 14px; }
 .events { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
+@media (min-width: 700px) { .events { flex-wrap: wrap; overflow-x: visible; } }
 .events button { font: inherit; font-size: 14px; font-weight: 600; flex: none; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 18px; padding: 6px 14px; cursor: pointer; }
 .events button[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
 .sentence { font-size: 18px; line-height: 1.5; max-width: 72ch; margin: 12px 0 16px; }
@@ -607,7 +608,7 @@ function renderEvidence(id, k) {
   const rows = (S().rows[id] || {})[k] || [];
   const [text, cls] = answerOf(id, ak, k);
   let h = `<button class="plain close" id="close">Close</button><h2><bdi>${esc(A.name)}</bdi> <span class="sub">· ${esc(A.type)}</span> ${langMark(ak)}</h2>` +
-    `<p class="sub">${esc(s.name)} · our party <bdi>${esc(c.party)}</bdi> · as of ${esc(fmtDate(D.as_of))} · ${esc(S().label)}</p>`;
+    `<p class="sub">${esc(chipLabel(id))} · our party <bdi>${esc(c.party)}</bdi> · as of ${esc(fmtDate(D.as_of))} · ${esc(S().label)}</p>`;
   if (hasPair(ak)) h += `<div class="seg" role="group" aria-label="Language version">` + A.versions.map(v =>
     `<button data-ver="${esc(v)}" aria-pressed="${v === k}">${verName(v)}</button>`).join("") + `</div>`;
   if (a && a.disagree) h += `<p class="warn"><b>The language versions disagree.</b> Unknown is not false, so this agreement counts as “can’t tell yet” until counsel settles it.</p>` +
@@ -1007,16 +1008,18 @@ function scaleHtml() {
     `<p class="scnote"><b>Same answer every run.</b> The rules give identical answers every time. A direct read changed its status on ${D.proof.cases - +sc.status_same.split("/")[0]} of ${D.proof.cases} test cases across 3 runs.` +
     (rt.median_ms ? ` <b>Re-run the whole portfolio in ${rt.median_ms} ms</b> (${rt.events} events, ${rt.agreements} agreements, rules on compiled answers).` : "") + `</p></div>`;
 }
-const AUTO = [["answered", "answered automatically", "clear"], ["plan", "plan for the worst case", "plan"], ["person", "need a person", "blocked"]];
+const AUTO = [["answered", "answered", "clear"], ["plan", "plan for the worst case", "plan"], ["person", "need a person", "blocked"]];
+// Before review nothing but the compiler and the rules answered; after review the count includes the reviewer's answers.
+const autoLabel = (k, l) => k !== "answered" ? l : stateName === "compiled" ? "answered automatically" : "answered with review";
 function automationHtml() {
   const a = D.states[stateName].automation, other = D.states[stateName === "review" ? "compiled" : "review"];
   const gain = D.states.review ? D.states.review.automation.answered - D.states.compiled.automation.answered : 0;
   return `<div class="card acard"><h2>Automation: ${a.total} outcomes (${agKeys.length} agreements × ${DEALS.length} deals)</h2>` +
     `<div class="seg" role="group" aria-label="Review state">` + [["compiled", "Before review"], ["review", "After review (simulated)"]].map(([k, l]) =>
       `<button data-state="${k}" aria-pressed="${k === stateName}" ${D.states[k] ? "" : "disabled"}>${l}</button>`).join("") + `</div>` +
-    `<div class="abar" role="img" aria-label="${AUTO.map(([k, l]) => `${a[k]} ${l}`).join(", ")}">` + AUTO.map(([k, , c]) =>
+    `<div class="abar" role="img" aria-label="${AUTO.map(([k, l]) => `${a[k]} ${autoLabel(k, l)}`).join(", ")}">` + AUTO.map(([k, , c]) =>
       `<span class="c-${c}" style="flex:${a[k]}">${a[k] / a.total > .08 ? a[k] : ""}</span>`).join("") + `</div>` +
-    `<div class="alegend">` + AUTO.map(([k, l, c]) => `<span class="c-${c}"><i></i><b>${a[k]}</b> ${l}</span>`).join("") + `</div>` +
+    `<div class="alegend">` + AUTO.map(([k, l, c]) => `<span class="c-${c}"><i></i><b>${a[k]}</b> ${autoLabel(k, l)}</span>`).join("") + `</div>` +
     `<p class="scnote">${stateName === "review" ? `<span class="delta">+${gain} answered</span> after review <span class="note">· review simulated from hand labels</span>` :
       `Review adds <span class="delta">+${gain} answered</span> <span class="note">(simulated)</span>`}</p></div>`;
 }
@@ -1209,7 +1212,9 @@ function renderClock() {
   v.innerHTML = `<h2>+90 days (dates, not a deal)</h2><p class="sentence">${sentence(sc)}</p><div class="prose">${actionsHtml(sc)}</div>${cantHtml(sc)}`;
   bindWhy(v);
 }
-const centreChip = () => { const on = document.querySelector("#view-ripple .events [aria-pressed=true]"); if (on) on.scrollIntoView({inline: "center", block: "nearest"}); };
+// Scroll only the chip row (phones), never the page, so the page still opens at the top.
+const centreChip = () => { const on = document.querySelector("#view-ripple .events [aria-pressed=true]"); if (!on) return;
+  const row = on.parentElement; row.scrollLeft += on.getBoundingClientRect().left - row.getBoundingClientRect().left - (row.clientWidth - on.offsetWidth) / 2; };
 PHONE.addEventListener("change", () => { if (!document.getElementById("view-ripple").hidden) renderRipple(false); });
 
 // ---------------- routing: #<view>[@compiled] ----------------
