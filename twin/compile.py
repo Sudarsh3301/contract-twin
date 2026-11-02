@@ -20,7 +20,7 @@ from pathlib import Path
 from . import llm
 from .ingest import DB, ROOT
 
-PROMPT_VERSION = "v3"
+PROMPT_VERSION = "v4"
 K_RUNS, TEMP, CAP, DEFS, MAXLEN = 3, 0.7, 40, 8, 1200
 STATUSES = ["known", "silent", "unknown", "refers_to_missing"]
 
@@ -33,7 +33,11 @@ COC = {
     "whose": ("enum", ["us", "them", "either"], "Whose change of control is covered: our party, the counterparty, or either?"),
     "triggers": ("set", ["ownership_threshold", "retained_stake", "competitor_stake", "management_change", "transaction_type",
                          "open_textured", "parent_direct_ownership", "cross_reference", "undefined"],
-                 "What counts as a change of control. Give every kind that the clause or its definition lists: "
+                 "What counts as a change of control. Give every kind that the clause or its definition lists. "
+                 "A vague word (significant, material, major, unacceptable) in front of a list governs every item in that list: "
+                 "'a material change in the ownership or management of the company' is ONE open_textured trigger, not "
+                 "ownership_threshold or management_change. Give a clear kind only when it stands in its own limb without the vague word. "
+                 "Kinds: "
                  "ownership_threshold = one person or group acquires a percentage of the voting power or shares; "
                  "retained_stake = the existing owners keep less than a percentage; "
                  "competitor_stake = a competitor of the other party acquires a stake at or above a small percentage, often "
@@ -378,6 +382,47 @@ def vote(template, runs, text=None):
     return out
 
 
+# ---- decomposition guards --------------------------------------------------------------------------------------------
+VAGUE = r"unacceptable|significant|material|major|substantial|جوهري|كبير|غير\s+مقبول"
+GOVERNED = {"management_change": r"manag|control|board|الإدارة|الادارة|السيطرة|مجلس",
+            "ownership_threshold": r"owner|control|shares|equity|الملكية|السيطرة|الأسهم"}
+AUTO = re.compile(r"(shall|will)\s+(immediately\s+|automatically\s+|forthwith\s+)*terminate|agreement\s+(shall\s+)?terminates?\b|"
+                  r"ينتهي\s+هذا\s+(العقد|الاتفاق)\s+تلقائي", re.I)
+RIGHT = re.compile(r"\bmay\s+(\w+\s+){0,4}terminate|right\s+to\s+terminate|at\s+its\s+option[^.]*terminate|يحق\s+[^.]*إنهاء", re.I)
+
+
+def guard_triggers(atoms, text):
+    """A vague qualifier in front of a list governs the whole list. When the cited text puts one before a management or
+    ownership item, only open_textured stays; a qualifier the code cannot tie to the listed kinds makes triggers unknown."""
+    t = atoms["triggers"]
+    kinds = set(t["value"] or [])
+    extra = kinds & set(GOVERNED)
+    if t["status"] != "known" or "open_textured" not in kinds or not extra:
+        return
+    sents = " ".join(text[s] for s in t["sids"] if s in text)
+    if not re.search(VAGUE, sents, re.I):
+        return
+    # the qualifier reaches an item when no clause break (; or a numbered limb) lies between them
+    reach = {k for k in extra if re.search(rf"({VAGUE})[^;.]{{0,80}}?({GOVERNED[k]})", sents, re.I)}
+    if reach == extra:
+        t["value"] = sorted(kinds - extra)
+    else:
+        t.update(status="unknown", value=None)
+
+
+def guard_effects(atoms, text):
+    """The cited wording decides between a termination right and an automatic end; a contradicting vote becomes unknown.
+    Wording that matches both patterns or neither leaves the vote alone."""
+    e = atoms["effects"]
+    if e["status"] != "known":
+        return
+    sents = " ".join(text[s] for s in e["sids"] if s in text)
+    auto, right = bool(AUTO.search(sents)), bool(RIGHT.search(sents))
+    kinds = {x["effect"] for x in e["value"]}
+    if (auto and not right and "termination_right" in kinds and "automatic_termination" not in kinds) or        (right and not auto and "automatic_termination" in kinds and "termination_right" not in kinds):
+        e.update(status="unknown", value=None)
+
+
 # ---- support check ---------------------------------------------------------------------------------------------------
 def support_schema(keys):
     """The checker may answer only for the keys it was asked about."""
@@ -524,6 +569,9 @@ def compile_one(con_path, cid, template, title, cache_dir, use_cache, party=None
     sch, sysm, usr = schema(template), system_prompt(template), user_prompt(title, sents, party)
     calls = [llm.ask(llm.ANSWERER, sysm, usr, sch, seed=i, temperature=TEMP, prompt_version=PROMPT_VERSION, **kw) for i in range(K_RUNS)]
     atoms = vote(template, [clean_run(template, c["data"], cand) for c in calls], cand)
+    if template == "coc":
+        guard_triggers(atoms, cand)
+        guard_effects(atoms, cand)
     support, sc = support_check(template, atoms, cand, party, pt, **kw)
     for k, ok in support.items():
         if ok is not True:      # rejected (False) or no usable reply (None): unknown, never silent
@@ -644,6 +692,28 @@ def _check():
     assert periods("قبل ثلاثين (٣٠) يوماً") == {(30.0, "days")} and (3.0, "business_days") in periods("خلال ثلاثة (3) أيام تجارية")
     assert (6.0, "months") in periods("قبل ستة (6) أشهر على الأقل") and (180.0, "days") in periods("مئة وثمانين (180) يوماً")
     assert value_matches_text("initial_term_unit", "years", "لمدة سنتين (2)") and not value_matches_text("notice_unit", "months", "ستين (٦٠) يوماً")
+    q = {1: "Termination applies on an unacceptable change in the control or management of a party."}
+    mk = lambda tr: {"triggers": {"status": "known", "value": tr, "sids": [1]}}
+    a = mk(["open_textured", "management_change"]); guard_triggers(a, q)
+    assert a["triggers"]["value"] == ["open_textured"], "the qualifier covers the whole list"
+    q = {1: "Either party may terminate if a person acquires 50% of the shares, or if there is a material change in the management."}
+    a = mk(["open_textured", "management_change", "ownership_threshold"]); guard_triggers(a, q)
+    assert a["triggers"]["status"] == "unknown", "the qualifier reaches only one of two items: not a guess"
+    q = {1: "A change of control occurs if the board changes, or a material adverse event happens."}
+    a = mk(["open_textured", "management_change"]); guard_triggers(a, q)
+    assert a["triggers"]["status"] == "unknown", "qualifier present but not in front of management"
+    a = mk(["management_change"]); guard_triggers(a, q)
+    assert a["triggers"]["value"] == ["management_change"]
+    ef = lambda k, t: {"effects": {"status": "known", "sids": [1], "value": [{"effect": k}]}} | {"_t": t}
+    for kind, wording, bad in (("termination_right", "This Agreement shall automatically terminate.", True),
+                               ("automatic_termination", "The other party may terminate this Agreement.", True),
+                               ("termination_right", "The other party shall have the right to terminate.", False),
+                               ("automatic_termination", "This Agreement terminates on that date.", False),
+                               ("termination_right", "The parties shall review the Agreement.", False),
+                               ("automatic_termination", "ينتهي هذا العقد تلقائياً.", False), ("termination_right", "ينتهي هذا العقد تلقائياً.", True),
+                               ("automatic_termination", "يحق للطرف الآخر إنهاء هذا العقد.", True)):
+        a = ef(kind, wording); guard_effects(a, {1: wording})
+        assert (a["effects"]["status"] == "unknown") == bad, (kind, wording)
     print("compile self-check ok")
 
 
