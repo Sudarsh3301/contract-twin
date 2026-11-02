@@ -11,7 +11,9 @@ be computed; the worst one is shown) or Blocked (some reading needs a document, 
 Reactions come from the rules only. No model is called.
 """
 import argparse
+import copy
 import csv
+import hashlib
 import io
 import json
 import re
@@ -24,7 +26,7 @@ from . import compile as comp
 from . import review
 from .core import State, apply
 from .ingest import DB, ROOT
-from .rules import CAUSES, CHOICE, PCT, Reaction, join_causes, react, readings
+from .rules import CAUSES, CHOICE, PCT, Reaction, join_causes, react, readings, ref
 
 D = "2026-11-02"           # the as-of date every scenario starts from
 LIBRARY = [
@@ -200,6 +202,153 @@ class Ctx:
                     if atom == "competitor_threshold_pct" and value == 0 else "")
 
 
+# ---------------- reasoning graphs ----------------
+LAYER = {"fact": 0, "atom": 1, "fork": 1, "limb": 2, "exception": 3, "effect": 4, "outcome": 5}
+
+
+class Graphs:
+    """Reasoning graphs, stored once each under a hash of their content (many outcomes share one graph)."""
+
+    def __init__(self):
+        self.all = {}
+
+    def add(self, rs) -> str:
+        g = graph(rs)
+        blob = json.dumps(g, sort_keys=True, ensure_ascii=False, default=str)
+        gid = hashlib.sha1(blob.encode("utf-8")).hexdigest()[:12]
+        self.all.setdefault(gid, g)
+        return gid
+
+
+def graph(rs) -> list[dict]:
+    """The traces of one outcome's reactions merged into one graph. Steps the reactions share appear once; each
+    reaction keeps its own outcome node. A reading fork ('if the standard is met') sits with the rule's limbs."""
+    out = {}
+    for i, r in enumerate(rs):
+        ids = {"outcome": f"outcome:{i}"} if len(rs) > 1 else {}
+        for st in r.trace:
+            sid = ids.get(st.id, st.id)
+            if sid in out:
+                continue
+            inputs = dict(st.inputs)
+            layer = 3 if st.kind == "fork" and not st.atom_refs else LAYER[st.kind]
+            text = plain(st.label) if st.kind in ("limb", "exception") else st.label
+            parents = [ids.get(p, p) for p in st.parents]
+            layer = max([layer] + [out[p]["layer"] + 1 for p in parents if p in out])
+            out[sid] = dict(id=sid, kind=st.kind, label=text, value="FUT"[int(st.value)], layer=layer,
+                            atoms=list(st.atom_refs), parents=parents,
+                            inputs=json.loads(json.dumps(inputs, default=str)))
+    return list(out.values())
+
+
+def graph_atoms(g: list[dict]) -> list[str]:
+    return sorted({a for st in g for a in st["atoms"]})
+
+
+def alts(rd: dict) -> list[dict]:
+    """The alternatives that lead to one reading: assumed atom values (by reviewed atom name) and the stated reading."""
+    return [dict(values={ref(k): v for k, v in w["values"].items()}, reading=w["reading"]) for w in rd["when"]]
+
+
+def sig(o: dict) -> list:
+    """What the map shows for an outcome: its status and the reactions on the cell."""
+    xs = o["reactions"] if o["status"] == "firm" else o["worst"] or []
+    return [o["status"], sorted({label(r) for r in xs if r.status == "TRIGGERED"}) or (["no reaction"] if o["status"] != "blocked" else [])]
+
+
+# Event numbers a slider can move: (event, parameter, text, unit, low end, high end or None = twice the largest value seen)
+PARAMS = {"share_sale": [("buyer_pct", "Stake sold to one buyer", "%", 0.0, 100.0)],
+          "ipo": [("sponsor_pct_after", "Sponsors keep after the IPO", "%", 0.0, 100.0),
+                  ("gross_proceeds_usd", "IPO gross proceeds", "$", 0.0, None)]}
+
+
+def numbers(x) -> set:
+    if isinstance(x, bool) or x is None:
+        return set()
+    if isinstance(x, (int, float)):
+        return {float(x)}
+    if isinstance(x, dict):
+        return set().union(*(numbers(v) for v in x.values())) if x else set()
+    if isinstance(x, (list, tuple)):
+        return set().union(*(numbers(v) for v in x)) if x else set()
+    return set()
+
+
+def with_param(sc: dict, param: str, v: float) -> dict:
+    return {**sc, "events": [{**e, param: v} if e["event"] in PARAMS else e for e in sc["events"]]}
+
+
+def nice(lo, hi, lo_in, hi_in):
+    """A value inside an interval to show on the slider: a whole number when one fits, else the middle."""
+    if lo == hi:
+        return lo
+    import math
+    for v in (round((lo + hi) / 2), math.floor(lo) + 1, math.ceil(hi) - 1):
+        if (lo < v or lo_in and lo == v) and (v < hi or hi_in and v == hi):
+            return float(v)
+    return (lo + hi) / 2
+
+
+def flips(sc: dict, t: str, fam: dict, G: Graphs) -> list[dict]:
+    """For each number of the scenario's event: the outcome on every interval of that number. Rules compare event numbers
+    only with numbers written in the clause (or 100 minus them, for what the old holders keep) and with each other, so
+    the outcome can change only at those values: evaluating at each such value and between each pair is exact."""
+    out = []
+    for e in sc["events"]:
+        for param, text, unit, lo, hi in PARAMS.get(e["event"], []):
+            cur = float(e.get(param, 0))
+            consts = numbers({k: v for k, v in fam.items() if not k.startswith("_")}) | numbers(e) | {50.0}
+            if hi is None:
+                hi = 2 * max([cur, 1.0] + [c for c in consts if c > 100])
+            pts = sorted({lo, hi, cur} | {p for c in consts for p in (c, 100 - c) if lo <= p <= hi})
+            probe = []
+            for i, p in enumerate(pts):
+                probe.append((p, p, True, True))
+                if i + 1 < len(pts):
+                    probe.append((p, pts[i + 1], False, False))
+            segs = []
+            for a, b, ai, bi in probe:
+                o = outcome(t, fam, state_of(with_param(sc, param, nice(a, b, ai, bi))))
+                s_ = sig(o)
+                if segs and segs[-1]["sig"] == s_:
+                    segs[-1].update(hi=b, hi_in=bi)
+                else:
+                    segs.append(dict(lo=a, hi=b, lo_in=ai, hi_in=bi, sig=s_, o=o))
+            ivs = []
+            for g in segs:
+                o = g.pop("o")
+                at = cur if (g["lo"] < cur or g["lo_in"] and g["lo"] == cur) and (cur < g["hi"] or g["hi_in"] and cur == g["hi"]) \
+                    else nice(g["lo"], g["hi"], g["lo_in"], g["hi_in"])
+                shown_rs = o["reactions"] if o["status"] == "firm" else o["worst"] or o["reactions"]
+                ivs.append(dict(lo=g["lo"], hi=g["hi"], lo_in=g["lo_in"], hi_in=g["hi_in"], at=at, status=g["sig"][0],
+                                label="; ".join(g["sig"][1]) or "blocked", sev=sev_all(shown_rs) if o["status"] != "blocked" else 0,
+                                graph=G.add(o["reactions"])))
+            out.append(dict(param=param, text=text, unit=unit, now=cur, lo=lo, hi=hi, intervals=ivs))
+    return out
+
+
+def corrections(t: str, fam: dict, atom: str, s: State) -> list[dict]:
+    """What the outcome would be if one confirmed-looking atom were different: each other allowed value, or for a list
+    of items (triggers, transaction types) each item added or taken away."""
+    vals = review.candidates(t, atom, s)
+    if not vals:
+        return []
+    cur = review.get_atom(fam, atom)
+    if len(vals) > 12 and isinstance(cur, list) and all(not isinstance(x, dict) for v in vals for x in v):
+        items = sorted({x for v in vals for x in v})
+        vals = [sorted(set(cur) ^ {x}) for x in items]
+    out = []
+    for v in vals[:24]:
+        if v == cur:
+            continue
+        f = copy.deepcopy(fam)
+        review.set_atom(f, atom, v)
+        o = outcome(t, f, s)
+        out.append(dict(value=v, status=o["status"], label="; ".join(sig(o)[1]) or "blocked",
+                        sev=sev_all(o["reactions"] if o["status"] == "firm" else o["worst"] or [])))
+    return out
+
+
 # ---------------- run ----------------
 def describe(rds: list) -> list[dict]:
     """Readings as branches, one line each: the outcome and the atom values or stated reading that lead to it.
@@ -234,8 +383,19 @@ def describe(rds: list) -> list[dict]:
     return out
 
 
+_OUTCOMES: dict = {}
+
+
 def outcome(t: str, fam: dict, s: State) -> dict:
-    """Status of one family in one state: firm, provisional (with its readings and the worst one) or blocked."""
+    """Status of one family in one state: firm, provisional (with its readings and the worst one) or blocked.
+    Memoised per build (sliders and corrections ask for the same family and state many times)."""
+    key = (t, json.dumps(fam, sort_keys=True, default=str), repr(s))
+    if key not in _OUTCOMES:
+        _OUTCOMES[key] = _outcome(t, fam, s)
+    return _OUTCOMES[key]
+
+
+def _outcome(t: str, fam: dict, s: State) -> dict:
     try:
         rs = react(t, fam, s)
     except (KeyError, TypeError, ValueError):     # a value the rules cannot read (e.g. a threshold marked absent)
@@ -252,11 +412,11 @@ def outcome(t: str, fam: dict, s: State) -> dict:
     return dict(status="provisional", reactions=rs, worst=worst, readings=rds)
 
 
-def run(library: list, ctx: Ctx) -> list[dict]:
+def run(library: list, ctx: Ctx, G: Graphs | None = None) -> list[dict]:
     """One row per scenario x contract x template. `atoms` are the atoms the outcome rests on (load-bearing for a firm
     outcome, the blockers that matter otherwise); `unconfirmed` are the known load-bearing atoms nobody has reviewed, `ask`
     the ones the compiler could not settle (asked as questions, not confirmed)."""
-    rows = []
+    rows, G = [], G if G is not None else Graphs()
     for sc in library:
         s = state_of(sc)
         for key in sorted(ctx.contracts):
@@ -279,18 +439,27 @@ def run(library: list, ctx: Ctx) -> list[dict]:
                            reactions=[dict(status=r.status, kind=r.kind, holder=r.holder, due=str(r.due) if r.due else "",
                                            reason=plain(r.reason), cause=r.cause) for r in o["reactions"]],
                            sids=sorted({sid for a in used for sid, _ in ctx.cited(key, t, a)}))
+                row["graph"] = G.add(o["reactions"])
+                row["flips"] = flips(sc, t, fam, G)
+                if o["status"] == "firm" and open_:
+                    row["corrections"] = {a: corrections(t, fam, a, s) for a in row["unconfirmed"]}
                 if o["status"] == "firm" and fam.get("_unknown"):
                     row["tried"] = review.blocker_atoms(fam)      # firm in every reading; the reason shows the first one tried
                 if o["status"] != "firm":
                     row["missing"] = "; ".join(sorted({plain(r.reason) for r in o["reactions"] if r.status == "NEEDS_LAWYER"}))
                 if o["status"] == "provisional":
                     row["branches"] = describe(o["readings"])
+                    for b, rd in zip(row["branches"], o["readings"]):
+                        b.update(graph=G.add(rd["reactions"]), alts=alts(rd))
                     w = o["worst"]
                     row["worst"] = [dict(status=r.status, kind=r.kind, holder=r.holder, due=str(r.due) if r.due else "",
                                          reason=plain(r.reason)) for r in w]
                     row["worst_sev"] = sev_all(w)
                     fork = any(w2["reading"] for rd in o["readings"] for w2 in rd["when"])
                     row["clears"] = (len(review.relevant_atoms(t, fam, s)) if fam.get("_unknown") else 0) + fork
+                gs = [row["graph"]] + [b["graph"] for b in row.get("branches", [])] + \
+                     [i["graph"] for f in row["flips"] for i in f["intervals"]]
+                row["cite"] = {a: [sid for sid, _ in ctx.cited(key, t, a)] for a in sorted({a for g in gs for a in graph_atoms(G.all[g])})}
                 rows.append(row)
     return rows
 
@@ -460,8 +629,8 @@ def case_safety(ctx: Ctx) -> dict:
     return ro.score(atoms, {p for q in qs if q.kind == "confirm" for p in q.pairs})[0]
 
 
-def build_state(ctx: Ctx, sents: dict, library=LIBRARY) -> dict:
-    rows = run(library, ctx)
+def build_state(ctx: Ctx, sents: dict, library=LIBRARY, G: Graphs | None = None) -> dict:
+    rows = run(library, ctx, G)
     cs = cells(rows)
     info = {f"{r['contract']}|{r['template']}|{a}": None for r in rows for a in r["atoms"]}
     info = {k: ctx.atom_info(*k.split("|")) for k in sorted(info)}
@@ -473,7 +642,7 @@ def build_state(ctx: Ctx, sents: dict, library=LIBRARY) -> dict:
             sents.setdefault(key, {})[str(sid)] = t
         return sorted({sid for sid, _ in pairs})
     for r in rows:
-        for a in r["atoms"]:
+        for a in sorted(set(r["atoms"]) | set(r["cite"])):
             sids(r["contract"], ctx.cited(r["contract"], r["template"], a))
     for c in cards:
         c["sids"] = sids(c["contract"], [x for a in c["atoms"] for x in ctx.cited(c["contract"], c["template"], a)])
@@ -504,14 +673,51 @@ def build_state(ctx: Ctx, sents: dict, library=LIBRARY) -> dict:
                 main_cause={c: sum(x["cause"].split(",")[0] == c for x in nl) for c in CAUSES}, needs_lawyer=len(nl))
 
 
+GROUPS = [("Lenders", ("credit", "revolver", "loan")),
+          ("Licensors and IP owners", ("licens", "intellectual property", "intelle", "content")),
+          ("Suppliers and manufacturers", ("supply", "manufactur", "distributor")),
+          ("Service providers", ("hosting", "outsourc", "maintenance", "services", "management", "consult")),
+          ("Commercial partners", ("sponsor", "co-brand", "co_bra", "alliance", "joint venture", "promotion", "marketing", "franchise")),
+          ("Landlords and public bodies", ("lease", "tenan", "ejari", "road", "إيجار", "طرق", "عقد"))]
+
+
+def group_of(title: str) -> str:
+    """Counterparty type, read from the agreement type in the title (the portfolio files do not record it)."""
+    t = title.lower()
+    return next((g for g, words in GROUPS if any(w in t for w in words)), "Other counterparties")
+
+
+def ripple(ctx: Ctx, library: list) -> dict:
+    """Fixed positions for the ripple view: the event at the centre, contracts on a ring in one arc per counterparty
+    type. Positions do not move between scenarios, so a change of scenario shows as a change of colour only."""
+    import math
+    by = {}
+    for k in sorted(ctx.contracts):
+        by.setdefault(group_of(ctx.contracts[k]["title"]), []).append(k)
+    names = [g for g, _ in GROUPS + [("Other counterparties", ())] if g in by]
+    n, gap, i, pos, groups = len(ctx.contracts), 0.9, 0, {}, []
+    step = (2 * math.pi - gap * len(names) / 4) / max(n, 1)
+    angle = -math.pi / 2
+    for g in names:
+        a0 = angle
+        for k in by[g]:
+            pos[k] = [round(math.cos(angle) * 0.62, 4), round(math.sin(angle) * 0.62, 4)]
+            angle += step
+        groups.append(dict(name=g, contracts=by[g], a0=round(a0, 4), a1=round(angle - step, 4)))
+        angle += gap / 4
+    return dict(groups=groups, pos=pos)
+
+
 def build(atoms_kind="compiled", library=LIBRARY) -> dict:
     """Everything the exports and the page need, from deterministic runs of each state."""
     names = ["compiled"] if atoms_kind == "gold" else ["compiled"] + (["review"] if SIMULATED.exists() else [])
-    sents, states, ctx = {}, {}, None
+    _OUTCOMES.clear()               # every build computes from scratch, so two builds are a real determinism check
+    sents, states, ctx, G = {}, {}, None, Graphs()
     for name in names:
         ctx = Ctx(atoms_kind, name)
-        states[name] = build_state(ctx, sents, library)
-    return dict(as_of=D, atoms=atoms_kind, sentences=sents, states=states,
+        states[name] = build_state(ctx, sents, library, G)
+    return dict(as_of=D, atoms=atoms_kind, sentences=sents, states=states, graphs=dict(sorted(G.all.items())),
+                ripple=ripple(ctx, library),
                 scenarios=[dict(id=sc["id"], name=sc["name"], templates=sc["templates"], events=sc["events"]) for sc in library],
                 contracts={k: dict(title=c["title"], party=c["party"], lang=c["lang"]) for k, c in sorted(ctx.contracts.items())},
                 cause_label=CAUSE_LABEL, sev_name={str(k): v for k, v in SEV_NAME.items()})
@@ -549,15 +755,17 @@ def write(data: dict, out: Path) -> None:
             (d / f"schedule_{sc['id']}.csv").write_bytes(schedule_csv(data, st, sc["id"]).encode("utf-8-sig"))
         exposure = dict(as_of=data["as_of"], atoms=data["atoms"], state=st["label"], header=st["header"],
                         scenarios=data["scenarios"], contracts=data["contracts"], cells=st["cells"],
+                        graphs="graphs.json (in the page folder): reasoning graph per id", ripple=data["ripple"],
                         outcomes=[{k: r[k] for k in r if k not in ("sids", "atoms", "tried")} for r in st["rows"]])
-        (d / "exposure.json").write_bytes(json.dumps(exposure, indent=1, ensure_ascii=False, sort_keys=True).encode("utf-8"))
+        (d / "exposure.json").write_bytes(json.dumps(exposure, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8"))
+    (out / "graphs.json").write_bytes(json.dumps(data["graphs"], ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8"))
     page = (Path(__file__).parent / "portfolio.html").read_text(encoding="utf-8")
     def nest(rows):                 # rows by scenario and contract, without repeating the two keys
         out = {}
         for r in rows:
             out.setdefault(r["scenario"], {}).setdefault(r["contract"], []).append({k: v for k, v in r.items() if k not in ("scenario", "contract")})
         return out
-    slim = {**data, "states": {n: {**st, "rows": nest(st["rows"]),
+    slim = {**{k: v for k, v in data.items() if k != "graphs"}, "states": {n: {**st, "rows": nest(st["rows"]),
                                    "cells": {sc: {k: {x: v for x, v in c.items() if x != "missing"} for k, c in cs.items()}
                                              for sc, cs in st["cells"].items()}}
                                for n, st in data["states"].items()}}        # the page reads what is missing from the rows
@@ -715,6 +923,59 @@ def worst_errors(ctx: Ctx, st: dict) -> list[str]:
     return errs
 
 
+def graph_errors(data: dict, ctx: Ctx, st: dict) -> tuple[list[str], dict]:
+    """Every exported graph states its outcome; every atom node quotes exact contract text; fork branches are the
+    outcomes readings() gives; every slider interval gives the outcome a fresh engine run gives at its values."""
+    errs, n = [], Counter()
+    src = {k: (ROOT / c["path"]).read_bytes().decode("utf-8") for k, c in ctx.contracts.items()}
+    spans = {(cid, sid): (a, b) for cid, sid, a, b in ctx.con.execute("SELECT contract_id, sid, char_start, char_end FROM sentence")}
+    states = {sc["id"]: sc for sc in LIBRARY}
+    G = data["graphs"]
+
+    def outcome_ok(gid, rs, where):
+        outs = [s for s in G[gid] if s["kind"] == "outcome"]
+        got = sorted((s["inputs"]["status"], s["inputs"]["kind"], s["inputs"]["holder"], s["inputs"]["due"]) for s in outs)
+        want = sorted((r.status, r.kind, r.holder, str(r.due) if r.due else "") for r in rs)
+        if got != want:
+            errs.append(f"{where}: graph outcome {got} != reactions {want}")
+        n["graphs"] += 1
+    for r in st["rows"]:
+        where = f"{r['scenario']} {r['contract']} {r['template']}"
+        fam, sc = ctx.atoms[r["contract"]][r["template"]], states[r["scenario"]]
+        s = state_of(sc)
+        o = outcome(r["template"], fam, s)
+        outcome_ok(r["graph"], o["reactions"], where)
+        cid = ctx.contracts[r["contract"]]["cid"]
+        for a, sids in r["cite"].items():
+            n["atom nodes"] += 1
+            for sid in sids:
+                lo, hi = spans[(cid, sid)]
+                n["quotes"] += 1
+                if src[r["contract"]][lo:hi] != data["sentences"][r["contract"]][str(sid)]:
+                    errs.append(f"{where} {a} [{sid}] not verbatim")
+        if r["status"] == "provisional":
+            rds = readings(r["template"], fam, s)
+            if len(rds) != len(r["branches"]):
+                errs.append(f"{where}: {len(r['branches'])} branches != {len(rds)} readings")
+            for b, rd in zip(r["branches"], rds):
+                outcome_ok(b["graph"], rd["reactions"], where + " branch")
+                if b["alts"] != alts(rd):
+                    errs.append(f"{where}: branch alternatives differ from readings()")
+                n["branches"] += 1
+        for f in r["flips"]:
+            for iv in f["intervals"]:
+                probes = {iv["at"]} | ({iv["lo"]} if iv["lo_in"] else set()) | ({iv["hi"]} if iv["hi_in"] else set())
+                for v in sorted(probes):
+                    fresh = _outcome(r["template"], fam, state_of(with_param(sc, f["param"], v)))   # not the memo
+                    if sig(fresh)[0] != iv["status"] or ("; ".join(sig(fresh)[1]) or "blocked") != iv["label"]:
+                        errs.append(f"{where} {f['param']}={v}: slider says {iv['label']}, engine {sig(fresh)}")
+                    n["slider probes"] += 1
+                if not iv["lo"] <= iv["at"] <= iv["hi"]:
+                    errs.append(f"{where}: slider value outside its interval")
+            n["sliders"] += 1
+    return errs, n
+
+
 def check(out: Path) -> None:
     import tempfile
     assert plain("competitor stake 0% vs >= 0.0%") == "buyer is not a competitor"
@@ -733,6 +994,9 @@ def check(out: Path) -> None:
         ctx = Ctx(state=name)
         errs = verbatim_errors(data, ctx, st) + worst_errors(ctx, st)
         assert not errs, errs[:5]
+        gerrs, gn = graph_errors(data, ctx, st)
+        assert not gerrs, gerrs[:5]
+        print(f"{name}: graphs ok: {dict(gn)}")
         nl = [x for r in st["rows"] for x in r["reactions"] if x["status"] == "NEEDS_LAWYER"]
         assert all(x["cause"] for x in nl), "every open reaction has a cause"
         assert st["effort"]["cards"] == len(st["cards"]), "one number for cards"
@@ -751,7 +1015,12 @@ def check(out: Path) -> None:
         names = sorted(str(p.relative_to(tmp)) for p in Path(tmp).rglob("*") if p.is_file())
         same = [n for n in names if (Path(tmp) / n).read_bytes() == (out / n).read_bytes()]
         assert same == names, sorted(set(names) - set(same))
-    print(f"portfolio check ok: {len(names)} files (both states, page included) byte-identical across two runs")
+    size = Counter()
+    for f in out.rglob("*"):
+        if f.is_file():
+            size[f.suffix] += f.stat().st_size
+    print(f"portfolio check ok: {len(names)} files (both states, page included) byte-identical across two runs; size by type (MB): "
+          + ", ".join(f"{k} {v / 1e6:.2f}" for k, v in sorted(size.items())) + f"; total {sum(size.values()) / 1e6:.2f}")
 
 
 def main():
