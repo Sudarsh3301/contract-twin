@@ -22,30 +22,62 @@ def load(p):
     return json.load(open(p, encoding="utf-8"))
 
 
+SETS = {"triggers", "carve_outs", "transaction_types", "deems", "effects"}
+
+
+def flat(fam):
+    """Family -> {key: value} with effects split into one set of kinds plus per-kind holder, notice and consent flag."""
+    out = {k: v for k, v in fam.items() if not k.startswith("_") and k not in ("retained_start_pct", "effect", "effect_holder", "notice", "effects", "unless_consented")}
+    effs = fam.get("effects") or ([{k: fam[k] for k in ("effect", "effect_holder", "notice", "unless_consented") if k in fam}] if "effect" in fam else [])
+    if effs:
+        out["effects"] = [e["effect"] for e in effs]
+        for e in effs:
+            out["effect_holder:" + e["effect"]] = e.get("effect_holder")
+            out["effect_notice:" + e["effect"]] = e.get("notice")
+            out["unless_consented:" + e["effect"]] = bool(e.get("unless_consented"))
+    elif "notice" in fam:
+        out["notice"] = fam["notice"]
+    return out
+
+
 def vs_gold(comp, gold, verbose):
     tot, stats, wrong = Counter(), defaultdict(Counter), []
+    sets = defaultdict(lambda: [0, 0, 0, 0])      # key -> [exact, hit, claimed, wanted]
     for src, fams in gold.items():
         if src.startswith("_"):
             continue
         for fam, atoms in fams.items():
             c = comp.get(src, {}).get(fam)
-            for key, gv in atoms.items():
+            cf, gf = flat(c) if c else {}, flat(atoms)
+            for key, gv in gf.items():
+                name = key.split(":")[0]
                 if c is None:
                     res = "missing"
-                elif "_unknown" in c and key not in c:
-                    res = "unknown"
-                elif key not in c:
-                    res = "missing"
+                elif key not in cf:
+                    res = "unknown" if "_unknown" in c or "_partial" in c else "missing"
+                    if name == "effects" and "_unknown" not in c:
+                        res = "missing"
                 else:
-                    res = "correct" if norm(c[key]) == norm(gv) else "wrong"
+                    res = "correct" if norm(cf[key]) == norm(gv) else "wrong"
                     if res == "wrong":
-                        wrong.append((src, fam, key, gv, c[key]))
-                stats[(fam, key)][res] += 1
+                        wrong.append((src, fam, key, gv, cf[key]))
+                if name in SETS and key == name:
+                    row = sets[(fam, name)]
+                    row[3] += len(gv)
+                    if key in cf:
+                        row[0] += res == "correct"
+                        row[1] += len(set(gv) & set(cf[key]))
+                        row[2] += len(set(cf[key]))
+                stats[(fam, name)][res] += 1
                 stats[(fam, "ALL")][res] += 1
                 tot[res] += 1
     for (fam, key), c in sorted(stats.items(), key=lambda x: (x[0][0], x[0][1] != "ALL", x[0][1])):
         n = sum(c.values())
-        print(f"{fam:6} {key:28} {c['correct']:3}/{n:<3} correct  wrong {c['wrong']}  unknown {c['unknown']}  missing {c['missing']}")
+        pr = ""
+        if (fam, key) in sets:
+            ex, hit, claimed, wanted = sets[(fam, key)]
+            pr = f"  set: exact {ex}, precision {hit}/{claimed}, recall {hit}/{wanted}"
+        print(f"{fam:6} {key:22} {c['correct']:3}/{n:<3} correct  wrong {c['wrong']}  unknown {c['unknown']}  missing {c['missing']}{pr}")
     n = sum(tot.values())
     print(f"TOTAL {tot['correct']}/{n} correct ({tot['correct'] / n:.0%}), wrong {tot['wrong']}, unknown {tot['unknown']}, missing {tot['missing']}")
     if verbose:

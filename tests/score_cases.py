@@ -4,7 +4,7 @@ import json
 import sys
 from datetime import date
 from twin.core import State, apply
-from twin.rules import TEMPLATES, Reaction
+from twin.rules import react
 
 cases = json.load(open("cases/scenario_cases.json", encoding="utf-8"))["cases"]
 gold = json.load(open("cases/gold_atoms.json", encoding="utf-8"))
@@ -27,11 +27,7 @@ def run(case):
     for f in fams:
         if f not in atoms:
             continue
-        if "_unknown" in atoms[f]:    # compiled atoms with a missing or unsure required value: a lawyer decides
-            if f == "term" or s.mechanism:
-                rs.append(Reaction("NEEDS_LAWYER", reason=f"{f}: " + "; ".join(atoms[f]["_unknown"])))
-            continue
-        rs += TEMPLATES[f](atoms[f], s)
+        rs += react(f, atoms[f], s)
     st = "TRIGGERED" if any(r.status == "TRIGGERED" for r in rs) else (
         "NEEDS_LAWYER" if any(r.status == "NEEDS_LAWYER" for r in rs) else "NOT_TRIGGERED")
     return st, rs
@@ -59,9 +55,14 @@ def check(case, st, rs):
 
 if __name__ == "__main__":
     ok = 0
+    tally = {"correct": 0, "wrong firm": 0, "abstain": 0, "other error": 0}
     for c in cases:
         st, rs = run(c)
         errs = check(c, st, rs)
         ok += not errs
+        want = c["expected"]["status"]
+        tally["correct" if not errs else "wrong firm" if st != "NEEDS_LAWYER" and st != want else
+              "abstain" if st == "NEEDS_LAWYER" and want != st else "other error"] += 1
         print(f"{'PASS' if not errs else 'FAIL'} {c['id']:4} {st:14} {'; '.join(errs) if errs else ''}  [{'; '.join(r.reason for r in rs)[:110]}]")
     print(f"\n{ok}/{len(cases)} cases match the independently written expectations")
+    print("outcomes:", tally)

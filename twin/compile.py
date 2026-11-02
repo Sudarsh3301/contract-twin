@@ -19,7 +19,7 @@ from pathlib import Path
 from . import llm
 from .ingest import DB, ROOT
 
-PROMPT_VERSION = "v1"
+PROMPT_VERSION = "v2"
 K_RUNS, TEMP, CAP, DEFS, MAXLEN = 3, 0.7, 40, 8, 1200
 STATUSES = ["known", "silent", "unknown", "refers_to_missing"]
 
@@ -30,14 +30,22 @@ EFFECTS = ["termination_right", "automatic_termination", "consent", "notice", "p
 COC = {
     "present": ("enum", YN, "Does the contract contain a change-of-control (or change in ownership/control) provision?"),
     "whose": ("enum", ["us", "them", "either"], "Whose change of control is covered: our party, the counterparty, or either?"),
-    "triggers": ("set", ["ownership_threshold", "retained_stake", "management_change", "transaction_type", "open_textured",
-                         "parent_direct_ownership", "cross_reference", "undefined"],
-                 "What counts as a change of control: a percentage acquired (ownership_threshold); owners keeping less than a "
-                 "percentage (retained_stake); change of management/board (management_change); a type of deal such as merger "
-                 "or asset sale regardless of percentage (transaction_type); vague words like significant/material/unacceptable "
-                 "(open_textured); parent stops owning the borrower directly (parent_direct_ownership); defined in another "
-                 "document (cross_reference); the term is used but no definition can be found (undefined)."),
+    "triggers": ("set", ["ownership_threshold", "retained_stake", "competitor_stake", "management_change", "transaction_type",
+                         "open_textured", "parent_direct_ownership", "cross_reference", "undefined"],
+                 "What counts as a change of control. Give every kind that the clause or its definition lists: "
+                 "ownership_threshold = one person or group acquires a percentage of the voting power or shares; "
+                 "retained_stake = the existing owners keep less than a percentage; "
+                 "competitor_stake = a competitor of the other party acquires a stake at or above a small percentage, often "
+                 "described as a stake that must be publicly disclosed under the securities rules (13d-1 in the US means 5%); "
+                 "management_change = the board, the management team, or a named key leadership position changes; "
+                 "transaction_type = a kind of deal such as merger or asset sale counts whatever the percentage; "
+                 "open_textured = vague words such as significant, material, major or unacceptable; "
+                 "parent_direct_ownership = a parent stops owning the borrower directly; "
+                 "cross_reference = the definition sits in another document; "
+                 "undefined = the term is used but no definition can be found."),
     "threshold_pct": ("num", None, "Ownership percentage that triggers it (ownership_threshold)."),
+    "competitor_threshold_pct": ("num", None, "Percentage a competitor must acquire (competitor_stake). Use 5 when the text only refers to a "
+                                 "stake that must be publicly disclosed under 13d-1."),
     "threshold_op": ("enum", ["gt", "gte"], "'more than X%' = gt; 'X% or more' / 'at least' = gte."),
     "retained_holder": ("enum", ["sponsors", "original_owners", "principal_owners", "none"], "Whose retained stake is tested (retained_stake)."),
     "retained_pct": ("num", None, "Percentage the retained holder must keep."),
@@ -47,11 +55,16 @@ COC = {
     "post_ipo_threshold_pct": ("num", None, "After a Qualifying IPO, percentage held by one person that counts as a change of control."),
     "post_ipo_relative_to_retained": ("enum", YN, "After a Qualifying IPO the holder must also hold at least as much as the retained holder."),
     "carve_outs": ("set", ["same_management", "qualifying_ipo", "prior_holders_keep_50", "consented", "non_competitor"],
-                   "Exceptions: same management team stays; Qualifying IPO; prior holders keep >= 50% of the successor; "
-                   "counterparty consented in writing; acquirer is not a competitor."),
+                   "Exceptions that make the event not a change of control: same_management = the same management team stays; "
+                   "qualifying_ipo = a Qualifying IPO; prior_holders_keep_50 = prior holders keep at least 50% of the successor; "
+                   "consented = the clause says the change of control does not occur (or does not count) if the other party "
+                   "consented in writing first; non_competitor = the acquirer is not a competitor. If prior consent only removes one "
+                   "effect, such as the termination right, use unless_consented on that effect instead of this carve-out."),
     "open_texture": ("enum", ["judgement", "magnitude", "other"], "For open_textured: counterparty's judgement/opinion standard, or a magnitude word (significant/material)."),
     "effects": ("effects", None, "What the clause does on a change of control. One entry per effect. notice_n/notice_unit = days or "
-                "months (days, months, business_days) within which a notice or termination must be given or takes effect."),
+                "months (days, months, business_days) within which a notice or termination must be given or takes effect. "
+                "effect_holder = who may use or must perform the effect. unless_consented = true when prior written consent of the "
+                "other party removes this effect only (the other effects stay)."),
     "definition_location": ("enum", ["in_clause", "elsewhere_in_contract", "elsewhere_not_located", "other_document"], "Where the change-of-control definition is."),
 }
 ASSIGN = {
@@ -80,7 +93,7 @@ TERM = {
     "notice_n": ("num", None, "Notice period to stop renewal or exit (number)."),
     "notice_unit": ("enum", ["days", "months", "business_days", "missing_unit"], "Unit of that notice; 'missing_unit' if the number has no unit."),
 }
-SPEC = {"coc": COC, "assign": ASSIGN, "term": TERM}
+ATOMS = {"coc": COC, "assign": ASSIGN, "term": TERM}
 INTRO = {"coc": "change of control", "assign": "assignment", "term": "term and renewal"}
 
 # keyword -> weight; a sentence's score is the sum over distinct keywords it contains
@@ -112,18 +125,19 @@ def schema(template):
         if kind == "set":
             return {"type": "array", "items": {"type": "string", "enum": vals}}
         eff = {"effect": {"type": "string", "enum": EFFECTS}, "effect_holder": {"type": ["string", "null"], "enum": ["us", "them", "either", None]},
-               "notice_n": {"type": ["number", "null"]}, "notice_unit": {"type": ["string", "null"], "enum": ["days", "months", "business_days", None]}}
+               "notice_n": {"type": ["number", "null"]}, "notice_unit": {"type": ["string", "null"], "enum": ["days", "months", "business_days", None]},
+               "unless_consented": {"type": "boolean"}}
         return {"type": "array", "items": {"type": "object", "properties": eff, "required": list(eff), "additionalProperties": False}}
     props = {k: {"type": "object", "properties": {"status": {"type": "string", "enum": STATUSES},
                                                  "sids": {"type": "array", "items": {"type": "integer"}},
                                                  "value": vt(kind, vals)},
                  "required": ["status", "sids", "value"], "additionalProperties": False}
-             for k, (kind, vals, _) in SPEC[template].items()}
+             for k, (kind, vals, _) in ATOMS[template].items()}
     return {"type": "object", "properties": props, "required": list(props), "additionalProperties": False}
 
 
 def system_prompt(template):
-    lines = "\n".join(f"- {k} ({kind}{': ' + '/'.join(vals) if vals else ''}): {q}" for k, (kind, vals, q) in SPEC[template].items())
+    lines = "\n".join(f"- {k} ({kind}{': ' + '/'.join(vals) if vals else ''}): {q}" for k, (kind, vals, q) in ATOMS[template].items())
     return (f"You extract facts about the {INTRO[template]} provisions of ONE contract from numbered sentences. "
             "You do not decide legal outcomes. For every atom return status, sids and value.\n"
             "status: known = the cited sentences state it; silent = the sentences you were given say nothing about it; "
@@ -135,9 +149,10 @@ def system_prompt(template):
             f"Atoms:\n{lines}")
 
 
-def user_prompt(title, sents):
+def user_prompt(title, sents, party=None):
     body = "\n".join(f"[{sid}] {t[:MAXLEN]}" for sid, t in sents)
-    return (f"Contract: {title}\n'us' = the company named in the contract title above (the party whose portfolio this is); "
+    us = party or "the company named in the contract title"
+    return (f"Contract: {title}\n'us' = {us} (the party whose portfolio this is, as the contract names it); "
             f"'them' = the other party.\n\nSentences:\n{body}")
 
 
@@ -220,7 +235,7 @@ def dates(text):
 
 
 UNIT_STEM = {"days": "day", "months": "month", "years": "year", "business_days": "business"}
-NUM_KEYS = {"threshold_pct", "retained_pct", "qipo_threshold", "post_ipo_threshold_pct", "initial_term_n", "renewal_term_n", "notice_n"}
+NUM_KEYS = {"threshold_pct", "competitor_threshold_pct", "retained_pct", "qipo_threshold", "post_ipo_threshold_pct", "initial_term_n", "renewal_term_n", "notice_n"}
 
 
 def value_matches_text(key, value, text):
@@ -232,13 +247,24 @@ def value_matches_text(key, value, text):
         return value == "on_execution" or value in dates(text)
     if key.endswith("_unit"):
         return value in (None, "redacted", "missing_unit") or UNIT_STEM[value] in low
-    if key == "effects":
-        for e in value:
-            if e["notice_n"] is not None and float(e["notice_n"]) not in numbers(text):
-                return False
-            if e["notice_unit"] and UNIT_STEM[e["notice_unit"]] not in low:
-                return False
     return True
+
+
+def periods(text):
+    """Notice periods the text states, as (n, unit) with unit days / business_days / months: 'sixty (60) days' -> (60.0, 'days')."""
+    out = set()
+    low = text.lower()
+    unit = r"(business\s+days?|days?|months?)"
+
+    def u(w):
+        return "business_days" if w.startswith("business") else ("days" if w.startswith("day") else "months")
+    for m in re.finditer(r"(\d[\d,]*(?:\.\d+)?)\)?\s*" + unit, low):
+        out.add((float(m.group(1).replace(",", "")), u(m.group(2))))
+    for m in re.finditer(r"\b([a-z]+(?:[- ][a-z]+)?)\s+(?:\(\d+\)\s*)?" + unit, low):
+        ns = numbers(m.group(1))
+        if len(ns) == 1:
+            out.add((ns.pop(), u(m.group(2))))
+    return out
 
 
 # ---- per-run validation and voting ---------------------------------------------------------------------------------
@@ -250,7 +276,7 @@ def canon(v):
 def clean_run(template, raw, cand):
     """Validate one model answer: sids exist and are candidates, known atoms are cited, numbers match the text."""
     out = {}
-    for key, (kind, _, _) in SPEC[template].items():
+    for key, (kind, _, _) in ATOMS[template].items():
         a = raw[key]
         st, sids, val = a["status"], [s for s in a["sids"] if s in cand], a["value"]
         if st == "known":
@@ -260,16 +286,48 @@ def clean_run(template, raw, cand):
                 st = "unknown"
             elif not value_matches_text(key, val, " ".join(cand[s] for s in sids)):
                 st = "unknown"
+            elif key == "effects":      # a notice the cited text does not state is dropped; the effect itself stays
+                per = periods(" ".join(cand[s] for s in sids))
+                val = [e if (e["notice_n"], e["notice_unit"]) in per else {**e, "notice_n": None, "notice_unit": None} for e in val]
         if st != "known":
             val, sids = None, []
         out[key] = {"status": st, "value": val, "sids": sids}
     return out
 
 
-def vote(template, runs):
-    """Majority over the k runs, per atom: >= 2 identical (status, value) wins, else unknown."""
+def vote_effects(runs, text):
+    """Per-field vote on the effects atom. A kind of effect is kept when >= 2 runs list it; its holder and consent flag are
+    voted separately (a field without a majority stays None); the notice period is one the cited text states, read by code."""
+    known = [r for r in runs if r["status"] == "known"]
+    first = [{e["effect"]: e for e in reversed(r["value"])} for r in known]
+    kinds = [c for c, n in Counter(c for f in first for c in f).most_common() if n >= 2]
+    if len(known) < 2 or not kinds:
+        return None
+    sids = sorted({s for r in known for s in r["sids"]})
+    per = periods(" ".join(text[s] for s in sids if s in text))
+
+    def major(vals):
+        if not vals:
+            return None
+        v, n = Counter(vals).most_common(1)[0]
+        return v if n >= 2 else None
+    value = []
+    for c in kinds:
+        es = [f[c] for f in first if c in f]
+        prop = Counter((e["notice_n"], e["notice_unit"]) for e in es if e["notice_n"] is not None and (e["notice_n"], e["notice_unit"]) in per)
+        n, u = prop.most_common(1)[0][0] if prop else (None, None)
+        value.append({"effect": c, "effect_holder": major([e["effect_holder"] for e in es if e["effect_holder"]]),
+                      "notice_n": n, "notice_unit": u, "unless_consented": major([e["unless_consented"] for e in es])})
+    return {"status": "known", "value": value, "k_agree": len(known), "sids": sids}
+
+
+def vote(template, runs, text=None):
+    """Majority over the k runs, per atom: >= 2 identical (status, value) wins, else unknown. Effects are voted per field."""
     out = {}
-    for key in SPEC[template]:
+    for key in ATOMS[template]:
+        if key == "effects" and (v := vote_effects([r[key] for r in runs], text or {})):
+            out[key] = v
+            continue
         cnt = Counter((r[key]["status"], canon(r[key]["value"])) for r in runs)
         (st, cv), n = cnt.most_common(1)[0]
         if n < 2:
@@ -286,11 +344,18 @@ SUPPORT_SCHEMA = {"type": "object", "properties": {"checks": {"type": "array", "
     "required": ["key", "supported"], "additionalProperties": False}}}, "required": ["checks"], "additionalProperties": False}
 
 
+def claim(key, value):
+    """What the checker is shown. For effects only the fields that were decided: empty fields are not claims."""
+    if key != "effects":
+        return value
+    return [{f: v for f, v in e.items() if v not in (None, False)} for e in value]
+
+
 def support_check(template, atoms, text, **kw):
     items = [(k, a) for k, a in atoms.items() if a["status"] == "known"]
     if not items:
         return {}, []
-    blocks = "\n\n".join(f"Check {k}\nQuestion: {SPEC[template][k][2]}\nClaimed answer: {json.dumps(a['value'])}\n"
+    blocks = "\n\n".join(f"Check {k}\nQuestion: {ATOMS[template][k][2]}\nClaimed answer: {json.dumps(claim(k, a['value']))}\n"
                          f"Text:\n" + "\n".join(f"- {text[s][:MAXLEN]}" for s in a["sids"]) for k, a in items)
     r = llm.ask(llm.CHECKER, "You verify claims against contract text. For each check, answer yes only if the given text itself "
                 "states the claimed answer to the question; otherwise no. Answer for every check, using its key.",
@@ -308,6 +373,7 @@ def _needed(template, v):
         t = v.get("triggers") or []
         need += (["threshold_pct", "threshold_op"] if "ownership_threshold" in t else [])
         need += (["retained_holder", "retained_pct"] if "retained_stake" in t else [])
+        need += (["competitor_threshold_pct"] if "competitor_stake" in t else [])
         need += (["transaction_types"] if "transaction_type" in t else [])
         need += (["open_texture"] if "open_textured" in t else [])
         if v.get("qipo_test") == "proceeds":
@@ -335,7 +401,7 @@ def assemble(template, atoms, guard_hit=False):
         if k not in ok:
             bad.append(f"{k} is {atoms[k]['status']}")
     if template == "coc":
-        for k in ("whose", "threshold_pct", "threshold_op", "retained_holder", "retained_pct", "transaction_types", "carve_outs",
+        for k in ("whose", "threshold_pct", "competitor_threshold_pct", "threshold_op", "retained_holder", "retained_pct", "transaction_types", "carve_outs",
                   "open_texture", "definition_location", "post_ipo_threshold_pct"):
             if k in ok:
                 a[k] = ok[k]
@@ -346,12 +412,19 @@ def assemble(template, atoms, guard_hit=False):
         if "qipo_test" in ok:
             a["qualifying_ipo"] = {"test": ok["qipo_test"], **({"threshold": ok["qipo_threshold"]} if "qipo_threshold" in ok else {})}
         effs = [{"effect": e["effect"], **({"effect_holder": e["effect_holder"]} if e["effect_holder"] else {}),
-                 **({"notice": [e["notice_n"], e["notice_unit"]]} if e["notice_n"] is not None and e["notice_unit"] else {})}
+                 **({"notice": [e["notice_n"], e["notice_unit"]]} if e["notice_n"] is not None and e["notice_unit"] else {}),
+                 **({"unless_consented": True} if e.get("unless_consented") else {})}
                 for e in ok.get("effects", [])]
-        if len(effs) == 1:
+        for e in ok.get("effects", []):
+            if e.get("unless_consented") is None:       # votes split: the rules must not guess whether consent matters
+                bad.append(f"unless_consented is unknown for {e['effect']}")
+        if len(effs) == 1 and not effs[0].get("unless_consented"):
             a.update(effs[0])
         elif effs:
             a["effects"] = effs
+        gaps = [f"effect_holder unknown for {e['effect']}" for e in ok.get("effects", []) if not e["effect_holder"]]
+        if gaps:
+            a["_partial"] = gaps
     elif template == "assign":
         for k in ("restricted", "consent_needed"):
             if k in ok:
@@ -380,20 +453,20 @@ def assemble(template, atoms, guard_hit=False):
 
 # ---- driver ----------------------------------------------------------------------------------------------------------
 
-def compile_one(con_path, cid, template, title, cache_dir, use_cache):
+def compile_one(con_path, cid, template, title, cache_dir, use_cache, party=None, budget=llm.BUDGET_USD):
     con = sqlite3.connect(con_path)
     sents = retrieve(con, cid, template)
     full = " ".join(t for _, t in con.execute("SELECT sid, text FROM sentence WHERE contract_id=?", (cid,)))
     con.close()
     guard_hit = bool(re.search(GUARD[template], full, re.I))
-    absent = {k: {"status": "silent", "value": None, "sids": [], "k_agree": 0} for k in SPEC[template]}
+    absent = {k: {"status": "silent", "value": None, "sids": [], "k_agree": 0} for k in ATOMS[template]}
     if not sents:
         return dict(atoms=absent, support={}, guard=guard_hit, cands=[], calls=[])
     cand = dict(sents)
-    kw = dict(cache_dir=cache_dir, use_cache=use_cache)
-    sch, sysm, usr = schema(template), system_prompt(template), user_prompt(title, sents)
+    kw = dict(cache_dir=cache_dir, use_cache=use_cache, budget=budget)
+    sch, sysm, usr = schema(template), system_prompt(template), user_prompt(title, sents, party)
     calls = [llm.ask(llm.ANSWERER, sysm, usr, sch, seed=i, temperature=TEMP, prompt_version=PROMPT_VERSION, **kw) for i in range(K_RUNS)]
-    atoms = vote(template, [clean_run(template, c["data"], cand) for c in calls])
+    atoms = vote(template, [clean_run(template, c["data"], cand) for c in calls], cand)
     support, sc = support_check(template, atoms, cand, **kw)
     for k, ok in support.items():
         if not ok:
@@ -411,32 +484,36 @@ def gold_key(cid):
     return "cuad:" + cid
 
 
-def run(only="", run_name="main", dry=False, workers=6):
+PORTFOLIO = json.loads((ROOT / "cases" / "portfolio.json").read_text(encoding="utf-8"))["contracts"]
+
+
+def run(only="", run_name="main", dry=False, workers=6, extra_budget=3.0):
     cache_dir = llm.CACHE if run_name == "main" else ROOT / "out" / f"cache_{run_name}"
+    budget = llm.spent() + extra_budget          # a cap on what this run may add
     con = sqlite3.connect(DB)
-    contracts = [r for r in con.execute("SELECT id, title FROM contract ORDER BY id") if r[0].startswith(only)]
+    contracts = [r for r in con.execute("SELECT id, title FROM contract ORDER BY id") if r[0].startswith(only) and r[0] in PORTFOLIO]
     con.execute("CREATE TABLE IF NOT EXISTS atom(run TEXT, contract_id TEXT, template TEXT, key TEXT, value TEXT, status TEXT, "
                 "sids TEXT, models TEXT, k_agree INTEGER, support_ok INTEGER, PRIMARY KEY(run, contract_id, template, key))")
     if dry:
         chars = 0
         for cid, title in contracts:
-            for t in SPEC:
-                chars += len(system_prompt(t)) + len(user_prompt(title, retrieve(con, cid, t)))
+            for t in ATOMS:
+                chars += len(system_prompt(t)) + len(user_prompt(title, retrieve(con, cid, t), PORTFOLIO[cid]["our_party"]))
         tin = chars / 4 * (K_RUNS + 0.5)
         tout = len(contracts) * 3 * 900 * (K_RUNS + 0.3)
         print(f"{len(contracts)} contracts x 3 templates: ~{tin / 1e6:.2f}M input tokens, ~{tout / 1e6:.2f}M output tokens, "
               f"est. cost ${tin * 0.3e-6 + tout * 1.3e-6:.2f} (upper-end prices)")
         return
     t0 = time.time()
-    jobs = [(cid, t, title) for cid, title in contracts for t in SPEC]
+    jobs = [(cid, t, title) for cid, title in contracts for t in ATOMS]
     def safe(j):
         try:
-            return compile_one(DB, j[0], j[1], j[2], cache_dir, run_name == "main")
+            return compile_one(DB, j[0], j[1], j[2], cache_dir, run_name == "main", PORTFOLIO[j[0]]["our_party"], budget)
         except llm.BudgetExceeded:
             raise
         except Exception as e:      # a failed call leaves the family unknown, never silent
             print("FAILED", j[0], j[1], type(e).__name__, str(e)[:120])
-            return dict(atoms={k: {"status": "unknown", "value": None, "sids": [], "k_agree": 0} for k in SPEC[j[1]]},
+            return dict(atoms={k: {"status": "unknown", "value": None, "sids": [], "k_agree": 0} for k in ATOMS[j[1]]},
                         support={}, guard=False, cands=[], calls=[])
     with ThreadPoolExecutor(workers) as ex:
         res = list(ex.map(safe, jobs))
@@ -470,7 +547,7 @@ def _check():
     cand = {1: "Either party may terminate on a change of control of fifty percent (50%) or more."}
     raw = {k: {"status": "silent", "sids": [], "value": None} for k in COC}
     raw["threshold_pct"] = {"status": "known", "sids": [1], "value": 50}
-    raw["effects"] = {"status": "known", "sids": [1], "value": [{"effect": "termination_right", "effect_holder": "them", "notice_n": None, "notice_unit": None}]}
+    raw["effects"] = {"status": "known", "sids": [1], "value": [{"effect": "termination_right", "effect_holder": "them", "notice_n": None, "notice_unit": None, "unless_consented": False}]}
     raw["carve_outs"] = {"status": "known", "sids": [9], "value": ["consented"]}       # sid not a candidate
     r = clean_run("coc", raw, cand)
     assert r["threshold_pct"]["status"] == "known" and r["carve_outs"]["status"] == "unknown"
@@ -482,6 +559,15 @@ def _check():
     atoms["present"] = {"status": "known", "value": "yes", "sids": [1], "k_agree": 3}
     assert assemble("coc", atoms)["_unknown"], "missing whose/triggers must block the rules"
     assert assemble("coc", {**atoms, "present": {"status": "known", "value": "no", "sids": [1], "k_agree": 3}}) is None
+    assert {(60.0, "days"), (3.0, "business_days"), (6.0, "months")} <= periods("within sixty (60) days, three (3) Business Days or 6 months")
+    eff = lambda h, n, u, c=False: {"effect": "termination_right", "effect_holder": h, "notice_n": n, "notice_unit": u, "unless_consented": c}
+    txt = {1: "may terminate on 180 days notice"}
+    mk = lambda e: {"status": "known", "value": [e], "sids": [1]}
+    v = vote_effects([mk(eff("them", 180, "days")), mk(eff("them", 90, "days")), mk(eff("us", None, None))], txt)["value"][0]
+    assert v["effect_holder"] == "them" and (v["notice_n"], v["notice_unit"]) == (180, "days") and v["unless_consented"] is False
+    v = vote_effects([mk(eff("them", None, None)), mk(eff("us", None, None)), {"status": "silent", "value": None, "sids": []}], txt)["value"][0]
+    assert v["effect_holder"] is None, "split holder stays unknown while the effect is known"
+    assert vote_effects([mk(eff("them", None, None))] + [{"status": "silent", "value": None, "sids": []}] * 2, txt) is None
     print("compile self-check ok")
 
 

@@ -156,3 +156,53 @@ def term_reactions(a: dict, s: State) -> list[Reaction]:
 
 
 TEMPLATES = {"coc": coc_reactions, "assign": assign_reactions, "term": term_reactions}
+
+
+# ---------------- rules on partly known atoms ----------------
+# Atoms with a closed list of values can be tried one by one. Numbers, dates and effects cannot: they stay unknown.
+POWER = {"triggers": ["ownership_threshold", "retained_stake", "competitor_stake", "management_change", "transaction_type",
+                      "open_textured", "parent_direct_ownership", "cross_reference", "undefined"],
+         "transaction_types": ["merger", "consolidation", "asset_sale", "reorganization", "share_sale"],
+         "carve_outs": ["same_management", "qualifying_ipo", "prior_holders_keep_50", "consented", "non_competitor"]}
+CHOICE = {"whose": ["us", "them", "either"], "threshold_op": ["gt", "gte"], "open_texture": ["judgement", "magnitude", "other"],
+          "retained_holder": ["sponsors", "original_owners", "principal_owners", "none"],
+          "restricted": [True, False], "consent_needed": [True, False],
+          "mode": ["auto", "evergreen", "option", "mutual", "conditional", "none"]}
+MAX_READINGS = 5000
+
+
+def _subsets(items, allow_empty):
+    from itertools import combinations
+    return [list(c) for n in range(0 if allow_empty else 1, len(items) + 1) for c in combinations(items, n)]
+
+
+def react(template: str, family: dict, s: State) -> list[Reaction]:
+    """Reactions of one compiled family. `_unknown` lists blockers as 'atom is status'. Each blocker with a closed list of values is
+    tried with every value; a firm answer is returned only when all readings give the same reactions, else NEEDS_LAWYER."""
+    blockers = family.get("_unknown", [])
+    base = {k: v for k, v in family.items() if not k.startswith("_")}
+    if not blockers:
+        return TEMPLATES[template](base, s)
+    if template != "term" and not s.mechanism:
+        return [Reaction("NOT_TRIGGERED", reason="event changes no ownership")]
+    keys = [b.split(" is ")[0] for b in blockers]
+    why = "; ".join(blockers)
+    if any(k not in CHOICE and k not in POWER or b.endswith("refers_to_missing") for k, b in zip(keys, blockers)):
+        return [Reaction("NEEDS_LAWYER", reason=f"{template}: {why}")]
+    options = [[(k, v) for v in (CHOICE[k] if k in CHOICE else _subsets(POWER[k], k == "carve_outs"))] for k in keys]
+    n = 1
+    for o in options:
+        n *= len(o)
+    if n > MAX_READINGS:
+        return [Reaction("NEEDS_LAWYER", reason=f"{template}: too many readings ({why})")]
+    from itertools import product
+    seen = {}
+    for combo in product(*options):
+        try:
+            rs = TEMPLATES[template]({**base, **dict(combo)}, s)
+        except (KeyError, TypeError, ValueError):      # this reading needs a number or date that is not known
+            rs = [Reaction("NEEDS_LAWYER", reason="a needed value is unknown")]
+        seen.setdefault(tuple((r.status, r.kind, r.holder, r.due) for r in rs), (combo, rs))
+    if len(seen) == 1:
+        return next(iter(seen.values()))[1]
+    return [Reaction("NEEDS_LAWYER", reason=f"{template}: depends on {' and '.join(keys)}")]

@@ -2,7 +2,7 @@
 import csv, itertools, os
 from datetime import date
 from twin.core import State, apply, K, k_and, k_or, k_not
-from twin.rules import coc_reactions, assign_reactions, term_reactions
+from twin.rules import coc_reactions, assign_reactions, term_reactions, react
 
 os.makedirs("out", exist_ok=True)
 ORDER = {"NOT_TRIGGERED": 0, "NEEDS_LAWYER": 1, "TRIGGERED": 2}
@@ -67,6 +67,20 @@ for coc_na, deems, mexc, unl, ev in itertools.product([False, True], [[], ["merg
     assert not (coc_na and ev["event"] == "share_sale" and r.status != "NOT_TRIGGERED")
 with open("out/truth_assign.csv", "w", newline="") as f:
     csv.writer(f).writerows([["coc_not_assignment", "deems", "merger_exception", "unless_competitor", "event", "competitor", "status", "reason"]] + arows)
+# --- rules on partly known atoms: a firm answer only when every reading agrees ---
+base = dict(triggers=["ownership_threshold"], threshold_pct=50, threshold_op="gte", effect="termination_right", effect_holder="them")
+sale60 = apply(State(), {"event": "share_sale", "buyer_pct": 60})
+r = react("coc", {**base, "_unknown": ["whose is unknown"]}, sale60)
+assert [x.status for x in r] == ["NEEDS_LAWYER"] and "whose" in r[0].reason
+assert react("coc", {**base, "whose": "us"}, sale60)[0].status == "TRIGGERED"
+assert react("coc", {**base, "_unknown": ["threshold_pct is unknown"]}, sale60)[0].status == "NEEDS_LAWYER"   # numbers stay unknown
+open_t = dict(triggers=["open_textured"], effect="termination_right", effect_holder="them", _unknown=["open_texture is unknown"])
+assert react("coc", {**open_t, "whose": "us"}, sale60)[0].status == "NEEDS_LAWYER"                  # judgement and magnitude differ
+assert react("coc", {**open_t, "whose": "them"}, sale60)[0].status == "NOT_TRIGGERED"               # every reading agrees
+assert react("coc", {**open_t, "whose": "us"}, State())[0].status == "NOT_TRIGGERED"                # no ownership event
+assert react("assign", dict(deems=["merger"], _unknown=["consent_needed is unknown"]), sale60)[0].status == "NOT_TRIGGERED"   # rules never read it
+assert react("coc", {**base, "whose": "us", "_unknown": ["effects is unknown"]}, sale60)[0].status == "NEEDS_LAWYER"
+
 print(f"all tests pass; truth_coc.csv {len(rows)} rows, truth_assign.csv {len(arows)} rows")
 
 # reviewable view: keep only the columns each trigger kind actually reads, then dedupe
