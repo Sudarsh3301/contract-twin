@@ -5,6 +5,7 @@ answer (cited sentences, numbers, dates), a second model checks support, and wea
     python -m twin.compile --only ipayment       # contracts whose id starts with the text
     python -m twin.compile [--run run2]          # all contracts; a new --run name uses a fresh cache
     python -m twin.compile --check               # offline self-check
+    python -m twin.compile --lang ar --budget 1  # the Arabic contracts -> out/compiled_atoms_ar.json
 Writes the atom table in data/twin.sqlite and out/compiled_atoms[_<run>].json (same shape as cases/gold_atoms.json).
 """
 import argparse
@@ -100,17 +101,21 @@ INTRO = {"coc": "change of control", "assign": "assignment", "term": "term and r
 KEYWORDS = {
     "coc": {r"change\s+(of|in)\s+(control|ownership)": 5, r"control": 2, r"merg|consolidat": 2, r"acqui": 2, r"ownership": 2,
             r"voting": 1, r"beneficial": 1, r"sale\s+of\s+(all|substantially)": 2, r"reorganiz": 1, r"shares|equity|stock": 1,
-            r"assign|transfer": 1, r"تغيير\s+السيطرة|السيطرة|اندماج|استحواذ|ملكية": 3},
+            r"assign|transfer": 1, r"تغيير\s+السيطرة|السيطرة|اندماج|استحواذ|ملكية": 3,
+            r"تغيير\s+(في\s+)?(السيطرة|الملكية)": 5, r"يندمج|الدمج|يتحد|بيع\s+جميع": 2,
+            r"التصويت|الأوراق\s+المالية|الأسهم|حصص": 1, r"إنهاء|ينتهي|المناصب\s+القيادية|مجلس\s+(ال)?إدارة": 1},
     "assign": {r"assign": 5, r"transfer": 2, r"operation\s+of\s+law": 4, r"delegat": 2, r"successor": 1, r"merg|consolidat": 1,
-               r"sublicen": 1, r"consent": 1, r"تنازل|إحالة|نقل\s+الحقوق": 3},
+               r"sublicen": 1, r"consent": 1, r"تنازل|إحالة|نقل\s+الحقوق": 3, r"تفويض|تحويل|نقل|بحكم\s+القانون": 2,
+               r"الدمج|يندمج|اندماج": 1},
     "term": {r"renew": 5, r"expir": 4, r"initial\s+term": 5, r"\bterm\b": 1, r"extend|extension": 2, r"terminat": 1, r"notice": 1,
-             r"effective\s+date": 2, r"commenc": 1, r"\byears?\b|\bmonths?\b": 1, r"تجديد|انتهاء|مدة|سريان": 3},
+             r"effective\s+date": 2, r"commenc": 1, r"\byears?\b|\bmonths?\b": 1, r"تجديد|انتهاء|مدة|سريان": 3,
+             r"يتجدد|تمديد|تستمر|المدة\s+الأولية|تاريخ\s+(النفاذ|السريان)": 3, r"إشعار": 1},
 }
 # strong words: a hit anywhere in the contract means "silent" cannot be trusted
 GUARD = {
-    "coc": r"change\s+(of|in)\s+(control|ownership)|controlling\s+interest|sale\s+of\s+(all|substantially)|voting\s+(stock|securities|shares)|(merger|consolidation)\s+(of|with)|تغيير\s+السيطرة",
-    "assign": r"assign|تنازل",
-    "term": r"renew|expir|initial\s+term|تجديد|انتهاء",
+    "coc": r"change\s+(of|in)\s+(control|ownership)|controlling\s+interest|sale\s+of\s+(all|substantially)|voting\s+(stock|securities|shares)|(merger|consolidation)\s+(of|with)|تغيير\s+(في\s+)?(السيطرة|الملكية)",
+    "assign": r"assign|تنازل|تفويض",
+    "term": r"renew|expir|initial\s+term|تجديد|انتهاء|يتجدد|تمديد",
 }
 
 
@@ -180,6 +185,15 @@ WORDS = {w: i for i, w in enumerate("zero one two three four five six seven eigh
 WORDS.update({w: 20 + 10 * i for i, w in enumerate("twenty thirty forty fifty sixty seventy eighty ninety".split())})
 SCALE = {"thousand": 1e3, "million": 1e6, "billion": 1e9}
 MONTHS = {m: i + 1 for i, m in enumerate("jan feb mar apr may jun jul aug sep oct nov dec".split())}
+AR_WORDS = {"واحد": 1, "واحدة": 1, "اثنين": 2, "اثنان": 2, "سنتين": 2, "شهرين": 2, "يومين": 2, "ثلاث": 3, "ثلاثة": 3,
+            "أربع": 4, "أربعة": 4, "خمس": 5, "خمسة": 5, "ست": 6, "ستة": 6, "سبع": 7, "سبعة": 7, "ثمان": 8, "ثماني": 8,
+            "ثمانية": 8, "تسع": 9, "تسعة": 9, "عشر": 10, "عشرة": 10, "عشرين": 20, "عشرون": 20, "ثلاثين": 30, "ثلاثون": 30,
+            "أربعين": 40, "أربعون": 40, "خمسين": 50, "خمسون": 50, "ستين": 60, "ستون": 60, "سبعين": 70, "سبعون": 70,
+            "ثمانين": 80, "ثمانون": 80, "تسعين": 90, "تسعون": 90, "مئة": 100, "مائة": 100}
+AR_MONTHS = {"يناير": 1, "فبراير": 2, "مارس": 3, "أبريل": 4, "إبريل": 4, "مايو": 5, "يونيو": 6, "يونيه": 6, "يوليو": 7,
+             "يوليه": 7, "أغسطس": 8, "سبتمبر": 9, "أكتوبر": 10, "نوفمبر": 11, "ديسمبر": 12}
+AR_UNIT = {"days": r"يوم|أيام", "months": r"شهر|أشهر|شهور", "years": r"سنة|سنوات|سنتين|عام|أعوام",
+           "business_days": r"أيام\s+(تجارية|عمل)"}
 
 
 def numbers(text):
@@ -213,6 +227,14 @@ def numbers(text):
             i = j
         else:
             i += 1
+    # ponytail: Arabic number words one by one (a leading و/ب/ل is stripped); compounds such as "مئة وثمانين" are not
+    # summed, so a value written only in words that way stays unknown. The texts here also give digits.
+    for w in re.findall(r"[\u0621-\u064A]+", text):
+        for t in (w, w[1:] if w[0] in "وبل" else w):
+            if t in AR_WORDS:
+                out.add(float(AR_WORDS[t]))
+    if re.search(r"اثن[يا]\s+عشر", text):
+        out.add(12.0)
     return out
 
 
@@ -225,7 +247,10 @@ def dates(text):
         out.add(f"{m.group(3)}-{MONTHS[m.group(1)]:02d}-{int(m.group(2)):02d}")
     for m in re.finditer(r"(\d{1,2})(?:st|nd|rd|th)?\s+(?:day\s+of\s+)?" + mon + r",?\s+(\d{4})", low):
         out.add(f"{m.group(3)}-{MONTHS[m.group(2)]:02d}-{int(m.group(1)):02d}")
-    for m in re.finditer(r"(\d{1,2})/(\d{1,2})/(\d{2,4})", low):
+    for m in re.finditer("(\\d{1,2})\\s+(" + "|".join(AR_MONTHS) + ")\\s+(?:سنة\\s+)?(\\d{4})", text):
+        out.add(f"{int(m.group(3))}-{AR_MONTHS[m.group(2)]:02d}-{int(m.group(1)):02d}")
+    # a date followed by هـ is Hijri: it is not read as a Gregorian date
+    for m in re.finditer(r"(\d{1,2})/(\d{1,2})/(\d{2,4})(?!\d)(?!\s*ه)", low):
         y = int(m.group(3)) + (2000 if len(m.group(3)) == 2 else 0)
         for mo, d in ((m.group(1), m.group(2)), (m.group(2), m.group(1))):
             if 1 <= int(mo) <= 12 and 1 <= int(d) <= 31:
@@ -246,7 +271,7 @@ def value_matches_text(key, value, text):
     if key in ("start", "end_date"):
         return value == "on_execution" or value in dates(text)
     if key.endswith("_unit"):
-        return value in (None, "redacted", "missing_unit") or UNIT_STEM[value] in low
+        return value in (None, "redacted", "missing_unit") or UNIT_STEM[value] in low or bool(re.search(AR_UNIT[value], text))
     return True
 
 
@@ -264,6 +289,10 @@ def periods(text):
         ns = numbers(m.group(1))
         if len(ns) == 1:
             out.add((ns.pop(), u(m.group(2))))
+    # ponytail: Arabic periods are read only when written with digits ("ستين (٦٠) يوماً"); words alone stay unknown
+    for m in re.finditer(r"(\d+)\)?\s*(أيام\s+(?:تجارية|عمل)|يوم|أيام|شهر|أشهر|شهور)", text):
+        w = m.group(2)
+        out.add((float(m.group(1)), "business_days" if re.match(r"أيام\s", w) else "days" if w in ("يوم", "أيام") else "months"))
     return out
 
 
@@ -484,14 +513,17 @@ def gold_key(cid):
     return "cuad:" + cid
 
 
-PORTFOLIO = json.loads((ROOT / "cases" / "portfolio.json").read_text(encoding="utf-8"))["contracts"]
+PORTFOLIO = {k: v for f in ("portfolio.json", "portfolio_ar.json")
+             for k, v in json.loads((ROOT / "cases" / f).read_text(encoding="utf-8"))["contracts"].items()}
 
 
-def run(only="", run_name="main", dry=False, workers=6, extra_budget=3.0):
+def run(only="", run_name="main", dry=False, workers=6, extra_budget=3.0, lang="en"):
     cache_dir = llm.CACHE if run_name == "main" else ROOT / "out" / f"cache_{run_name}"
     budget = llm.spent() + extra_budget          # a cap on what this run may add
     con = sqlite3.connect(DB)
-    contracts = [r for r in con.execute("SELECT id, title FROM contract ORDER BY id") if r[0].startswith(only) and r[0] in PORTFOLIO]
+    contracts = [r for r in con.execute("SELECT id, title FROM contract WHERE language=? ORDER BY id", (lang,))
+                 if r[0].startswith(only) and r[0] in PORTFOLIO]
+    tag = run_name if lang == "en" else f"{run_name}_{lang}"     # atom-table run name; English rows stay untouched
     con.execute("CREATE TABLE IF NOT EXISTS atom(run TEXT, contract_id TEXT, template TEXT, key TEXT, value TEXT, status TEXT, "
                 "sids TEXT, models TEXT, k_agree INTEGER, support_ok INTEGER, PRIMARY KEY(run, contract_id, template, key))")
     if dry:
@@ -518,24 +550,24 @@ def run(only="", run_name="main", dry=False, workers=6, extra_budget=3.0):
     with ThreadPoolExecutor(workers) as ex:
         res = list(ex.map(safe, jobs))
     out, guards, cost = {}, 0, 0.0
-    con.execute("DELETE FROM atom WHERE run=?", (run_name,))
+    con.execute("DELETE FROM atom WHERE run=?", (tag,))
     for (cid, t, _), r in zip(jobs, res):
         models = json.dumps(sorted({f"{c['model']}@{c['provider']}" for c in r["calls"]}))
         fam = assemble(t, r["atoms"], r["guard"])
         if fam and fam.get("_unknown") and fam["_unknown"][0].startswith("silence guard"):
             guards += 1
         if fam is not None:
-            out.setdefault(gold_key(cid), {})[t] = fam
+            out.setdefault(gold_key(cid) if lang == "en" else PORTFOLIO[cid]["src"], {})[t] = fam
         cost += sum(c["cost"] for c in r["calls"] if not c["cached"])
         con.executemany("INSERT INTO atom VALUES(?,?,?,?,?,?,?,?,?,?)", [
-            (run_name, cid, t, k, json.dumps(a["value"]), a["status"], json.dumps(a["sids"]), models, a["k_agree"],
+            (tag, cid, t, k, json.dumps(a["value"]), a["status"], json.dumps(a["sids"]), models, a["k_agree"],
              int(r["support"].get(k, False))) for k, a in r["atoms"].items()])
     con.commit()
     (ROOT / "out").mkdir(exist_ok=True)
-    name = "compiled_atoms.json" if run_name == "main" else f"compiled_atoms_{run_name}.json"
+    name = "compiled_atoms" + ("" if run_name == "main" else f"_{run_name}") + ("" if lang == "en" else f"_{lang}") + ".json"
     (ROOT / "out" / name).write_text(json.dumps(out, indent=1, sort_keys=True), encoding="utf-8")
-    st = Counter(row[0] for row in con.execute("SELECT status FROM atom WHERE run=?", (run_name,)))
-    print(f"run {run_name}: {len(contracts)} contracts, {len(jobs)} families, {time.time() - t0:.0f}s, new spend ${cost:.3f}, "
+    st = Counter(row[0] for row in con.execute("SELECT status FROM atom WHERE run=?", (tag,)))
+    print(f"run {tag}: {len(contracts)} contracts, {len(jobs)} families, {time.time() - t0:.0f}s, new spend ${cost:.3f}, "
           f"total spend ${llm.spent():.3f}, silence guard fired {guards}, atom statuses {dict(st)}")
 
 
@@ -568,6 +600,15 @@ def _check():
     v = vote_effects([mk(eff("them", None, None)), mk(eff("us", None, None)), {"status": "silent", "value": None, "sids": []}], txt)["value"][0]
     assert v["effect_holder"] is None, "split holder stays unknown while the effect is known"
     assert vote_effects([mk(eff("them", None, None))] + [{"status": "silent", "value": None, "sids": []}] * 2, txt) is None
+    # Arabic: Arabic-Indic digits, number words, units, Gregorian month names; a Hijri date is never read as Gregorian
+    assert {50.0, 10.0} <= numbers("لنسبة ٥٠٪ (خمسين في المائة) ... عشر (١٠) سنوات") and 12.0 in numbers("لمدة اثني عشر شهراً")
+    assert 60.0 in numbers("قبل نهاية الفترة بستين (60) يوماً") and 1.0 in numbers("مدة كل منها سنة واحدة")
+    assert dates("الموافق 14/11/1431هـ، الموافق 22/10/2010م") == {"2010-10-22"}
+    assert dates("اعتباراً من ٣ أكتوبر ٢٠١٨م") == {"2018-10-03"} and "2007-01-29" in dates("المؤرخة في 29 يناير 2007")
+    assert dates("اليوم الأول من يونيو سنة 1999") == set(), "an ordinal day is not parsed: the start stays unknown"
+    assert periods("قبل ثلاثين (٣٠) يوماً") == {(30.0, "days")} and (3.0, "business_days") in periods("خلال ثلاثة (3) أيام تجارية")
+    assert (6.0, "months") in periods("قبل ستة (6) أشهر على الأقل") and (180.0, "days") in periods("مئة وثمانين (180) يوماً")
+    assert value_matches_text("initial_term_unit", "years", "لمدة سنتين (2)") and not value_matches_text("notice_unit", "months", "ستين (٦٠) يوماً")
     print("compile self-check ok")
 
 
@@ -578,5 +619,7 @@ if __name__ == "__main__":
     ap.add_argument("--dry", action="store_true")
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--workers", type=int, default=6)
+    ap.add_argument("--lang", default="en", help="contract language in the database: en or ar")
+    ap.add_argument("--budget", type=float, default=3.0, help="USD this run may add to the total spend")
     a = ap.parse_args()
-    _check() if a.check else run(a.only, a.run, a.dry, a.workers)
+    _check() if a.check else run(a.only, a.run, a.dry, a.workers, a.budget, a.lang)

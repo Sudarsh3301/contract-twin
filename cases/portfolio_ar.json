@@ -1,0 +1,13 @@
+{
+ "_note": "Our party per Arabic contract: the same role as the English source for twins and translations. For the curated Gulf forms the role is chosen by us: the tenant (Ejari), the contractor (Balady urban roads) and the supervision consultant (Balady engineering services; this form has no contractor party). src is the key in cases/gold_atoms_ar.json.",
+ "contracts": {
+  "twin_virtualscopics": {"our_party": "شركة فيرتشوال سكوبيكس (\"الشركة\" أو \"الطرف الثاني\")", "src": "ar:twin_virtualscopics", "en_src": "cuad:VirtualScopics", "note": "English: VirtualScopics (VS)"},
+  "twin_zounds": {"our_party": "المصنع (شركة إنرسكوب لتقنيات السمع)", "src": "ar:twin_zounds", "en_src": "cuad:Zounds", "note": "English: the Manufacturer (InnerScope); Zounds is the Subcontractor"},
+  "twin_corio": {"our_party": "كوريو", "src": "ar:twin_corio", "en_src": "cuad:Corio", "note": "English: Corio"},
+  "mt_ipayment": {"our_party": "آي إس أو (ISO)", "src": "ar:mt_ipayment", "en_src": "cuad:iPayment", "note": "English: ISO"},
+  "mt_dyntek": {"our_party": "دبلومات", "src": "ar:mt_dyntek", "en_src": "cuad:DynTek", "note": "English: Diplomat"},
+  "ejari_unified_tenancy_contract": {"our_party": "المستأجر (Tenant)", "src": "ar:ejari_tenancy", "note": "the tenant"},
+  "balady_urban_roads_contract": {"our_party": "المقاول (الطرف الثاني)", "src": "ar:balady_urban_roads", "note": "the contractor"},
+  "balady_engineering_services_contract": {"our_party": "استشاري الإشراف (الطرف الثاني)", "src": "ar:balady_engineering_services", "note": "the supervision consultant (second party)"}
+ }
+}

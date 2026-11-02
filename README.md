@@ -54,6 +54,8 @@ realistic messy input.
 | Ingest | 30 English contracts, 9,753 sentences, offsets exact for all; 205/205 CUAD label pieces located [measured] |
 | Scenario cases on atoms compiled by an open model (DeepSeek V4.1 Flash, Qwen 3.8 27B support check) | 24/37 correct, **0 wrong firm answers**, 13 abstentions (NEEDS_LAWYER) [measured] |
 | Direct-read baseline: same model answers each scenario from the same retrieved text, 3 runs | majority 23/37; 3 wrong firm answers + 9 firm where our labels abstain; same status in all 3 runs for 30/37 [measured] |
+| Arabic (5 twins/translations of English sources, 3 Gulf forms) | same outcome as English on 11/14 scenario runs, 0 wrong firm; a threshold lost in machine translation came back as missing, not invented [measured; consistency, not accuracy] |
+| Review queue (gold atoms play the lawyer) | from compiled atoms, 13 answers raise 24/37 to 31/37; answering blockers can expose wrong atoms elsewhere in the clause, so the path is now confirmed before an outcome turns firm [measured] |
 | Cost (open model via OpenRouter) | compile ~$0.04 per contract once; direct read ~$0.002 per contract per scenario; twin cheaper beyond ~22 scenarios per contract [measured unit costs] |
 
 ## Run
