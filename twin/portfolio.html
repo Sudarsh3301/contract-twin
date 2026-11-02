@@ -8,23 +8,33 @@
 :root {
   --bg: #f6f5f2; --panel: #ffffff; --ink: #1d1d1b; --muted: #66645e; --line: #dcd9d2; --soft: #eeece7;
   --termination: #b3261e; --termination-bg: #fbe3e1;
-  --lawyer: #6a3fa0; --lawyer-bg: #ece3f7;
-  --consent: #a45a00; --consent-bg: #fbe9d2;
   --prepayment: #8a2d6b; --prepayment-bg: #f6dfee;
+  --consent: #a45a00; --consent-bg: #fbe9d2;
   --notice: #1f5fa8; --notice-bg: #dde9f8;
   --deadline: #0f6e66; --deadline-bg: #d8f0ed;
   --other: #55534e; --other-bg: #e9e7e2;
-  --none: #9a978f; --none-bg: transparent;
-  --focus: #1f5fa8;
+  --none: #8c8981; --none-bg: transparent;
+  --blocked: #4d4b46; --blocked-bg: #e2e0da;
+  --counsel: #6a3fa0; --counsel-bg: #ece3f7;
+  --focus: #1f5fa8; --warn: #a45a00; --ok: #0f6e66;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #171716; --panel: #212120; --ink: #ecebe7; --muted: #a8a59d; --line: #3a3936; --soft: #2a2a28;
-    --termination: #ff8a80; --termination-bg: #4a1f1c; --lawyer: #c9a6f5; --lawyer-bg: #36294a;
-    --consent: #ffb866; --consent-bg: #47331a; --prepayment: #f19ad3; --prepayment-bg: #452438;
-    --notice: #8fbaf0; --notice-bg: #1f3350; --deadline: #7fd8cd; --deadline-bg: #173d39;
-    --other: #c4c1ba; --other-bg: #34332f; --none: #77746d; --focus: #8fbaf0;
+    --termination: #ff8a80; --termination-bg: #4a1f1c; --prepayment: #f19ad3; --prepayment-bg: #452438;
+    --consent: #ffb866; --consent-bg: #47331a; --notice: #8fbaf0; --notice-bg: #1f3350;
+    --deadline: #7fd8cd; --deadline-bg: #173d39; --other: #c4c1ba; --other-bg: #34332f; --none: #77746d;
+    --blocked: #c9c6bf; --blocked-bg: #33322f; --counsel: #c9a6f5; --counsel-bg: #36294a;
+    --focus: #8fbaf0; --warn: #ffb866; --ok: #7fd8cd;
   }
+}
+:root[data-theme="dark"] {
+  --bg: #171716; --panel: #212120; --ink: #ecebe7; --muted: #a8a59d; --line: #3a3936; --soft: #2a2a28;
+  --termination: #ff8a80; --termination-bg: #4a1f1c; --prepayment: #f19ad3; --prepayment-bg: #452438;
+  --consent: #ffb866; --consent-bg: #47331a; --notice: #8fbaf0; --notice-bg: #1f3350;
+  --deadline: #7fd8cd; --deadline-bg: #173d39; --other: #c4c1ba; --other-bg: #34332f; --none: #77746d;
+  --blocked: #c9c6bf; --blocked-bg: #33322f; --counsel: #c9a6f5; --counsel-bg: #36294a;
+  --focus: #8fbaf0; --warn: #ffb866; --ok: #7fd8cd;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
@@ -33,72 +43,86 @@ h1 { font-size: 19px; margin: 0 0 2px; letter-spacing: -.01em; }
 h2 { font-size: 16px; margin: 20px 0 8px; }
 h3 { font-size: 14px; margin: 0 0 6px; }
 .sub { color: var(--muted); font-size: 13px; }
-nav { display: flex; gap: 4px; margin-top: 12px; }
+.bar { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 10px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { font: inherit; font-weight: 600; padding: 6px 14px; border: 0; background: var(--panel); color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
+.seg button:disabled { cursor: not-allowed; opacity: .5; }
+.simnote { font-size: 12px; color: var(--warn); font-weight: 600; }
+.stats { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; margin: 8px 0 0; }
+.stats b { font-size: 15px; }
+nav { display: flex; gap: 4px; margin-top: 10px; }
 nav a { padding: 8px 14px; color: var(--muted); text-decoration: none; border-bottom: 3px solid transparent; font-weight: 600; }
 nav a[aria-current="page"] { color: var(--ink); border-color: var(--ink); }
 main { padding: 16px 24px 40px; }
 .summary { list-style: none; padding: 0; margin: 0 0 14px; display: grid; gap: 2px; }
-.summary li { display: grid; grid-template-columns: 260px 1fr auto; gap: 12px; padding: 5px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
-.summary b { font-weight: 600; }
+.summary li { display: grid; grid-template-columns: 250px 1fr auto; gap: 12px; padding: 5px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
 .summary .q { color: var(--muted); font-size: 12px; white-space: nowrap; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 10px; margin: 6px 0 12px; font-size: 12px; color: var(--muted); align-items: center; }
 .tablewrap { overflow: auto; max-height: calc(100vh - 120px); border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
 table.map { border-collapse: separate; border-spacing: 0; font-size: 12px; }
 .map th, .map td { border-bottom: 1px solid var(--line); border-right: 1px solid var(--soft); padding: 0; }
-.map thead th { position: sticky; top: 0; background: var(--panel); z-index: 2; vertical-align: bottom; min-width: 112px; }
-.map th.corner { left: 0; z-index: 3; min-width: 250px; text-align: left; padding: 6px 10px; color: var(--muted); font-weight: 500; }
+.map thead th { position: sticky; top: 0; background: var(--panel); z-index: 2; vertical-align: bottom; min-width: 126px; }
+.map th.corner { left: 0; z-index: 3; min-width: 230px; text-align: left; padding: 6px 10px; color: var(--muted); font-weight: 500; }
 .map tbody th { position: sticky; left: 0; background: var(--panel); z-index: 1; text-align: left; }
 .hbtn { all: unset; cursor: pointer; display: block; padding: 6px 8px; width: 100%; box-sizing: border-box; }
 .hbtn:hover { background: var(--soft); }
 .hbtn:focus-visible, .cell:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 .hbtn .nm { font-weight: 600; display: block; }
-.hbtn .tt { color: var(--muted); display: block; max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 400; }
-.hbtn .arrow { color: var(--muted); font-weight: 400; }
-.cell { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 1px; width: 100%; min-height: 42px; padding: 4px 7px; border-left: 4px solid var(--c); background: var(--cbg); color: var(--c); font-weight: 600; }
+.hbtn .tt { color: var(--muted); display: block; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 400; }
+.cell { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 1px; width: 100%; min-height: 48px; padding: 4px 7px; border-left: 4px solid var(--c); background: var(--cbg); color: var(--c); font-weight: 600; }
 .cell:hover { filter: brightness(.96); }
-.cell .more { font-weight: 500; color: var(--muted); font-size: 11px; }
-.cell.pending { background-image: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in srgb, var(--c) 10%, transparent) 6px 8px); }
-.cell .pend { font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.cell .tag { font-size: 10px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); }
+.cell .cz { font-size: 10px; font-weight: 600; color: var(--muted); }
+.cell .cz .counsel { color: var(--counsel); }
+.cell.prov { border-left-style: dashed; }
+.cell.blk { background-image: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in srgb, var(--blocked) 14%, transparent) 6px 8px); }
+.cell.pending .tag::after { content: " · unconfirmed"; }
 .cell.none { color: var(--none); font-weight: 400; }
 .cell.absent { cursor: default; color: var(--none); font-weight: 400; border-left-color: transparent; }
-.chip { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 700; border: 1px solid var(--c); color: var(--c); background: var(--cbg); }
+.chip { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 700; border: 1px solid var(--c); color: var(--c); background: var(--cbg); white-space: nowrap; }
 .c-termination { --c: var(--termination); --cbg: var(--termination-bg); }
-.c-lawyer { --c: var(--lawyer); --cbg: var(--lawyer-bg); }
-.c-consent { --c: var(--consent); --cbg: var(--consent-bg); }
 .c-prepayment { --c: var(--prepayment); --cbg: var(--prepayment-bg); }
+.c-consent { --c: var(--consent); --cbg: var(--consent-bg); }
 .c-notice { --c: var(--notice); --cbg: var(--notice-bg); }
 .c-deadline { --c: var(--deadline); --cbg: var(--deadline-bg); }
 .c-other { --c: var(--other); --cbg: var(--other-bg); }
 .c-none { --c: var(--none); --cbg: var(--none-bg); }
+.c-blocked { --c: var(--blocked); --cbg: var(--blocked-bg); }
+.c-counsel { --c: var(--counsel); --cbg: var(--counsel-bg); }
 .tools { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; color: var(--muted); font-size: 12px; }
 button.plain { font: inherit; padding: 4px 10px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 6px; cursor: pointer; }
-/* evidence */
-#ev { position: fixed; top: 0; right: 0; bottom: 0; width: min(640px, 100vw); background: var(--panel); border-left: 1px solid var(--line); box-shadow: -8px 0 24px rgba(0,0,0,.12); overflow: auto; padding: 18px 22px 40px; z-index: 10; }
+#ev { position: fixed; top: 0; right: 0; bottom: 0; width: min(660px, 100vw); background: var(--panel); border-left: 1px solid var(--line); box-shadow: -8px 0 24px rgba(0,0,0,.12); overflow: auto; padding: 18px 22px 40px; z-index: 10; }
 #ev[hidden] { display: none; }
 #ev .close { position: sticky; top: 0; float: right; }
 .reaction { border: 1px solid var(--line); border-left: 4px solid var(--c); border-radius: 6px; padding: 10px 12px; margin: 10px 0; }
-.kv { display: grid; grid-template-columns: 110px 1fr; gap: 2px 10px; margin: 6px 0; }
+.kv { display: grid; grid-template-columns: 120px 1fr; gap: 2px 10px; margin: 6px 0; }
 .kv dt { color: var(--muted); }
 .kv dd { margin: 0; }
+.branches { margin: 4px 0 8px; padding-left: 18px; }
+.branches li { margin: 2px 0; }
 table.atoms { width: 100%; border-collapse: collapse; font-size: 12px; margin: 6px 0; }
 .atoms th, .atoms td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--soft); vertical-align: top; }
 .atoms th { color: var(--muted); font-weight: 500; }
 .atoms code { font-size: 11px; word-break: break-word; }
 .atoms td:first-child code { white-space: nowrap; word-break: normal; }
-.warn { color: var(--consent); }
-.ok { color: var(--deadline); }
+.warn { color: var(--warn); }
+.ok { color: var(--ok); }
 blockquote { margin: 6px 0; padding: 6px 10px; border-left: 3px solid var(--line); background: var(--soft); border-radius: 0 4px 4px 0; font-family: Georgia, "Times New Roman", serif; font-size: 13px; }
 blockquote[dir="rtl"] { border-left: 0; border-right: 3px solid var(--line); border-radius: 4px 0 0 4px; font-family: "Segoe UI", Tahoma, "Noto Naskh Arabic", serif; font-size: 15px; line-height: 1.8; }
 blockquote .sid { color: var(--muted); font-family: system-ui, sans-serif; font-size: 11px; }
 .note { color: var(--muted); font-size: 12px; }
-/* queue */
 .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
 .counts { border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); font-size: 12px; }
 .counts th, .counts td { padding: 4px 10px; border-bottom: 1px solid var(--soft); text-align: right; }
 .counts th:first-child, .counts td:first-child { text-align: left; }
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--c); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
 .card .rank { color: var(--muted); font-weight: 600; margin-right: 6px; }
-.card ul { margin: 4px 0; padding-left: 18px; }
+.card .head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.card .head .chip { white-space: normal; text-align: center; }
+.preview { margin: 6px 0 0; padding: 0; list-style: none; font-size: 13px; }
+.preview li { padding: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.preview li b { font-weight: 600; }
 details summary { cursor: pointer; color: var(--muted); font-size: 12px; margin-top: 6px; }
 .big { font-size: 15px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin: 10px 0 16px; }
 @media (max-width: 900px) {
@@ -112,6 +136,8 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12px; margin-
 <header>
   <h1>Contract portfolio: scenario run</h1>
   <div class="sub" id="meta"></div>
+  <div class="bar"><div class="seg" role="group" aria-label="Review state" id="seg"></div><span class="simnote" id="simnote"></span></div>
+  <div class="stats" id="stats"></div>
   <nav><a href="#map" id="nav-map">Exposure map</a><a href="#queue" id="nav-queue">Question queue</a></nav>
 </header>
 <main>
@@ -123,18 +149,25 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12px; margin-
 <script>
 "use strict";
 const D = JSON.parse(document.getElementById("data").textContent);
-const RANK = {termination: 7, lawyer: 6, consent: 5, prepayment: 4, notice: 3, deadline: 2, other: 1, none: 0};
-const CLASS_LABEL = {termination: "termination right", lawyer: "NEEDS_LAWYER", consent: "consent", prepayment: "prepayment",
-                     notice: "notice", deadline: "deadline", other: "other", none: "none"};
 const TEMPLATE = {coc: "change of control", assign: "assignment", term: "term and renewal"};
+const STATUS = {firm: "Firm", provisional: "Provisional (worst case)", blocked: "Blocked"};
+const CAUSE_HELP = {legal_judgement: "a reading of an open standard or a rule with two readings: counsel decides",
+  missing_document: "the answer is in another instrument, a definition not located or a redacted term: get the document",
+  missing_fact: "depends on a business fact, not the text: give it as a scenario input",
+  check_extraction: "the compiler is unsure of an atom: a paralegal or analyst checks the quote below"};
 const SC = Object.fromEntries(D.scenarios.map(s => [s.id, s]));
+const keys = Object.keys(D.contracts);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
 const short = k => k.startsWith("ar:") ? k.slice(3) : k.split(":")[1].split("_")[0];
 const lang = k => D.contracts[k].lang;
 const who = (h, k) => ({us: `our party (${D.contracts[k].party})`, them: "counterparty", either: "either party", both: "both parties"}[h] || "-");
-const sev = cell => cell ? Math.max(...cell.classes.map(c => RANK[c])) : -1;
-const keys = Object.keys(D.contracts);
-let rowOrder = keys.slice(), colOrder = D.scenarios.map(s => s.id), sortNote = "";
+const sevName = n => D.sev_name[String(n)];
+const sevClass = n => n >= 6 ? "termination" : n === 5 ? "consent" : n === 4 ? "notice" : n === 2 ? "deadline" : n ? "other" : "none";
+const kindClass = x => x.status !== "TRIGGERED" ? "none" :
+  ({termination_right: "termination", automatic_termination: "termination", prepayment: "prepayment", consent: "consent", notice: "notice"}[x.kind] || "other");
+const causeChips = cs => cs.map(c => `<span class="chip ${c === "legal_judgement" ? "c-counsel" : "c-blocked"}">${esc(D.cause_label[c])}</span>`).join(" ");
+let stateName = "compiled", view = "map", rowOrder = [], colOrder = [], sortNote = "";
+const S = () => D.states[stateName];
 
 function fmt(v) {
   if (v === null || v === undefined) return "<i>unknown</i>";
@@ -150,147 +183,169 @@ function quotes(k, sids) {
 function atomRows(k, t, atoms, pend) {
   return `<table class="atoms"><tr><th>atom</th><th>value</th><th>compile status</th><th>agreement</th><th>review</th></tr>` +
     atoms.map(a => {
-      const i = D.atominfo[`${k}|${t}|${a}`] || {};
+      const i = S().atominfo[`${k}|${t}|${a}`] || {};
       const agree = D.atoms === "gold" ? "gold" : `${i.agree}/3 runs, support ${i.support ? "passed" : "not passed"}`;
-      const rv = i.reviewed ? '<span class="ok">reviewed</span>' : pend && pend.includes(a) ? '<span class="warn">confirm</span>' : "-";
-      return `<tr><td><code>${esc(a)}</code></td><td><code>${fmt(i.value)}</code></td><td>${esc(i.status || "")}</td><td>${agree}</td><td>${rv}</td></tr>`;
+      const rv = i.reviewed ? '<span class="ok">reviewed</span>' : i.unsure ? '<span class="warn">answer (compiler unsure)</span>' :
+        pend && pend.includes(a) ? '<span class="warn">confirm</span>' : "-";
+      return `<tr><td><code>${esc(a)}</code></td><td><code>${fmt(i.value)}</code>${i.suspicious ? `<div class="warn">⚠ ${esc(i.suspicious)}</div>` : ""}</td>` +
+        `<td>${esc(i.status || "")}</td><td>${agree}</td><td>${rv}</td></tr>`;
     }).join("") + "</table>";
 }
 
+// ---------------- state ----------------
+function renderTop() {
+  document.getElementById("seg").innerHTML = Object.entries({compiled: "Compiled (no review)", review: "After review (simulated)"}).map(([k, l]) =>
+    `<button data-state="${k}" aria-pressed="${k === stateName}" ${D.states[k] ? "" : "disabled"}>${l}</button>`).join("");
+  document.querySelectorAll("[data-state]").forEach(b => b.onclick = () => go(view, b.dataset.state));
+  const h = S().header, hl = h.hand_labels;
+  document.getElementById("simnote").textContent = stateName === "review" ?
+    `Reviewer answers simulated from hand labels; not a lawyer's review. ${hl.contracts_without} of ${keys.length} contracts have no hand labels and stay as compiled.` : "";
+  const c = h.cases;
+  document.getElementById("stats").innerHTML =
+    `<span><b>${h.cards_answered}</b> cards answered</span><span><b>${h.questions_answered}</b> questions answered</span>` +
+    `<span><b>${h.firm}</b> of ${h.outcomes} outcomes firm</span><span><b>${h.provisional}</b> provisional</span><span><b>${h.blocked}</b> blocked</span>` +
+    `<span><b>${h.counsel}</b> decisions for counsel</span>` +
+    `<span>Scenario cases: <b>${c["wrong firm"]}</b> wrong firm, ${c.correct} correct, ${c.pending} pending, ${c.abstain} open</span>`;
+}
+
 // ---------------- exposure map ----------------
-function headerLine(s) {
-  const m = s.summary;
-  return `${m.react} contracts react: ${m.consent} consents, ${m.notice} notices, ${m.termination} termination rights, ${m.lawyer} for a lawyer` +
-    (m.deadline ? `, ${m.deadline} deadlines` : "") + (m.prepayment ? `, ${m.prepayment} prepayments` : "");
+function headline(m) {
+  return `${m.firm} firm, ${m.provisional} provisional (worst case), ${m.blocked} blocked; ${m.counsel} decision${m.counsel === 1 ? "" : "s"} for counsel`;
 }
-function renderMap() {
-  const v = document.getElementById("view-map");
-  const legend = Object.keys(RANK).map(c => `<span class="chip c-${c}">${CLASS_LABEL[c]}</span>`).join("") +
-    `<span>Striped cell, <b>UNCONFIRMED</b>: the outcome rests on compiled atoms no reviewer has confirmed yet.</span>`;
-  let h = `<ul class="summary">` + D.scenarios.map(s => `<li><b>${esc(s.name)}</b><span>${headerLine(s)}</span>` +
-    `<span class="q">${s.summary.open_questions} open questions · ${s.summary.pending} pending outcomes</span></li>`).join("") + `</ul>`;
-  h += `<div class="legend">${legend}</div>`;
-  h += `<div class="tools"><span>Click a scenario to sort contracts by it; click a contract to sort scenarios by it. ${esc(sortNote)}</span>` +
-       `<button class="plain" id="reset">Reset order</button></div>`;
-  h += `<div class="tablewrap"><table class="map"><thead><tr><th class="corner">Contract (our party)</th>` +
-    colOrder.map(id => `<th scope="col"><button class="hbtn" data-col="${id}"><span class="nm">${esc(SC[id].name)}</span></button></th>`).join("") +
-    `</tr></thead><tbody>`;
-  for (const k of rowOrder) {
-    const c = D.contracts[k];
-    h += `<tr><th scope="row"><button class="hbtn" data-row="${esc(k)}" title="${esc(c.title)}"><span class="nm">${esc(short(k))}` +
-      `${c.lang === "ar" ? ' <span class="chip c-other">AR</span>' : ""}</span><span class="tt"><bdi>${esc(c.party)}</bdi></span></button></th>`;
-    for (const id of colOrder) {
-      const cell = (D.cells[id] || {})[k];
-      if (!cell) { h += `<td><span class="cell absent">no clause</span></td>`; continue; }
-      const top = cell.classes[0];
-      const lbl = cell.labels.filter(l => l !== "none");
-      h += `<td><button class="cell c-${top} ${top === "none" ? "none" : ""} ${cell.pending ? "pending" : ""}" data-ev="${esc(id + "|" + k)}" ` +
-        `aria-label="${esc(SC[id].name)}, ${esc(short(k))}: ${esc(cell.labels.join(", "))}${cell.pending ? ", unconfirmed" : ""}">` +
-        `<span>${esc(lbl[0] || "none")}</span>${lbl.length > 1 ? `<span class="more">+ ${esc(lbl.slice(1).join(", "))}</span>` : ""}` +
-        `${cell.pending ? '<span class="pend">unconfirmed</span>' : ""}</button></td>`;
-    }
-    h += `</tr>`;
-  }
-  v.innerHTML = h + `</tbody></table></div>`;
-  v.querySelectorAll("[data-col]").forEach(b => b.onclick = () => {
-    const id = b.dataset.col;
-    rowOrder.sort((a, z) => sev(D.cells[id][z]) - sev(D.cells[id][a]) || a.localeCompare(z));
-    sortNote = `Contracts sorted by “${SC[id].name}”.`; renderMap();
-  });
-  v.querySelectorAll("[data-row]").forEach(b => b.onclick = () => {
-    const k = b.dataset.row;
-    colOrder.sort((a, z) => sev(D.cells[z][k]) - sev(D.cells[a][k]));
-    sortNote = `Scenarios sorted by ${short(k)}.`; renderMap();
-  });
-  v.querySelectorAll("[data-ev]").forEach(b => b.onclick = () => { location.hash = "ev=" + encodeURIComponent(b.dataset.ev); });
-  document.getElementById("reset").onclick = () => { defaultOrder(); renderMap(); };
+function cellHtml(id, k) {
+  const cell = (S().cells[id] || {})[k];
+  if (!cell) return `<td><span class="cell absent">no clause</span></td>`;
+  const blk = cell.status === "blocked", prov = cell.status === "provisional";
+  const cls = cell.sev ? cell.cls : blk ? "blocked" : "none";
+  const main = cell.sev ? cell.labels[0] : blk ? "Blocked" : "no reaction";
+  const more = cell.sev && cell.labels.length > 1 ? ` <span class="cz">+ ${esc(cell.labels.slice(1).join(", "))}</span>` : "";
+  const tag = prov ? `provisional · clears with ${cell.clears} question${cell.clears === 1 ? "" : "s"}` : blk ? (cell.sev ? "rest blocked" : "") : "firm";
+  const cz = cell.causes.map(c => `<span class="${c === "legal_judgement" ? "counsel" : ""}">${esc(D.cause_label[c])}</span>`).join(" · ");
+  return `<td><button class="cell c-${cls} ${cls === "none" ? "none" : ""} ${prov ? "prov" : ""} ${blk ? "blk" : ""} ${cell.pending ? "pending" : ""}" data-ev="${esc(id + "|" + k)}" ` +
+    `aria-label="${esc(SC[id].name)}, ${esc(short(k))}: ${esc(main)}, ${esc(STATUS[cell.status])}${cz ? ", " + esc(cell.causes.map(c => D.cause_label[c]).join(", ")) : ""}">` +
+    `<span>${esc(main)}${prov && cell.sev ? " (worst case)" : ""}${more}</span>${tag ? `<span class="tag">${esc(tag)}</span>` : (cell.pending ? '<span class="tag"></span>' : "")}` +
+    `${cz ? `<span class="cz">${cz}</span>` : ""}</button></td>`;
 }
+const sevOf = (id, k) => { const c = (S().cells[id] || {})[k]; return c ? c.sev * 3 + (c.status === "blocked" ? 2 : c.status === "provisional" ? 1 : 0) : -1; };
 function defaultOrder() {
-  const total = k => D.scenarios.reduce((n, s) => n + Math.max(0, sev((D.cells[s.id] || {})[k])), 0);
+  const total = k => D.scenarios.reduce((n, s) => n + Math.max(0, sevOf(s.id, k)), 0);
   rowOrder = keys.slice().sort((a, z) => total(z) - total(a) || a.localeCompare(z));
   colOrder = D.scenarios.map(s => s.id); sortNote = "";
 }
+function renderMap() {
+  const v = document.getElementById("view-map");
+  let h = `<ul class="summary">` + D.scenarios.map(s => { const m = S().summaries[s.id];
+    return `<li><b>${esc(s.name)}</b><span>${headline(m)}</span><span class="q">${m.open_questions} open questions · ${m.pending} pending · ${m.material_open} material open</span></li>`; }).join("") + `</ul>`;
+  h += `<div class="legend">${["termination", "prepayment", "consent", "notice", "deadline", "other", "none"].map(c => `<span class="chip c-${c}">${c === "termination" ? "termination right" : c === "none" ? "no reaction" : c}</span>`).join("")}` +
+    `<span>Solid edge: firm. Dashed edge: provisional, the worst reading shown. Hatched: blocked. Open because:</span>${causeChips(Object.keys(D.cause_label))}</div>`;
+  h += `<div class="tools"><span>Click a scenario to sort contracts by it; click a contract to sort scenarios by it. ${esc(sortNote)}</span><button class="plain" id="reset">Reset order</button></div>`;
+  h += `<div class="tablewrap"><table class="map"><thead><tr><th class="corner">Contract (our party)</th>` +
+    colOrder.map(id => `<th scope="col"><button class="hbtn" data-col="${id}"><span class="nm">${esc(SC[id].name)}</span></button></th>`).join("") + `</tr></thead><tbody>`;
+  for (const k of rowOrder) {
+    const c = D.contracts[k];
+    h += `<tr><th scope="row"><button class="hbtn" data-row="${esc(k)}" title="${esc(c.title)}"><span class="nm">${esc(short(k))}` +
+      `${c.lang === "ar" ? ' <span class="chip c-other">AR</span>' : ""}</span><span class="tt"><bdi>${esc(c.party)}</bdi></span></button></th>` +
+      colOrder.map(id => cellHtml(id, k)).join("") + `</tr>`;
+  }
+  v.innerHTML = h + `</tbody></table></div>`;
+  v.querySelectorAll("[data-col]").forEach(b => b.onclick = () => { const id = b.dataset.col;
+    rowOrder.sort((a, z) => sevOf(id, z) - sevOf(id, a) || a.localeCompare(z)); sortNote = `Contracts sorted by “${SC[id].name}”.`; renderMap(); });
+  v.querySelectorAll("[data-row]").forEach(b => b.onclick = () => { const k = b.dataset.row;
+    colOrder.sort((a, z) => sevOf(z, k) - sevOf(a, k)); sortNote = `Scenarios sorted by ${short(k)}.`; renderMap(); });
+  v.querySelectorAll("[data-ev]").forEach(b => b.onclick = () => go("ev=" + b.dataset.ev, stateName));
+  document.getElementById("reset").onclick = () => { defaultOrder(); renderMap(); };
+}
 
 // ---------------- evidence ----------------
+function reactionLines(xs, k) {
+  return xs.map(x => `<dt>${esc(x.status === "TRIGGERED" ? x.kind.replace(/_/g, " ") : x.status === "NOT_TRIGGERED" ? "no reaction" : "open")}</dt><dd>` +
+    (x.status === "TRIGGERED" ? `${esc(who(x.holder, k))} · ${esc(x.due || "no date in the clause")}<br>` : "") + `<span class="note">${esc(x.reason || "")}</span></dd>`).join("");
+}
 function renderEvidence(id, k) {
-  const ev = document.getElementById("ev");
-  const c = D.contracts[k], s = SC[id];
-  const rows = D.rows.filter(r => r.scenario === id && r.contract === k);
+  const ev = document.getElementById("ev"), c = D.contracts[k], s = SC[id];
+  const rows = (S().rows[id] || {})[k] || [];
   let h = `<button class="plain close" id="close">Close</button><h2>${esc(short(k))} · ${esc(s.name)}</h2>` +
-    `<p class="sub">${esc(c.title)}<br>Our party: <bdi>${esc(c.party)}</bdi> · as of ${esc(D.as_of)}</p>`;
+    `<p class="sub">${esc(c.title)}<br>Our party: <bdi>${esc(c.party)}</bdi> · as of ${esc(D.as_of)} · ${esc(S().label)}</p>`;
   for (const r of rows) {
-    const cls = r.status === "NEEDS_LAWYER" ? "lawyer" : r.status !== "TRIGGERED" ? "none" :
-      ({termination_right: "termination", automatic_termination: "termination", consent: "consent", prepayment: "prepayment", notice: "notice"}[r.kind] || "other");
-    h += `<div class="reaction c-${cls}"><h3>${esc(TEMPLATE[r.template])}: <span class="chip c-${cls}">${esc(r.status === "TRIGGERED" ? r.kind.replace(/_/g, " ") : r.status)}</span></h3>` +
-      `<dl class="kv"><dt>Status</dt><dd>${esc(r.status)}${r.unconfirmed.length ? ' <span class="warn">(pending confirmation)</span>' : ""}</dd>` +
-      (r.status === "TRIGGERED" ? `<dt>Who acts</dt><dd>${esc(who(r.holder, k))}</dd><dt>By when</dt><dd>${esc(r.due || "no date in the clause")}</dd>` : "") +
-      `<dt>Rule's reason</dt><dd>${esc(r.reason || "-")}</dd></dl>` +
-      (r.unconfirmed.length ? `<p class="note">Confirm together before relying on this outcome: ${r.unconfirmed.map(a => `<code>${esc(a)}</code>`).join(", ")}.</p>` : "") +
-      `<h3>Atoms used</h3>` + (r.atoms.length ? atomRows(k, r.template, r.atoms, r.unconfirmed) : '<p class="note">None: no atom value changes this outcome.</p>') +
+    const top = r.status === "provisional" ? sevClass(r.worst_sev) : r.status === "blocked" ? "blocked" :
+      kindClass(r.reactions.reduce((a, x) => (x.status === "TRIGGERED" ? x : a), r.reactions[0]));
+    h += `<div class="reaction c-${top}"><h3>${esc(TEMPLATE[r.template])}: <span class="chip c-${top}">${esc(STATUS[r.status])}</span> ${causeChips(r.causes)}</h3>`;
+    if (r.status === "firm") {
+      h += `<dl class="kv">${reactionLines(r.reactions, k)}</dl>` + (r.tried ? `<p class="note">Firm in every reading of the open atom${r.tried.length > 1 ? "s" : ""} ` +
+        `${r.tried.map(a => `<code>${esc(a)}</code>`).join(", ")}; the reason shows the first reading tried, not a compiled value.</p>` : "");
+    } else if (r.status === "provisional") {
+      h += `<p><b>Worst case for us:</b></p><dl class="kv">${reactionLines(r.worst, k)}</dl><p><b>Readings</b> (clears with ${r.clears} question${r.clears === 1 ? "" : "s"}):</p>` +
+        `<ul class="branches">${r.branches.map(b => `<li><span class="chip c-${sevClass(b.sev)}">${esc(b.label)}</span> — ${esc(b.when)}</li>`).join("")}</ul>`;
+    } else {
+      h += `<p><b>Blocked:</b> ${esc(r.missing)}</p>`;
+    }
+    if (r.causes.length) h += `<ul class="note">${r.causes.map(x => `<li><b>${esc(D.cause_label[x])}</b>: ${esc(CAUSE_HELP[x])}</li>`).join("")}</ul>`;
+    if (r.unconfirmed.length || r.ask.length) h += `<p class="note">Before relying on this outcome: confirm ${r.unconfirmed.map(a => `<code>${esc(a)}</code>`).join(", ") || "nothing"}` +
+      `${r.ask.length ? `; answer ${r.ask.map(a => `<code>${esc(a)}</code>`).join(", ")} (the compiler is unsure)` : ""}.</p>`;
+    h += `<h3>Atoms used</h3>` + (r.atoms.length ? atomRows(k, r.template, r.atoms, r.unconfirmed) : '<p class="note">None: no atom value changes this outcome.</p>') +
       `<h3>Cited sentences (verbatim)</h3>${quotes(k, r.sids)}</div>`;
   }
   h += `<p class="note">The rules apply the compiled reading of the clause. A reaction shown here means the clause is potentially triggered under that reading; it is not a legal conclusion.</p>`;
   ev.innerHTML = h; ev.hidden = false;
-  document.getElementById("close").onclick = () => { location.hash = "map"; };
+  document.getElementById("close").onclick = () => go("map", stateName);
   document.getElementById("close").focus();
 }
 
 // ---------------- question queue ----------------
-function previewGroups(preview) {        // answers that change the same reactions in the same way share one line
-  const g = new Map();
-  for (const p of preview) {
-    const ch = p.changes.join("; ") || "no change";
-    g.set(ch, [...(g.get(ch) || []), p.answer]);
-  }
-  return [...g];
-}
+function couldCause(x) { return `<span class="chip c-${sevClass(x.sev)}">could cause: ${esc(sevName(x.sev))}</span>`; }
 function renderQueue() {
-  const v = document.getElementById("view-queue"), e = D.effort;
-  let h = `<div class="big"><b>${e.pending_outcomes}</b> pending outcomes rest on <b>${e.single_atom_confirmations}</b> unconfirmed atoms. ` +
-    `Grouped by reasoning path they need <b>${e.cards_opened}</b> cards (${e.cards} distinct paths over ${e.clauses} clauses), ` +
-    `instead of ${e.single_atom_confirmations} one-atom confirmations. <b>${D.questions.length}</b> blocking questions come first.</div>`;
-  h += `<table class="counts"><tr><th>Scenario</th><th>Open questions</th><th>Pending outcomes</th><th>For a lawyer</th></tr>` +
-    D.scenarios.map(s => `<tr><td>${esc(s.name)}</td><td>${s.summary.open_questions}</td><td>${s.summary.pending}</td><td>${s.summary.lawyer}</td></tr>`).join("") + `</table>`;
-  h += `<div class="cols"><div><h2>Blocking questions (${D.questions.length}), ranked</h2>` +
-    `<p class="note">Each one is an unknown atom whose answer can change a reaction. Rank: outcomes one answer makes firm, then outcomes it touches.</p>`;
-  D.questions.forEach((q, i) => {
-    h += `<div class="card"><h3><span class="rank">${i + 1}</span>${esc(short(q.contract))} · ${esc(TEMPLATE[q.template])} · <code>${esc(q.atom)}</code></h3>` +
-      `<div>${esc(q.text)}</div><div class="note">Allowed: ${esc(q.allowed)}</div>` +
-      `<div class="note">Makes ${q.firm_pairs} outcome(s) firm · touches ${q.pairs.length}: ${q.pairs.map(p => esc(SC[p].name)).join("; ")}</div>` +
-      `<details ${i < 1 ? "open" : ""}><summary>Cited sentences and impact preview</summary>${quotes(q.contract, q.sids)}<ul>` +
-      previewGroups(q.preview).map(([ch, ans]) => `<li>${ans.map(x => `<code>${esc(x)}</code>`).join(", ")}: ${esc(ch)}</li>`).join("") + `</ul></details></div>`;
+  const v = document.getElementById("view-queue"), st = S(), e = st.effort;
+  let h = `<div class="big"><b>${e.pending_outcomes}</b> pending outcomes rest on <b>${e.single_atom_confirmations}</b> unconfirmed atoms over ${e.clauses} clauses. ` +
+    `They need <b>${e.cards}</b> reasoning-path cards instead of ${e.single_atom_confirmations} one-atom confirmations. <b>${st.questions.length}</b> questions to answer come first. ` +
+    `Both lists start with what could cause the most harm.</div>`;
+  h += `<table class="counts"><tr><th>Scenario</th><th>Firm</th><th>Provisional</th><th>Blocked</th><th>For counsel</th><th>Open questions</th><th>Pending outcomes</th><th>Material open</th></tr>` +
+    D.scenarios.map(s => { const m = st.summaries[s.id];
+      return `<tr><td>${esc(s.name)}</td><td>${m.firm}</td><td>${m.provisional}</td><td>${m.blocked}</td><td>${m.counsel}</td><td>${m.open_questions}</td><td>${m.pending}</td><td>${m.material_open}</td></tr>`; }).join("") +
+    `</table><p class="note">Material open: open questions and cards whose worst answer in that scenario is a termination right, a prepayment or a consent.</p>`;
+  h += `<div class="cols"><div><h2>Questions to answer (${st.questions.length})</h2><p class="note">An atom the compiler could not settle, whose answer can change a reaction. Order: what it could cause, then outcomes it makes firm, then outcomes it touches.</p>`;
+  st.questions.forEach((q, i) => {
+    h += `<div class="card c-${sevClass(q.sev)}"><div class="head"><h3><span class="rank">${i + 1}</span>${esc(short(q.contract))} · ${esc(TEMPLATE[q.template])} · <code>${esc(q.atom)}</code></h3>${couldCause(q)}</div>` +
+      `<div>${esc(q.text)}</div><div class="note">Touches ${q.pairs.length} outcome(s): ${q.pairs.map(p => esc(SC[p].name)).join("; ")}</div>` +
+      `<ul class="preview">${q.preview.map(p => `<li title="${esc(p.answers.join(", ") + " → " + p.line)}"><b>${esc(p.answers.length > 3 ? p.answers.slice(0, 3).join(", ") + ` +${p.answers.length - 3}` : p.answers.join(", "))}</b> → ${esc(p.line)}</li>`).join("")}</ul>` +
+      `<details ${i < 1 ? "open" : ""}><summary>Cited sentences and details</summary>${quotes(q.contract, q.sids)}<div class="note">Allowed: ${esc(q.allowed)}</div>` +
+      `<ul class="note">${q.preview.filter(p => p.detail).map(p => `<li>${esc(p.detail)}</li>`).join("")}</ul></details></div>`;
   });
-  h += `</div><div><h2>Reasoning-path cards (${D.cards.length})</h2>` +
-    `<p class="note">One card per pending outcome: every load-bearing atom it rests on, to confirm together against the same sentences. ` +
-    `Outcomes of one clause that rest on the same atoms share a card. Weakest compile evidence first.</p>`;
-  D.cards.forEach((c, i) => {
-    h += `<div class="card"><h3><span class="rank">${i + 1}</span>${esc(short(c.contract))} · ${esc(TEMPLATE[c.template])} · confirm ${c.atoms.length} atom${c.atoms.length > 1 ? "s" : ""} together</h3>` +
-      `<div class="note">Settles: ${c.outcomes.map(o => `${esc(SC[o.scenario].name)} (${esc(o.label)})`).join("; ")}</div>` +
+  h += `</div><div><h2>Reasoning-path cards (${st.cards.length})</h2><p class="note">One card per pending outcome: every atom the compiler settled that the outcome rests on, to confirm together against the same sentences. Order: what a wrong atom could cause, then weakest compile evidence.</p>`;
+  st.cards.forEach((c, i) => {
+    h += `<div class="card c-${sevClass(c.sev)}"><div class="head"><h3><span class="rank">${i + 1}</span>${esc(short(c.contract))} · ${esc(TEMPLATE[c.template])} · confirm ${c.atoms.length} atom${c.atoms.length > 1 ? "s" : ""} together</h3>${couldCause(c)}</div>` +
+      `<div class="note">Settles: ${c.outcomes.map(o => `${esc(SC[o.scenario].name)} (${esc(o.label)})`).join("; ")}` +
+      `${c.also ? `<br>Also settles, with the cards before it: ${c.also.map(o => `${esc(SC[o.scenario].name)} (${esc(o.label)})`).join("; ")}` : ""}</div>` +
       atomRows(c.contract, c.template, c.atoms, c.atoms) +
-      `<details ${i < 2 ? "open" : ""}><summary>Cited sentences (${c.sids.length})</summary>${quotes(c.contract, c.sids)}</details></div>`;
+      `<details ${i < 1 ? "open" : ""}><summary>Cited sentences (${c.sids.length})</summary>${quotes(c.contract, c.sids)}</details></div>`;
   });
   v.innerHTML = h + `</div></div>`;
 }
 
-// ---------------- routing ----------------
+// ---------------- routing: #<view>[@review] ----------------
+function go(v, st) { location.hash = v + (st === "review" ? "@review" : ""); }
 function route() {
-  const hsh = decodeURIComponent(location.hash.slice(1));
-  const queue = hsh === "queue";
+  let hsh = decodeURIComponent(location.hash.slice(1)) || "map";
+  const want = hsh.endsWith("@review") && D.states.review ? "review" : "compiled";
+  hsh = hsh.replace(/@review$/, "");
+  if (want !== stateName) { stateName = want; renderTop(); renderMap(); renderQueue(); }
+  view = hsh.startsWith("ev=") ? "map" : hsh === "queue" ? "queue" : "map";
+  const queue = view === "queue";
   document.getElementById("view-map").hidden = queue;
   document.getElementById("view-queue").hidden = !queue;
+  document.getElementById("nav-map").href = "#map" + (stateName === "review" ? "@review" : "");
+  document.getElementById("nav-queue").href = "#queue" + (stateName === "review" ? "@review" : "");
   document.getElementById("nav-map").toggleAttribute("aria-current", !queue);
   document.getElementById("nav-queue").toggleAttribute("aria-current", queue);
-  if (queue) document.getElementById("nav-queue").setAttribute("aria-current", "page"); else document.getElementById("nav-map").setAttribute("aria-current", "page");
+  document.getElementById(queue ? "nav-queue" : "nav-map").setAttribute("aria-current", "page");
   if (hsh.startsWith("ev=")) {
-    const [id, k] = [hsh.slice(3, hsh.indexOf("|")), hsh.slice(hsh.indexOf("|") + 1)];
-    if (SC[id] && D.contracts[k]) return renderEvidence(id, k);
+    const i = hsh.indexOf("|"), id = hsh.slice(3, i), k = hsh.slice(i + 1);
+    if (SC[id] && D.contracts[k]) { view = hsh; return renderEvidence(id, k); }
   }
   document.getElementById("ev").hidden = true;
 }
-document.getElementById("meta").textContent = `As of ${D.as_of} · ${D.scenarios.length} scenarios × ${keys.length} contracts · atoms: ${D.atoms}` +
-  (D.reviews ? ` (${D.reviews} reviews applied)` : "") + " · deterministic rules, no model calls";
-document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.getElementById("ev").hidden) location.hash = "map"; });
-defaultOrder(); renderMap(); renderQueue();
+document.getElementById("meta").textContent = `As of ${D.as_of} · ${D.scenarios.length} scenarios × ${keys.length} contracts · deterministic rules, no model calls`;
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !document.getElementById("ev").hidden) go("map", stateName); });
+defaultOrder(); renderTop(); renderMap(); renderQueue();
 window.addEventListener("hashchange", route); route();
 </script>
 </body>

@@ -432,8 +432,15 @@ def questions(atoms_by_contract: dict, scenarios: list[dict], con=None, run: str
                             cited_text(con, cids[gk], t, a, fam, run + "_ar" if gk.startswith("ar:") else run) if gk in cids else [], q["pairs"], len(firm_ids), prev))
     out.sort(key=lambda x: (-x.firm_pairs, -len(x.pairs), x.contract, x.template, x.atom))
     if reviews is not None:
-        out += confirm_questions(atoms_by_contract, scenarios, reviews, con, run, cids)
+        more = confirm_questions(atoms_by_contract, scenarios, reviews, con, run, cids)
+        out += [q for q in more if q.kind == "blocking"] + [q for q in more if q.kind == "confirm"]
     return out
+
+
+def unsure(fam: dict) -> set:
+    """Atoms the compiler could not settle but the rules did not need to block on: the rules read them as absent.
+    Such an atom is asked as a question to answer, never shown as a value to confirm."""
+    return {atom_of(b) for b in fam.get("_optional_unknown", [])}
 
 
 # ---------------- load-bearing atoms ----------------
@@ -574,9 +581,12 @@ def confirm_questions(atoms_by_contract: dict, scenarios: list[dict], reviews: l
         if not prev:        # a free value cannot be tried: say that any other value changes these reactions
             prev = [dict(answer="(any other value)", changes=[dict(scenario=sid, before=label(b), after="changes or becomes undetermined")
                                                                for sid, b in zip(q["pairs"], q["before"])])]
+        r = run + "_ar" if gk.startswith("ar:") else run
+        ask = a in unsure(fam)          # the compiled "value" is only the rules' default: ask for it
         out.append(Question(f"{gk}|{t}|{a}", gk, t, a, text_q, allowed,
-                            cited_text(con, cids[gk], t, a, fam, run + "_ar" if gk.startswith("ar:") else run) if gk in cids else [], q["pairs"], 0, prev,
-                            "confirm", cur, agreement(con, cids[gk], t, a, run) if gk in cids else (0, False)))
+                            cited_text(con, cids[gk], t, a, fam, r) if gk in cids else [], q["pairs"], 0, prev,
+                            "blocking" if ask else "confirm", None if ask else cur,
+                            agreement(con, cids[gk], t, a, r) if gk in cids else (0, False)))
     out.sort(key=lambda x: (x.agreement[0] >= 3 and x.agreement[1], x.agreement[0], -len(x.pairs), x.contract, x.template, x.atom))
     return out
 
@@ -636,6 +646,8 @@ def _check():
     assert "effects" not in load_bearing("coc", f5, low), "nothing triggers, so the effect decides nothing"
     f6 = {"mode": "mutual", "start": "2020-01-01", "initial_term": [2, "years"], "notice": [30, "days"], "renewal_term": [1, "years"]}
     assert load_bearing("term", f6, State()) == ["present", "mode", "start", "initial_term"], "notice and renewal term decide nothing under mutual renewal"
+    f7 = dict(f5, _optional_unknown=["carve_outs is unknown"])
+    assert unsure(f7) == {"carve_outs"} and unsure(f5) == set()
     print("review self-check ok")
 
 
