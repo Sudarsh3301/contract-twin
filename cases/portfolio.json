@@ -1,0 +1,125 @@
+{
+ "_note": "Which party is 'us' in each contract: the party whose corporate events the scenarios simulate. A portfolio input chosen by us, not extracted. Role names follow the contract's own wording; check them against the parties clause.",
+ "contracts": {
+  "raesystemsinc_20001114_10_q_ex_10_57_2631790_ex_10_57_co_bra": {
+   "our_party": "RAE Systems",
+   "src": "cuad:RaeSystems"
+  },
+  "virtualscopics_inc_11_12_2010_ex_10_1_strategic_alliance_agr": {
+   "our_party": "VirtualScopics (VS)",
+   "src": "cuad:VirtualScopics"
+  },
+  "dyntekinc_07_30_1999_ex_10_online_hosting_agreement": {
+   "our_party": "Diplomat",
+   "src": "cuad:DynTek"
+  },
+  "ipayment_inc_05_14_2007_ex_10_1_sponsorship_agreement": {
+   "our_party": "ISO",
+   "src": "cuad:iPayment"
+  },
+  "elandiainternationalinc_04_25_2007_ex_10_21_outsourcing_agre": {
+   "our_party": "Datec",
+   "src": "cuad:eLandia"
+  },
+  "blackboxstocksinc_08_05_2014_ex_10_1_distributor_agreement": {
+   "our_party": "the Distributor",
+   "src": "cuad:BlackBox"
+  },
+  "mphasetechnologiesinc_20030911_10_k_ex_10_15_1560667_ex_10_1": {
+   "our_party": "mPhase",
+   "src": "cuad:mPhase"
+  },
+  "verticalnetinc_04_01_2002_ex_10_19_maintenance_and_support_a": {
+   "our_party": "VerticalNet",
+   "src": "cuad:VerticalNet"
+  },
+  "gopagecorp_20140221_10_k_ex_10_1_8432966_ex_10_1_content_lic": {
+   "our_party": "Licensee",
+   "src": "cuad:Gopage"
+  },
+  "corioinc_07_20_2000_ex_10_5_license_and_hosting_agreement": {
+   "our_party": "Corio",
+   "src": "cuad:Corio"
+  },
+  "edietscominc_20001030_10qsb_ex_10_4_2606646_ex_10_4_co_brand": {
+   "our_party": "eDiets",
+   "src": "cuad:eDiets"
+  },
+  "zounds_hearing_inc_manufacturing_design_marketing_agreem": {
+   "our_party": "the Manufacturer",
+   "src": "cuad:Zounds"
+  },
+  "tricitybanksharescorp_05_15_1998_ex_10_outsourcing_agreement": {
+   "our_party": "Customer",
+   "src": "cuad:TriCity"
+  },
+  "jointcorp_09_19_2014_ex_10_15_franchise_agreement": {
+   "our_party": "the Franchise Owner (franchisee)",
+   "src": "cuad:JointCorp"
+  },
+  "amscan_2011_credit": {
+   "our_party": "Holdings and the Borrowers (Amscan group)",
+   "src": "edgar:Amscan"
+  },
+  "vertexenergyinc_20200113_8_k_ex_10_1_11943624_ex_10_1_market": {
+   "our_party": "Vertex",
+   "src": "cuad:Vertex"
+  },
+  "gpaqacquisitionholdingsinc_20200123_s_4a_ex_10_6_11951677_ex": {
+   "our_party": "the Village Media Company",
+   "src": "cuad:Gpaq"
+  },
+  "europeanmicroholdingsinc_03_06_1998_ex_10_6_distributor_agre": {
+   "our_party": "the Distributor",
+   "src": "cuad:EuropeanMicro"
+  },
+  "kiromicbiopharma_inc_04_08_2020_ex_10_28_joint_venture_agree": {
+   "our_party": "Kiromic",
+   "src": "cuad:Kiromic"
+  },
+  "agapeatpcorp_20191202_10_ka_ex_10_1_11911128_ex_10_1_supply": {
+   "our_party": "the filing company named in the file title",
+   "src": null
+  },
+  "calpine_2017_revolver": {
+   "our_party": "the filing company named in the file title",
+   "src": null
+  },
+  "ehaveinc_20190515_20_f_ex_4_44_11678816_ex_4_44_license_agre": {
+   "our_party": "the filing company named in the file title",
+   "src": null
+  },
+  "energouscorp_03_16_2017_ex_10_24_strategic_alliance_agreemen": {
+   "our_party": "the filing company named in the file title",
+   "src": null
+  },
+  "freezetaginc_20180411_8_k_ex_10_1_11139603_ex_10_1_sponsorsh": {
+   "our_party": "the filing company named in the file title",
+   "src": null
+  },
+  "garrettmotioninc_20181001_8_k_ex_2_4_11364532_ex_2_4_intelle": {
+   "our_party": "the filing company named in the file title",
+   "src": null
+  },
+  "healthgatedatacorp_11_24_1999_ex_10_1_hosting_and_management": {
+   "our_party": "the filing company named in the file title",
+   "src": null
+  },
+  "lantheus_2014_credit": {
+   "our_party": "the filing company named in the file title",
+   "src": null
+  },
+  "middlebrookpharmaceuticals_inc_03_18_2010_ex_10_1_promotion": {
+   "our_party": "the filing company named in the file title",
+   "src": null
+  },
+  "sfgfinancialcorp_05_12_2009_ex_10_1_software_license_and_mai": {
+   "our_party": "the filing company named in the file title",
+   "src": null
+  },
+  "virtuososurgicalinc_20191227_1_a_ex1a_6_mat_ctrct_11933379_e": {
+   "our_party": "the filing company named in the file title",
+   "src": null
+  }
+ }
+}

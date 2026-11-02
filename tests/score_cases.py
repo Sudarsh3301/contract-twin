@@ -1,12 +1,16 @@
 """Score the rules against the independent scenario cases, using hand-labelled gold atoms.
-Run from repo root: python -m tests.score_cases"""
+Run from repo root: python -m tests.score_cases [--atoms compiled|gold] [--file out/compiled_atoms.json]"""
 import json
+import sys
 from datetime import date
 from twin.core import State, apply
-from twin.rules import TEMPLATES
+from twin.rules import TEMPLATES, Reaction
 
 cases = json.load(open("cases/scenario_cases.json", encoding="utf-8"))["cases"]
 gold = json.load(open("cases/gold_atoms.json", encoding="utf-8"))
+if "--atoms" in sys.argv and sys.argv[sys.argv.index("--atoms") + 1] == "compiled":
+    gold = json.load(open(sys.argv[sys.argv.index("--file") + 1] if "--file" in sys.argv else "out/compiled_atoms.json",
+                          encoding="utf-8"))
 SAME = {"either": "both"}
 
 
@@ -14,12 +18,20 @@ def run(case):
     src = case["src"].split(" ")[0]
     if src.startswith("edgar:Amscan"):
         src = "edgar:Amscan"
-    atoms = gold[src]
+    atoms = gold.get(src, {})
     s = State()
     for ev in case["scenario"]:
         s = apply(s, ev)
     fams = ["term"] if case["id"].startswith("N") else ["coc", "assign"]
-    rs = [r for f in fams if f in atoms for r in TEMPLATES[f](atoms[f], s)]
+    rs = []
+    for f in fams:
+        if f not in atoms:
+            continue
+        if "_unknown" in atoms[f]:    # compiled atoms with a missing or unsure required value: a lawyer decides
+            if f == "term" or s.mechanism:
+                rs.append(Reaction("NEEDS_LAWYER", reason=f"{f}: " + "; ".join(atoms[f]["_unknown"])))
+            continue
+        rs += TEMPLATES[f](atoms[f], s)
     st = "TRIGGERED" if any(r.status == "TRIGGERED" for r in rs) else (
         "NEEDS_LAWYER" if any(r.status == "NEEDS_LAWYER" for r in rs) else "NOT_TRIGGERED")
     return st, rs
