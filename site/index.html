@@ -328,6 +328,9 @@ svg.graph { display: block; font-family: system-ui, sans-serif; }
 .graph .node rect.box { stroke-width: 1.6; rx: 6; fill: var(--cbg); stroke: var(--c); }
 .graph .node.k-fact { --c: var(--notice); --cbg: var(--notice-bg); }
 .graph .node.k-atom, .graph .node.k-fork { --c: var(--deadline); --cbg: var(--deadline-bg); }
+.graph .node.row rect.box { fill: transparent; stroke: transparent; }
+.graph .clausecard rect { fill: var(--deadline-bg); stroke: var(--deadline); stroke-width: 1.6; rx: 8; }
+.graph .clausecard text { fill: var(--deadline); font-size: 12px; font-weight: 700; }
 .graph .node.k-limb { --c: var(--other); --cbg: var(--other-bg); }
 .graph .node.k-exception { --c: var(--consent); --cbg: var(--consent-bg); }
 .graph .node.k-effect { --c: var(--prepayment); --cbg: var(--prepayment-bg); }
@@ -888,7 +891,7 @@ function renderQueue() {
 // No rule is evaluated in the browser.
 const CAP = {fact: "From the deal", atom: "From the clause", fork: "From the clause", limb: "Test", exception: "Exception", effect: "Effect", outcome: "Result"};
 const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)");
-const NW = 158, NH = 74, CW = 172, RH = 90;
+const NW = 158, NH = 74, CW = 214, RH = 90, W0 = 270;
 const confirmed = new Set();      // atoms confirmed on this page only (nothing is stored)
 const corrected = {};             // atom -> correction picked on this page only
 let GV = [];                      // view state of each graph on the open evidence panel
@@ -941,14 +944,28 @@ function visible(g, all) {
   if (keep.length > 25) keep = keep.filter(s => s.kind === "outcome" || keep.indexOf(s) < 24);
   return {nodes: keep, hidden: all.length - keep.length};
 }
+// Deal facts and clause facts share the first column: the deal facts on top, then one "The clause says" card
+// that holds each clause fact as a row. The other columns sit to the right with room between them for the lines.
+const isRow = n => n.kind === "atom" || n.kind === "fork";
 function layout(nodes) {
-  const layers = [...new Set(nodes.map(n => n.layer))].sort((a, z) => a - z), col = Object.fromEntries(layers.map((l, i) => [l, i]));
-  const count = {}, pos = {};
-  nodes.forEach(n => count[col[n.layer]] = (count[col[n.layer]] || 0) + 1);
-  const most = Math.max(1, ...Object.values(count)), seen = {};
-  nodes.forEach(n => { const c = col[n.layer]; seen[c] = (seen[c] || 0);
-    pos[n.id] = {x: 14 + c * CW, y: 28 + (most - count[c]) * RH / 2 + seen[c]++ * RH}; });
-  return {pos, w: layers.length * CW + 10, h: most * RH + 30};
+  const key = n => Math.max(1, n.layer), layers = [...new Set(nodes.map(key))].sort((a, z) => a - z), col = Object.fromEntries(layers.map((l, i) => [l, i]));
+  const x = c => c ? 14 + W0 + 56 + (c - 1) * CW : 14, pos = {};
+  let y = 28;
+  for (const n of nodes.filter(n => n.kind === "fact")) { const h = 32 + wrap(stepText(n), 36).length * 15; pos[n.id] = {x: 14, y, w: W0, h}; y += h + 12; }
+  const firstUse = id => Math.min(99, ...nodes.filter(c => c.parents.includes(id)).map(c => c.layer));
+  const rows = nodes.filter(isRow).map((n, i) => [n, i]).sort((a, z) => firstUse(a[0].id) - firstUse(z[0].id) || a[1] - z[1]).map(r => r[0]);
+  let card = null;
+  if (rows.length) {
+    card = {x: 14, y: y + 2, w: W0}; y += 30;
+    for (const n of rows) { const h = 10 + wrap(stepText(n), n.kind === "fork" ? 26 : 34).length * 15; pos[n.id] = {x: 22, y, w: W0 - 16, h}; y += h + 4; }
+    card.h = y - card.y + 6; y += 6;
+  }
+  const rest = nodes.filter(n => !pos[n.id]), count = {}, seen = {};
+  rest.forEach(n => count[col[key(n)]] = (count[col[key(n)]] || 0) + 1);
+  const H = Math.max(y - 28, ...Object.values(count).map(k => k * RH));
+  rest.forEach(n => { const c = col[key(n)]; seen[c] = seen[c] || 0;
+    pos[n.id] = {x: x(c), y: 28 + (H - count[c] * RH) / 2 + seen[c]++ * RH, w: NW, h: NH}; });
+  return {pos, card, w: x(layers.length - 1) + NW + 14, h: H + 44};
 }
 const order = nodes => nodes.map((n, i) => [n, i]).sort((a, z) => a[0].layer - z[0].layer || a[1] - z[1]).map(x => x[0]);
 
@@ -1041,9 +1058,9 @@ function paneHtml(g, st) {
 // Where a bezier edge sits at fraction u (used to put the gate mark just before the arrow).
 const bez = (x1, y1, x2, y2, u) => { const mx = (x1 + x2) / 2, v = 1 - u, f = (a, b, c, d) => v * v * v * a + 3 * v * v * u * b + 3 * v * u * u * c + u * u * u * d; return [f(x1, mx, mx, x2), f(y1, y1, y2, y2)]; };
 // Slots along a box side so lines that meet one box do not all end at one point.
-const slot = (i, k) => k < 2 ? NH / 2 : 12 + i * (NH - 24) / (k - 1);
+const slot = (i, k, h) => k < 2 || h < 50 ? h / 2 : 12 + i * (h - 24) / (k - 1);
 function svgHtml(g) {
-  const all = steps(g), {nodes, hidden} = visible(g, all), {pos, w, h} = layout(nodes), ord = order(nodes);
+  const all = steps(g), {nodes, hidden} = visible(g, all), {pos, card, w, h} = layout(nodes), ord = order(nodes);
   const rank = Object.fromEntries(ord.map((n, i) => [n.id, i])), lb = lbAtoms(g), pend = new Set(pendingAtoms(g));
   g.order = ord.map(n => n.id); g.n = ord.length;
   if (g.step === null || g.step > g.n) g.step = g.n;
@@ -1062,9 +1079,10 @@ function svgHtml(g) {
     for (const q = [T]; q.length;) { const x = q.pop(); for (const c of outs[x] || []) if (!desc.has(c)) { desc.add(c); q.push(c); } }
   }
   const inTrace = id => !T || anc.has(id) || desc.has(id);
-  let s = `<svg class="graph" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="group" aria-label="Reasoning graph, ${nodes.length} steps. Arrows point from cause to result.">`;
+  let s = `<svg class="graph" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="group" aria-label="Reasoning graph, ${nodes.length} steps. Arrows point from cause to result.">` +
+    (card ? `<g class="clausecard"><rect x="${card.x}" y="${card.y}" width="${card.w}" height="${card.h}"/><text x="${card.x + 10}" y="${card.y + 18}">The clause says</text></g>` : "");
   for (const [p, c] of edges) {
-    const a = pos[p], b = pos[c], x1 = a.x + NW, y1 = a.y + slot(outs[p].indexOf(c), outs[p].length), x2 = b.x, y2 = b.y + slot(ins[c].indexOf(p), ins[c].length), mx = (x1 + x2) / 2;
+    const a = pos[p], b = pos[c], x1 = a.x + a.w, y1 = a.y + slot(outs[p].indexOf(c), outs[p].length, a.h), x2 = b.x, y2 = b.y + slot(ins[c].indexOf(p), ins[c].length, b.h), mx = (x1 + x2) / 2;
     const lit = rank[c] === g.step - 1 && g.step < g.n, shown = rank[p] < g.step && rank[c] < g.step || lit;
     const hit = T && (anc.has(p) && anc.has(c) || desc.has(p) && desc.has(c)), cls = hit ? "hit" : heavyEdge(p, c) ? "heavy" : "";
     s += `<g class="eg ${shown ? "" : "pend"} ${T && !hit ? "fade" : ""}"><path class="edge ${cls} ${lit ? "lit" : ""}" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}"/>` +
@@ -1078,16 +1096,16 @@ function svgHtml(g) {
   }
   for (const n of nodes) {
     const p = pos[n.id], pending = rank[n.id] >= g.step, a = n.atoms[0], isLb = a && lb.has(a) && n.kind === "atom";
-    const lines = wrap(stepText(n), 22), val = valText(n, pending);
-    s += `<g class="node k-${n.kind} v${n.value} ${pending ? "pending" : ""} ${isLb ? "lb" : ""} ${g.sel === n.id ? "sel" : ""} ${T && !inTrace(n.id) ? "fade" : ""} ${rank[n.id] === g.step - 1 && g.step < g.n ? "now" : ""}" ` +
+    const row = isRow(n), W = p.w, H = p.h, lines = wrap(stepText(n), row ? (n.kind === "fork" ? 26 : 34) : n.kind === "fact" ? 36 : 22), val = valText(n, pending), ty = row ? 16 : 35;
+    s += `<g class="node k-${n.kind} v${n.value} ${row ? "row" : ""} ${pending ? "pending" : ""} ${isLb ? "lb" : ""} ${g.sel === n.id ? "sel" : ""} ${T && !inTrace(n.id) ? "fade" : ""} ${rank[n.id] === g.step - 1 && g.step < g.n ? "now" : ""}" ` +
       `data-node="${esc(n.id)}" transform="translate(${p.x},${p.y})" role="button" tabindex="-1" aria-label="${esc(lab(n, val) + ": " + stepText(n))}">` +
-      `<title>${esc(stepText(n))}</title>${isLb ? `<rect class="ring" x="-4" y="-4" width="${NW + 8}" height="${NH + 8}"/>` : ""}<rect class="box" width="${NW}" height="${NH}"/>` +
-      `<text class="cap" x="8" y="17">${esc(CAP[n.kind])}</text><text class="val" x="${NW - 8}" y="17" text-anchor="end">${esc(val)}</text>` +
-      lines.map((l, i) => `<text class="t" x="8" y="${35 + i * 15}">${esc(l)}</text>`).join("") +
-      (n.was && !n.other ? `<text class="diffwas" x="8" y="${NH + 14}">was ${esc(valText(n.was) || "set differently")}${n.only ? " (new here)" : ""}</text>` : "");
+      `<title>${esc(stepText(n))}</title>${isLb ? `<rect class="ring" x="${row ? 0 : -4}" y="${row ? 0 : -4}" width="${row ? W : W + 8}" height="${row ? H : H + 8}"/>` : ""}<rect class="box" width="${W}" height="${H}"/>` +
+      (row ? "" : `<text class="cap" x="8" y="17">${esc(CAP[n.kind])}</text>`) + `<text class="val" x="${W - 8}" y="${row ? 16 : 17}" text-anchor="end">${esc(val)}</text>` +
+      lines.map((l, i) => `<text class="t" x="8" y="${ty + i * 15}">${esc(l)}</text>`).join("") +
+      (n.was && !n.other ? `<text class="diffwas" x="8" y="${H + 14}">was ${esc(valText(n.was) || "set differently")}${n.only ? " (new here)" : ""}</text>` : "");
     if (isLb && g.row.unconfirmed.includes(a)) {
       const done = !pend.has(a);
-      s += `<g class="pill ${done ? "done" : ""}" data-act="confirm" data-atom="${esc(a)}" transform="translate(${NW - 92},${-24})"><rect width="88" height="19"/>` +
+      s += `<g class="pill ${done ? "done" : ""}" data-act="confirm" data-atom="${esc(a)}" transform="translate(${W - 92},${row ? (H - 19) / 2 : -24})"><rect width="88" height="19"/>` +
         `<text x="44" y="14" text-anchor="middle">${done ? "✓ confirmed" : "confirm"}</text></g>`;
     }
     s += `</g>`;
