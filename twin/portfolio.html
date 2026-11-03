@@ -752,10 +752,10 @@ function renderEvidence(id, k) {
   const decided = use.reduce((n, r) => n + (r.status === "firm" ? r.atoms.length : 0), 0);
   let note = "";
   if (!hp && decided) note = "Every fact that decides this answer is confirmed.";
-  else if (hp) note = `${hp} ${plural(hp, "fact that decides this answer is", "facts that decide this answer are")} not confirmed yet. Open “Show reasoning” to confirm or correct ${plural(hp, "it", "them")}.`;
+  else if (hp) note = `${hp} ${plural(hp, "fact that decides this answer is", "facts that decide this answer are")} not confirmed yet. Open “Show reasoning graph” to confirm or correct ${plural(hp, "it", "them")}.`;
   if (op) note += ` ${op} other ${plural(op, "fact", "facts")}, in the ${names} clause, ${plural(op, "is", "are")} not confirmed; ${plural(op, "it", "they")} could add an effect but cannot change the answer above.`;
   if (note) h += `<p class="note prose">${esc(note.trim())}</p>`;
-  h += `<details class="reasoning" id="reasoning"><summary>Show reasoning</summary>`;
+  h += `<details class="reasoning" id="reasoning"><summary>Show reasoning graph</summary>`;
   for (const r of rows) {
     const top = r.status === "provisional" ? sevClass(r.worst_sev) : r.status === "blocked" ? "blocked" :
       kindClass(r.reactions.reduce((x, y) => (y.status === "TRIGGERED" ? y : x), r.reactions[0]));
@@ -1388,7 +1388,7 @@ function renderDecide() {
     `<section class="hd-col hd-answer" aria-label="The answer" aria-live="polite"><h2>The answer</h2><p class="note hd-ctx">${esc(run.label)}</p>` +
     run.answer.map(a => `<p class="hd-ans c-${HD_CLS[a.kind]}">${esc(a.text)}</p>`).join("") +
     (run.why ? `<p class="hd-why">${esc(run.why)}</p>` : "") + `</section></div>` +
-    `<details class="hd-graph" ${hdOpen ? "open" : ""}><summary>See the reasoning graph</summary><p class="note">Read from left to right: what happened, the tests, the exception, the effect, the conclusion.</p><div id="hd-graph"></div></details>` +
+    `<details class="hd-graph" ${hdOpen ? "open" : ""}><summary>Show reasoning graph</summary><p class="note">Read from left to right: what happened, the tests, the exception, the effect, the conclusion.</p><div id="hd-graph"></div></details>` +
     `<p class="hd-foot">Some clauses need a lawyer’s reading. When a contract says “a significant change”, the system does not guess; it plans for the stricter reading and flags it — see ` +
     `<button class="linkbtn" data-why="${esc(mp.sc + "|" + AG[mp.ak].versions[0])}">${esc(AG[mp.ak].name)}</button>.</p>`;
   hdDone = true;
@@ -1409,9 +1409,28 @@ function hdGraph() {
     el.innerHTML = '<p class="note">Loading the reasoning graph…</p>';
     return loadGraphs().then(hdGraph).catch(() => { el.innerHTML = '<p class="note">The reasoning graphs load from <code>graphs.json</code> next to this page. Open the page through a web server.</p>'; });
   }
-  const g = {row: {status: "firm", atoms: [], unconfirmed: [], graph: D.how.runs[hdSc].graph}, branch: null, flip: null, diff: "", step: null, showAll: false, sel: null};
-  el.innerHTML = `<div class="rg-scroll" tabindex="0" role="group" aria-label="Reasoning graph for this deal">${svgHtml(g).svg}</div>`;
+  if (!hdG || hdG.sc !== hdSc) {        // a new scenario starts a fresh graph; stop any play-through of the old one
+    if (hdG) stopPlay(hdG);
+    hdG = {sc: hdSc, row: {status: "firm", atoms: [], unconfirmed: [], graph: D.how.runs[hdSc].graph}, branch: null, flip: null, diff: "",
+           step: null, showAll: false, sel: null, timer: null, order: [], n: 0};
+  }
+  const g = hdG, refocus = document.activeElement && document.activeElement.hasAttribute("data-hdplay");
+  const {svg} = svgHtml(g);
+  el.innerHTML = `<div class="rg-bar"><button class="plain" data-hdplay>${g.timer ? "❚❚ Pause" : "▶ Play through"}</button><span>Step ${g.step} of ${g.n}</span></div>` +
+    `<div class="rg-scroll" tabindex="0" role="group" aria-label="Reasoning graph for this deal">${svg}</div>`;
+  const btn = el.querySelector("[data-hdplay]");
+  btn.onclick = () => {
+    if (g.timer) { stopPlay(g); return hdGraph(); }
+    if (g.step >= g.n) g.step = 0;
+    g.timer = setInterval(() => {
+      if (!document.getElementById("hd-graph") || hdG !== g) return stopPlay(g);      // the page or the scenario changed
+      g.step++; if (g.step >= g.n) stopPlay(g); g.sel = g.order[g.step - 1] || null; hdGraph();
+    }, REDUCED.matches ? 900 : 600);
+    hdGraph();
+  };
+  if (refocus) btn.focus();
 }
+let hdG = null;           // view state of the graph on the "How it decides" page
 // ---------------- print: the schedule for the chosen event on one page ----------------
 function printHtml(sc) {
   const list = Object.entries(S().acells[sc]).filter(([, a]) => a.group);
