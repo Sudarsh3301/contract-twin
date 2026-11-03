@@ -809,7 +809,6 @@ function renderEvidence(id, k) {
       (r.flips.length ? `<div class="flipbox" id="fl-${i}" aria-label="What would change this answer"></div>` : `<div id="fl-${i}"></div>`);
   });
   if (!rows.length) h += `<p class="note">There is no clause of this kind to quote.</p>`;
-  h += `<p class="note prose" hidden>The rules apply the compiled reading of the clause. A reaction shown here means the clause is potentially triggered under that reading; it is not a legal conclusion.</p>`;
   ev.innerHTML = h; ev.hidden = false; ev.scrollTop = 0;
   ev.querySelectorAll("[data-ver]").forEach(b => b.onclick = () => go("ev=" + id + "|" + b.dataset.ver, stateName));
   mountGraphs(id, k, rows);
@@ -1016,7 +1015,7 @@ function paneHtml(g, st) {
   let h = `<h4>${esc(lab(st, valText(st)).replace(", ", ": "))}</h4><p>${esc(stepText(st))}</p>`;
   if (st.was) h += `<p class="note">In “${esc(SC[g.diff].name)}”: ${esc(valText(st.was))} · ${esc(stepText(st.was))}</p>`;
   const a = st.atoms[0];
-  if (!a) return h + (st.kind === "outcome" ? `<p class="note">A reaction shown here means the clause is potentially triggered under this reading; it is not a legal conclusion.</p>` : "");
+  if (!a) return h;
   const i = S().atominfo[`${g.k}|${g.row.template}|${a}`];
   if (i) h += `<p class="note">Read from the clause: ${esc(i.status)}${D.atoms === "gold" ? "" : ` · agreement ${i.agree}/3 runs · support ${i.support ? "passed" : "not passed"}`}${i.reviewed ? " · reviewed" : ""}</p>`;
   if (st.kind === "fork" && Array.isArray(st.inputs.tried) && g.row.branches) {
