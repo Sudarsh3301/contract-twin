@@ -47,25 +47,64 @@ async function keys(b) {
   assert(await p.$$eval(".ripple .dotn", xs => xs.length) > 0, "Enter on the “no reaction” ring shows those agreements");
   assert(errs.length === 0, "no console errors " + JSON.stringify(errs));
   await ctx.close();
+  await decideKeys(b);
+}
+
+// "How it decides": keyboard reaches the buttons, the phrase and rule linking and the graph toggle; no engine words in any scenario.
+async function decideKeys(b) {
+  for (const [w, h] of [[1440, 900], [390, 844]]) {
+    const ctx = await b.newContext({ viewport: { width: w, height: h }, reducedMotion: "reduce" });
+    const p = await ctx.newPage();
+    const errs = []; p.on("pageerror", e => errs.push(e.message)); p.on("console", m => m.type() === "error" && errs.push(m.text()));
+    await p.goto(base + "/index.html#decide"); await p.waitForTimeout(900);
+    const tag = `${w}px how it decides`;
+    await p.focus("[data-hd='1']"); await p.keyboard.press("Enter"); await p.waitForTimeout(200);
+    assert(await p.$eval("[data-hd='1']", e => e.getAttribute("aria-pressed")) === "true", `${tag}: Enter on a scenario button selects it`);
+    assert(await p.evaluate(() => document.activeElement.matches("[data-hd='1']")), `${tag}: focus stays on the button after it is chosen`);
+    await p.focus("[data-hd='0']"); await p.keyboard.press("Space"); await p.waitForTimeout(200);
+    await p.focus(".hd-clause .pt[data-part=stake]");
+    assert(await p.$$eval(".hd-rules .pt[data-part=stake].on", xs => xs.length) === 1, `${tag}: focusing a phrase in the clause lights its rule words`);
+    await p.focus(".hd-rules li[data-line='3']");
+    assert(await p.$$eval(".hd-clause .pt.on", xs => xs.map(x => x.dataset.part).sort().join()) === "consent,end", `${tag}: focusing a rule line lights its phrases in the clause`);
+    await p.focus(".hd-graph summary"); await p.keyboard.press("Enter"); await p.waitForTimeout(700);
+    assert(await p.$$eval("#hd-graph svg.graph .node", xs => xs.length) > 5, `${tag}: Enter on the graph toggle opens the graph`);
+    assert(await p.$eval("#hd-graph .rg-scroll", e => e.tabIndex) === 0, `${tag}: the graph can be reached with Tab`);
+    const bad = /(firm|provisional|blocked|atoms?|NEEDS_LAWYER|compiler|simulated)|=|[A-Za-z0-9]+_[A-Za-z0-9]+|cuad:|ar:|\[\d+\]/i;
+    for (let i = 0; i < 3; i++) {
+      await p.click(`[data-hd='${i}']`); await p.waitForTimeout(500);
+      const t = await p.$eval("#view-decide", e => e.innerText);
+      assert(!bad.test(t), `${tag}: scenario ${i + 1} shows no engine words, "=", snake_case, contract keys or sentence numbers ${(t.match(bad) || [""])[0]}`);
+      assert(await p.$eval("#hd-graph svg.graph", () => true), `${tag}: the graph stays open when the scenario changes`);
+    }
+    await p.goto(base + "/index.html#ripple=sale_60"); await p.waitForTimeout(700);
+    assert(await p.$$eval("#p-decide a[href^='#decide']", xs => xs.length) === 1, `${tag}: the Overview strip links to the page`);
+    await p.click("#p-decide a[href^='#decide']"); await p.waitForTimeout(300);
+    assert(await p.$eval("#view-decide", e => !e.hidden), `${tag}: the strip link opens the page`);
+    await p.click(".hd-foot [data-why]"); await p.waitForTimeout(500);
+    assert(await p.$eval("#ev", e => !e.hidden), `${tag}: the agreement name at the bottom opens its drawer`);
+    assert(errs.length === 0, `${tag}: no console errors ` + JSON.stringify(errs));
+    await ctx.close();
+  }
 }
 
 async function audit(b) {
   const src = fs.readFileSync(__dirname + "/audit_page.js", "utf8");
   const screens = [["overview", "#ripple=sale_60", null], ["drawer EN", "#ev=sale_60|cuad:iPayment", "#ev"], ["drawer AR", "#ev=sale_60|ar:mt_ipayment", "#ev"],
-                   ["to resolve", "#queue", null], ["analyst", "#map", null]];
+                   ["to resolve", "#queue", null], ["analyst", "#map", null], ["how it decides", "#decide", "#view-decide"]];
   for (const [w, h] of [[1440, 900], [390, 844]]) for (const theme of ["light", "dark"]) {
     const ctx = await b.newContext({ viewport: { width: w, height: h }, colorScheme: theme });
     const p = await ctx.newPage();
     for (const [name, hash, root] of screens) {
       await p.goto(base + "/index.html" + hash); await p.waitForTimeout(900);
       if (root) { await openReasoning(p); await p.waitForTimeout(900); }
+      if (name === "how it decides") { await p.evaluate(() => { document.querySelector(".hd-graph").open = true; }); await p.waitForTimeout(700); }
       const r = await p.evaluate(`window.AUDIT_ROOT = ${root ? `document.querySelector("${root}")` : "null"}; ${src}`);
       const tag = `${w}px ${theme} ${name}`;
       assert(r.fails === 0, `${tag}: ${r.checked} text nodes meet the contrast minimum; lowest 5: ` + r.lowest.map(x => `${x.ratio} "${x.text}"`).join(", "));
       assert(r.small.length === 0, `${tag}: no HTML text below 12 px ${JSON.stringify(r.small.slice(0, 3))}`);
       if (w === 1440) assert(r.svgSmall.length === 0, `${tag}: no drawn label below 12 px rendered height ${JSON.stringify(r.svgSmall.slice(0, 3))}`);
       assert(r.docW === r.vw, `${tag}: page width ${r.docW} equals viewport width ${r.vw}`);
-      if (name === "overview") assert(r.engineWords.length === 0, `${tag}: no engine words on the first screen ${JSON.stringify(r.engineWords)}`);
+      if (name === "overview" || name === "how it decides") assert(r.engineWords.length === 0, `${tag}: no engine words on the first screen ${JSON.stringify(r.engineWords)}`);
     }
     await p.goto(base + "/index.html#ripple=sale_60"); await p.waitForTimeout(500);
     const cs = await p.$eval("#view-ripple", () => getComputedStyle(document.documentElement).colorScheme);

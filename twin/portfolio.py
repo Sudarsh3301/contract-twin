@@ -235,7 +235,7 @@ FACT_PHRASE = {            # fact id -> (text with {v}, how to show the value)
     "fact:buyer_is_competitor": ("The buyer is a competitor: {v}", "yn"), "fact:consented": ("The other party consented in advance: {v}", "yn"),
     "fact:holding_position": ("New holding company: {v}", "word"), "fact:ipo_proceeds": ("The IPO raises ${v}", "money"),
     "fact:largest_other_pct": ("The largest other holder has {v}%", "num"), "fact:listed": ("The company is listed: {v}", "yn"),
-    "fact:management_changed": ("Management changes: {v}", "yn"), "fact:mechanism": ("The deal is a {v}", "word"),
+    "fact:management_changed": ("Management changes: {v}", "yn"), "fact:mechanism": ("The deal is {v}", "mech"),
     "fact:retained": ("{v}", "label"), "fact:as_of": ("Date: {v}", "date")}
 EXC_PHRASE = {"exc:same_management": "an unchanged management team", "exc:consented": "prior consent",
               "exc:merger_exception": "a merger", "exc:qualifying_ipo": "a qualifying IPO",
@@ -251,13 +251,18 @@ LIMB_ID = {"limb:" + k for k in ("after_expiry", "before_deadline", "competitor"
            "retained_stake", "running", "share_sale", "transaction_type", "transfer", "unreached", "whose")}
 
 
+MECH = {"share_sale": "a share sale", "ipo": "an IPO", "merger": "a merger", "share_exchange": "a share exchange",
+        "asset_sale": "an asset sale", "reorganization": "a reorganization", "consolidation": "a consolidation"}
+STEP_ID_TAIL = re.compile(r":\d+$|_\d+$")         # "effect:1" and "exc:consented_1" are the same kind of step as without the number
+
+
 def nf(v) -> str:
     return f"{v:g}"
 
 
 def step_text(st) -> str:
     """The plain phrase one graph step shows. Display only: the rules decide, nothing is read back from this text."""
-    inp, base, val_ = dict(st.inputs), re.sub(r":\d+$", "", st.id), "FUT"[int(st.value)]
+    inp, base, val_ = dict(st.inputs), STEP_ID_TAIL.sub("", st.id), "FUT"[int(st.value)]
     v = inp.get("value")
     if st.kind == "atom":
         name = ATOM_NAME[base[5:]]
@@ -271,7 +276,8 @@ def step_text(st) -> str:
         if how == "label":
             return words(st.label)
         val = {"num": lambda: nf(v), "yn": lambda: "yes" if v else "no", "word": lambda: words(v or "none"),
-               "money": lambda: f"{v:,.0f}", "date": lambda: fdate(v)}[how]()
+               "money": lambda: f"{v:,.0f}", "date": lambda: fdate(v),
+               "mech": lambda: MECH.get(v) or ("a " + words(v) if v else "no deal")}[how]()
         return tpl.format(v=val)
     if st.kind == "effect":
         m = re.match(r"(.*?) \((us|them|either|both|\?)\)$", st.label)
@@ -280,10 +286,16 @@ def step_text(st) -> str:
     if st.kind == "exception":
         name = EXC_PHRASE[base]
         why = st.label.split(": ", 1)[1] if val_ == "F" and ": " in st.label else ""
-        return f"Exception for {name}: " + ("applies" if val_ == "T" else "does not apply" + (f" ({words(why)})" if why else ""))
+        text = f"Exception for {name}: " + ("applies" if val_ == "T" else "does not apply")
+        return text + (f" ({words(why)})" if why and len(text) + len(words(why)) < 64 else "")      # a node shows three short lines
     if st.kind == "outcome":
-        return words(st.label).replace("open: ", "Open: ").replace("a legal reading", "question for counsel") if st.label.startswith("open:") else \
-            "No reaction" if st.label == "no reaction" else "Result: " + words(st.label)
+        if st.label.startswith("open:"):
+            return words(st.label).replace("open: ", "Open: ").replace("a legal reading", "question for counsel")
+        m = re.fullmatch(r"(.*?) \((us|them|either|both)\)(?: by (\d{4}-\d\d-\d\d))?", st.label)
+        said = EFFECT_PHRASE.get((m[1].replace(" ", "_"), m[2])) if m else None
+        if st.label == "no reaction":
+            return "No reaction"
+        return "Result: " + (said + (" by " + fdate(m[3]) if m[3] else "") if said else words(st.label))
     if st.kind == "fork":
         atom = base[5:]
         if atom == "reading":
@@ -308,7 +320,7 @@ def phrase_errors(graphs: dict) -> list[str]:
     errs = []
     for gid, steps in graphs.items():
         for s in steps:
-            base = re.sub(r":\d+$", "", s["id"])
+            base = STEP_ID_TAIL.sub("", s["id"])
             if s["kind"] == "fact" and base not in FACT_PHRASE:
                 errs.append(f"fact without a phrase: {base}")
             if s["kind"] == "atom" and base[5:] not in ATOM_NAME:
@@ -1218,6 +1230,155 @@ LLM_CASES = {"N06": dict(src="cuad:DynTek", templates=["term"], title="DynTek ex
              "R16": dict(src="cuad:Corio", templates=["coc", "assign"], title="Corio: a competitor buys 60% of us")}
 
 
+# ---------------- the "How it decides" page: one change-of-control clause, read the way a lawyer reads it ----------------
+HOW_KEY = "cuad:iPayment"
+# The three sentences (found by their opening words) and the words in each that decide the answer: (part, phrase, which
+# occurrence). Every phrase is cut from the sentence as written; the page colours each part of the rule the same way.
+HOW_SENTENCES = [
+    ('"Change of Control" means%', [
+        ("stake", "more than 51%", 0), ("mgmt", "power to direct the management", 0),
+        ("exception", "becoming a public company with the same management team or changing the beneficial ownership of "
+                      "more than 51% of the equity securities while maintaining the same management team will not constitute "
+                      "a change in control", 0)]),
+    ("%Upon a Change of Control of ISO with%", [
+        ("end", "one hundred eighty (180) days", 0), ("consent", "unless the SERVICERS had previously consented", 0)]),
+    ("%within three (3) Business Days of any Change of Control%", [("notice", "within three (3) Business Days", 0)])]
+HOW_RUNS = [("sell", "Sell 30%, new management", "30% sold · new management", "sale_30"),
+            ("ipo", "IPO, same team stays", "listing · management stays", "ipo_200_60"),
+            ("agreed", "They agreed in advance", "60% sold · new management · consent given", None)]
+HOW_AGREED = [{"event": "share_sale", "buyer_pct": 60, "consented": True, "date": D}]
+HOW_BANNED = re.compile(r"\b(firm|provisional|blocked|atoms?|NEEDS_LAWYER|compiler|simulated)\b|=|[A-Za-z]+_[A-Za-z]+")
+WEEKDAY = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+
+def wdate(d, year=True) -> str:
+    return f"{WEEKDAY[d.weekday()]} {d.day} {MONTHS[d.month - 1]}" + (f" {d.year}" if year else "")
+
+
+def how_facts(fam: dict) -> dict:
+    """The numbers the page words come from, read from the clause's facts. The page is written for this clause: any other shape stops the build."""
+    eff = {e["effect"]: e for e in fam["effects"]}
+    assert sorted(eff) == ["notice", "termination_right"] and eff["termination_right"].get("unless_consented"), fam["effects"]
+    assert sorted(fam["triggers"]) == ["management_change", "ownership_threshold"] and fam["carve_outs"] == ["same_management"], fam
+    return dict(more={"gt": "more than", "gte": "at least"}[fam["threshold_op"]], pct=fam["threshold_pct"],
+                notice=eff["notice"]["notice"], end=eff["termination_right"]["notice"], triggers=fam["triggers"])
+
+
+def how_lines(f: dict) -> list[dict]:
+    """The rule in plain English: four lines, each a list of [text, part]; a part is the same colour as its words in the clause."""
+    stake = f"{f['more']} {f['pct']}%"
+    return [dict(lead="", parts=[["A change of control happens if a buyer gets ", ""], [f"{stake} of the shares", "stake"], [", OR ", ""],
+                                 ["control of management changes", "mgmt"], [".", ""]]),
+            dict(lead="EXCEPT:", parts=[[f"going public, or a sale of {stake}, with the same management team, is not a change of control.", "exception"]]),
+            dict(lead="THEN:", parts=[["we must notify them in writing ", ""], [f"within {f['notice'][0]} business days", "notice"], [".", ""]]),
+            dict(lead="AND:", parts=[["they may end the agreement ", ""], [f"on {f['end'][0]} days’ notice", "end"], [", UNLESS ", ""],
+                                     ["they agreed to the change in advance", "consent"], [".", ""]])]
+
+
+def how_read(f: dict) -> str:
+    """One sentence rebuilt from the clause's extracted facts, to set beside the clause itself."""
+    what = {"ownership_threshold": f"a buyer gets {f['more']} {f['pct']}% of the shares", "management_change": "control of management changes"}
+    return (f"A change of control is when {' or '.join(what[t] for t in what if t in f['triggers'])}, unless the same management team stays. "
+            f"Then we must notify them within {f['notice'][0]} business days and they may end the agreement on {f['end'][0]} days’ notice, "
+            f"unless they agreed to the change in advance.")
+
+
+def how_run(fam: dict, f: dict, events: list, G: "Graphs") -> dict:
+    """One scenario on this clause: the rules' answer in words, the rule lines that decided it, one line on why, the graph."""
+    s = state_of(dict(events=events))
+    o = outcome("coc", fam, s)
+    assert o["status"] == "firm", o["status"]
+    rs = o["reactions"]
+    val = {st.id: int(st.value) for r in rs for st in r.trace}
+    on = lambda i: val.get(i) == 2
+    trig = {r.kind: r for r in rs if r.status == "TRIGGERED"}
+    lit = [on("limb:management_change") or on("limb:ownership_threshold"), on("exc:same_management"), "notice" in trig,
+           "termination_right" in trig or any(on(i) for i in val if i.startswith("exc:consented"))]
+    ans = []
+    if "notice" in trig:
+        d = trig["notice"].due
+        ans.append(dict(kind="notice", text=f"We must notify them by {wdate(d)} ({wdate(s.as_of, False)} + {f['notice'][0]} business days)."))
+    if "termination_right" in trig:
+        ans.append(dict(kind="end", text=f"They may end the agreement on {f['end'][0]} days’ notice."))
+    elif trig:
+        ans.append(dict(kind="noend", text="They cannot end the agreement: they agreed to the change in advance."))
+    if not trig:
+        ans.append(dict(kind="none", text="No change of control, so nothing is triggered."))
+    if on("exc:same_management"):
+        why = "The exception applies: going public with the same management team is not a change of control."
+    elif any(on(i) for i in val if i.startswith("exc:consented")):
+        why = "Their consent removes their right to end the agreement. It does not remove our duty to notify."
+    elif val.get("limb:ownership_threshold") == 0 and on("limb:management_change"):
+        why = (f"The stake test fails ({nf(s.buyer_pct)}% is not {f['more']} {f['pct']}%). "
+               f"The management test decides it: management changes.")
+    else:
+        why = ""
+    return dict(answer=ans, lit=lit, why=why, graph=G.add(rs),
+                reactions=[[r.status, r.kind, r.holder, str(r.due) if r.due else ""] for r in rs])
+
+
+def how(ctx: Ctx, G: "Graphs") -> dict:
+    """Everything the page needs for the one clause: its three sentences with the deciding words marked, the rule in plain
+    English, the sentence read back from the extracted facts, and three scenarios run through the rules."""
+    c, fam = ctx.contracts[HOW_KEY], ctx.atoms[HOW_KEY]["coc"]
+    f = how_facts(fam)
+    sents = []
+    for like, parts in HOW_SENTENCES:
+        rows = ctx.con.execute("SELECT text FROM sentence WHERE contract_id=? AND text LIKE ?", (c["cid"], like)).fetchall()
+        assert len(rows) == 1, (like, len(rows))
+        text, marks = rows[0][0], []
+        for part, phrase, nth in parts:
+            a = -1
+            for _ in range(nth + 1):
+                a = text.index(phrase, a + 1)
+            marks.append(dict(part=part, a=a, b=a + len(phrase)))
+        sents.append(dict(text=text, marks=sorted(marks, key=lambda m: m["a"])))
+    events = {sc["id"]: sc["events"] for sc in LIBRARY}
+    runs = [dict(id=i, label=lab, sub=sub, **how_run(fam, f, events[sc] if sc else HOW_AGREED, G)) for i, lab, sub, sc in HOW_RUNS]
+    return dict(sentences=sents, lines=how_lines(f), read=how_read(f), runs=runs)
+
+
+def how_errors(h: dict) -> list[str]:
+    """Each marked phrase sits whole inside its sentence (never cut mid-word); every rule line has a phrase in the clause; no engine words in the page text."""
+    errs, marked = [], {m["part"] for s in h["sentences"] for m in s["marks"]}
+    used = {p for ln in h["lines"] for _, p in ln["parts"]}
+    for s in h["sentences"]:
+        t = s["text"]
+        for m in s["marks"]:
+            a, b = m["a"], m["b"]
+            if not (0 <= a < b <= len(t)) or (a and t[a - 1].isalnum() and t[a].isalnum()) or (b < len(t) and t[b - 1].isalnum() and t[b].isalnum()):
+                errs.append(f"phrase cut mid-word: {t[max(0, a - 5):b + 5]!r}")
+            if m["part"] not in used:
+                errs.append(f"phrase without a rule line: {m['part']}")
+    for ln in h["lines"]:
+        if not {p for _, p in ln["parts"] if p} & marked:
+            errs.append(f"rule line without a phrase: {ln['parts'][0][0]}")
+        if any(p and p not in marked for _, p in ln["parts"]):
+            errs.append(f"rule part without a phrase in the clause: {ln['parts']}")
+    texts = [h["read"]] + [t for ln in h["lines"] for t, _ in ln["parts"]] + \
+            [x for r in h["runs"] for x in [r["label"], r["sub"], r["why"]] + [a["text"] for a in r["answer"]]]
+    errs += [f"engine word in page text: {t!r}" for t in texts if HOW_BANNED.search(t)]
+    return errs
+
+
+def how_run_errors(h: dict, rows: list[dict]) -> list[str]:
+    """The three runs against the portfolio's own rows for this agreement: the 30% sale and the IPO rows give the same
+    reactions; a sale with prior consent leaves the notice and nothing else."""
+    def mine(sc):
+        return [[x["status"], x["kind"], x["holder"], x["due"]] for r in rows if r["scenario"] == sc and r["contract"] == HOW_KEY and r["template"] == "coc"
+                for x in r["reactions"]]
+    run = {r["id"]: r for r in h["runs"]}
+    errs = []
+    if run["sell"]["reactions"] != mine("sale_30"):
+        errs.append("Sell 30% differs from the portfolio row")
+    for sc in ("ipo_200_60", "ipo_100_45"):
+        if run["ipo"]["reactions"] != mine(sc):
+            errs.append(f"IPO differs from the portfolio row {sc}")
+    if [r[1] for r in run["agreed"]["reactions"] if r[0] == "TRIGGERED"] != ["notice"]:
+        errs.append("a sale with prior consent should leave the notice only")
+    return errs
+
+
 def first_sentences(text: str, cap: int = 230) -> str:
     out = ""
     for part in re.split(r"(?<=[.;])\s+", text):
@@ -1325,10 +1486,11 @@ def build(atoms_kind="compiled", library=LIBRARY) -> dict:
     for key, sid, text in [(reading["ak"], reading["sid"], reading["quote"])] + [(c["contract"], sid, t) for c in llm["cases"] for sid, t in c["quotes"].items()]:
         sents.setdefault(key, {})[str(sid)] = text
     ipo = [sc["id"] for sc in library if sc["events"][0]["event"] == "ipo"]
+    how_ = how(ctx, G)
     shown_state = states.get("review") or states["compiled"]
     default = "sale_60" if "sale_60" in shown_state["brief"] else ipo[0]      # opens on the share sale: most answers are settled there
     return dict(as_of=D, atoms=atoms_kind, sentences=sents, states=states, graphs=dict(sorted(G.all.items())), default_event=default,
-                words=dict(WORD), decide=[dict(sc=a, ak=b, title=c) for a, b, c in DECIDE],
+                words=dict(WORD), decide=[dict(sc=a, ak=b, title=c) for a, b, c in DECIDE], how=how_,
                 agreements=ags, ask=ask_table(states), scale=scale_cards(res), proof=proof_line(res),
                 runtime=json.loads(RUNTIME.read_text(encoding="utf-8")) if RUNTIME.exists() else {}, reading=reading, llm=llm,
                 scenarios=[dict(id=sc["id"], name=sc["name"], templates=sc["templates"], events=sc["events"]) for sc in library],
@@ -1653,6 +1815,12 @@ def check(out: Path) -> None:
         print(f"{name}: {len(nl)} open reactions, causes {st['causes']}; {sum(r['status'] == 'provisional' for r in st['rows'])} "
               f"provisional worst cases match readings(); cases {st['header']['cases']}")
     assert all(sc in {x["id"] for x in LIBRARY} and ak in data["agreements"] for sc, ak, _ in DECIDE), "the strip names real cases"
+    h = data["how"]
+    herr = how_errors(h) + [e for st in data["states"].values() for e in how_run_errors(h, st["rows"])]
+    assert not herr, herr
+    assert [r["answer"][0]["text"] for r in h["runs"]][0].startswith("We must notify them by Thu 5 Nov 2026 (Mon 2 Nov + 3 business days)"), h["runs"][0]["answer"]
+    print("how it decides: phrases whole, every rule line has a phrase, runs equal the portfolio rows in both states; "
+          + "; ".join(f"{r['label']}: {' '.join(a['text'] for a in r['answer'])}" for r in h["runs"]))
     perr = phrase_errors(data["graphs"])
     assert not perr, perr[:8]
     print(f"phrase table: {len(phrase_table())} phrases; every fact, clause fact and value in {len(data['graphs'])} graphs has one")

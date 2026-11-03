@@ -1,0 +1,230 @@
+[
+ {
+  "name": "decide_light_1440",
+  "hash": "decide",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 600
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "shot": "t19/sell_light_1440.png"
+   },
+   {
+    "click": "[data-hd='1']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "shot": "t19/ipo_light_1440.png"
+   },
+   {
+    "click": "[data-hd='2']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "shot": "t19/agreed_light_1440.png"
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "click": ".hd-graph summary"
+   },
+   {
+    "wait": 600
+   },
+   {
+    "eval": "document.querySelector('.hd-graph').scrollIntoView()"
+   },
+   {
+    "wait": 200
+   },
+   {
+    "shot": "t19/graph_light_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "decide_light_390",
+  "hash": "decide",
+  "w": 390,
+  "h": 844,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 600
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "shot": "t19/sell_light_390.png"
+   },
+   {
+    "click": "[data-hd='1']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "shot": "t19/ipo_light_390.png"
+   },
+   {
+    "click": "[data-hd='2']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "shot": "t19/agreed_light_390.png"
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "click": ".hd-graph summary"
+   },
+   {
+    "wait": 600
+   },
+   {
+    "eval": "document.querySelector('.hd-graph').scrollIntoView()"
+   },
+   {
+    "wait": 200
+   },
+   {
+    "shot": "t19/graph_light_390.png"
+   }
+  ]
+ },
+ {
+  "name": "decide_dark_1440",
+  "hash": "decide",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 600
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "shot": "t19/sell_dark_1440.png"
+   },
+   {
+    "click": "[data-hd='1']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "shot": "t19/ipo_dark_1440.png"
+   },
+   {
+    "click": "[data-hd='2']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "shot": "t19/agreed_dark_1440.png"
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "click": ".hd-graph summary"
+   },
+   {
+    "wait": 600
+   },
+   {
+    "eval": "document.querySelector('.hd-graph').scrollIntoView()"
+   },
+   {
+    "wait": 200
+   },
+   {
+    "shot": "t19/graph_dark_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "decide_dark_390",
+  "hash": "decide",
+  "w": 390,
+  "h": 844,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 600
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "shot": "t19/sell_dark_390.png"
+   },
+   {
+    "click": "[data-hd='1']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "shot": "t19/ipo_dark_390.png"
+   },
+   {
+    "click": "[data-hd='2']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "shot": "t19/agreed_dark_390.png"
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "click": ".hd-graph summary"
+   },
+   {
+    "wait": 600
+   },
+   {
+    "eval": "document.querySelector('.hd-graph').scrollIntoView()"
+   },
+   {
+    "wait": 200
+   },
+   {
+    "shot": "t19/graph_dark_390.png"
+   }
+  ]
+ }
+]

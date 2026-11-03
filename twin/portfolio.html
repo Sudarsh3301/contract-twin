@@ -406,6 +406,47 @@ svg.graph { display: block; font-family: system-ui, sans-serif; }
   .sentence { font-size: 17px; }
   .answer { font-size: 18px; }
 }
+
+/* ---- How it decides: one clause, three columns, colour-linked ---- */
+.hd { display: grid; gap: 16px 20px; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "btn btn btn" "clause rule answer"; align-items: start; margin-top: 8px; }
+.hd-clause { grid-area: clause; } .hd-rule { grid-area: rule; } .hd-answer { grid-area: answer; } .hd-btn { grid-area: btn; }
+.hd h2 { margin: 0 0 8px; font-size: 18px; }
+.hd-col { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px 16px; min-width: 0; }
+.hd-col blockquote { margin: 0 0 10px; font-size: 15px; line-height: 1.65; }
+.hd-col blockquote .cap { display: block; font: 600 13px/1.4 system-ui, sans-serif; color: var(--muted); margin-bottom: 2px; }
+.hd-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.hd-btns button { font: inherit; text-align: left; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 10px; padding: 8px 14px; cursor: pointer; display: flex; flex-direction: column; min-width: 0; }
+.hd-btns button b { font-size: 15px; }
+.hd-btns button small { font-size: 13px; color: var(--muted); }
+.hd-btns button[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+.hd-btns button[aria-pressed="true"] small { color: var(--panel); opacity: .85; }
+.hd-same { margin: 8px 0 0; }
+.pt { --c: var(--other); --cbg: var(--other-bg); background: var(--cbg); border-bottom: 2px solid var(--c); border-radius: 2px; padding: 0 1px; color: var(--ink); }
+.pt[data-part="stake"] { --c: var(--deadline); --cbg: var(--deadline-bg); }
+.pt[data-part="mgmt"] { --c: var(--prepayment); --cbg: var(--prepayment-bg); }
+.pt[data-part="exception"] { --c: var(--consent); --cbg: var(--consent-bg); }
+.pt[data-part="notice"] { --c: var(--notice); --cbg: var(--notice-bg); }
+.pt[data-part="end"] { --c: var(--termination); --cbg: var(--termination-bg); }
+.pt[data-part="consent"] { --c: var(--clear); --cbg: var(--clear-bg); }
+.pt.off { background: none; border-bottom-style: dotted; }
+.pt.on { background: color-mix(in srgb, var(--c) 20%, var(--cbg)); outline: 2px solid var(--c); outline-offset: 1px; }
+.pt:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.hd-rules { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.hd-rules li { padding: 6px 10px; border-left: 4px solid var(--line); border-radius: 0 6px 6px 0; line-height: 1.7; color: var(--muted); }
+.hd-rules li.lit { border-left-color: var(--ink); color: var(--ink); background: var(--soft); }
+.hd-rules li:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.hd-rules li b { font-size: 13px; letter-spacing: .03em; }
+.hd-read { margin: 4px 0 0; font-size: 14px; }
+.hd-ans { margin: 0 0 8px; padding: 6px 0 6px 12px; border-left: 5px solid var(--c); font-size: 17px; line-height: 1.45; }
+.hd-why { margin: 10px 0 0; font-size: 15px; font-weight: 600; }
+.hd-ctx { margin: 0 0 8px; }
+.hd-graph { margin-top: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 18px 14px; }
+.hd-graph > summary { margin: 0; font-weight: 600; color: var(--ink); }
+.hd-foot { margin: 18px 0 0; max-width: 80ch; }
+button.linkbtn { all: unset; color: var(--notice); text-decoration: underline; cursor: pointer; font-weight: 600; }
+button.linkbtn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 899px) { .hd { grid-template-columns: minmax(0, 1fr); grid-template-areas: "clause" "rule" "btn" "answer"; } }
 </style>
 </head>
 <body>
@@ -414,10 +455,11 @@ svg.graph { display: block; font-family: system-ui, sans-serif; }
     <div><h1>Run a deal against every contract.</h1><div class="sub" id="meta"></div></div>
     <div class="bar"><div class="seg" role="group" aria-label="Colour theme" id="theme"></div></div>
   </div>
-  <nav><a href="#ripple" id="nav-ripple">Overview</a><a href="#reviewers" id="nav-reviewers">For reviewers</a></nav>
+  <nav><a href="#ripple" id="nav-ripple">Overview</a><a href="#decide" id="nav-decide">How it decides</a><a href="#reviewers" id="nav-reviewers">For reviewers</a></nav>
 </header>
 <main>
   <section id="view-ripple"></section>
+  <section id="view-decide" hidden></section>
   <section id="view-reviewers" hidden>
     <div class="simnote" id="simnote"></div>
     <p class="rvnav"><a href="#queue" data-jump="rv-queue">Open work</a><a href="#map" data-jump="rv-clock">+90 days</a><a href="#map" data-jump="rv-map">Exposure map and per-event table</a></p>
@@ -1302,7 +1344,7 @@ function excerpt(text, toks, n = 280) {
 }
 const cap1 = t => t.charAt(0).toUpperCase() + t.slice(1);
 function decideHtml() {
-  return `<section class="panel" id="p-decide"><h2>How it decides</h2><p class="note prose">Three real clauses. The rules read the clause, test the numbers, check the exceptions and state the effect. When a word needs a judgement, they stop and ask counsel.</p><div class="strip3">` +
+  return `<section class="panel" id="p-decide"><h2>How it decides</h2><p class="note prose">Three real clauses. The rules read the clause, test the numbers, check the exceptions and state the effect. When a word needs a judgement, they stop and ask counsel. <a href="${"#decide" + sfx()}">See one clause in full →</a></p><div class="strip3">` +
     D.decide.map(c => {
       const k = AG[c.ak].versions[0], rows = (S().rows[c.sc] || {})[k] || [], a = S().acells[c.sc][c.ak];
       const r = rows.find(x => x.status !== "firm" || x.reactions.some(y => y.status === "TRIGGERED")) || rows[0];
@@ -1316,6 +1358,59 @@ function decideHtml() {
         `<ol><li>${esc(cap1(eventPhrase(c.sc)) + ".")}</li><li>${esc(kinds(["test", "exception"]))}</li><li>${esc(last)}</li></ol>` +
         `<button class="plain go" data-why="${esc(c.sc + "|" + k)}" aria-label="Open ${esc(AG[c.ak].name)}">Open</button></div>`;
     }).join("") + `</div></section>`;
+}
+// ---------------- how it decides: one clause, the rule in plain English, the answer for a chosen deal ----------------
+// The answers, the lit rule lines and the graph ids come from the Python export (D.how); nothing is decided here.
+let hdSc = 0, hdDone = false, hdOpen = false;
+const HD_CLS = {notice: "notice", end: "termination", noend: "clear", none: "none"};
+const hdLineOf = () => Object.fromEntries(D.how.lines.flatMap((ln, i) => ln.parts.filter(p => p[1]).map(p => [p[1], i])));
+function hdQuote(sn, cap, off) {
+  let h = "", at = 0;
+  for (const m of sn.marks) {
+    h += esc(sn.text.slice(at, m.a)) + `<span class="pt ${off(m.part) ? "off" : ""}" data-part="${m.part}" tabindex="0">${esc(sn.text.slice(m.a, m.b))}</span>`;
+    at = m.b;
+  }
+  return `<blockquote><span class="cap">${esc(cap)}</span>${h + esc(sn.text.slice(at))}</blockquote>`;
+}
+function renderDecide() {
+  const H = D.how, run = H.runs[hdSc], line = hdLineOf(), off = p => !run.lit[line[p]], v = document.getElementById("view-decide");
+  const mp = D.decide.find(x => x.ak === "cuad:mPhase"), caps = ["The definition", "The right to end the agreement", "The duty to notify"];
+  v.innerHTML = `<p class="lead">Here is one clause, how the system reads it, and what it decides.</p><div class="hd">` +
+    `<section class="hd-col hd-clause" aria-label="The clause"><h2>The clause</h2>${H.sentences.map((sn, i) => hdQuote(sn, caps[i], off)).join("")}` +
+    `<p class="hd-read"><b>What the system read:</b> ${esc(H.read)}</p></section>` +
+    `<section class="hd-col hd-rule" aria-label="The rule, in plain English"><h2>The rule, in plain English</h2><p class="note">Same colour, same words: each coloured part of the rule comes from the clause. Point at one to see its partner.</p><ol class="hd-rules">` +
+    H.lines.map((ln, i) => `<li class="${run.lit[i] ? "lit" : ""}" data-line="${i}" tabindex="0">${run.lit[i] ? '<span class="sr">This line decided the answer. </span>' : ""}` +
+      (ln.lead ? `<b>${esc(ln.lead)}</b> ` : "") + ln.parts.map(([t, p]) => p ? `<span class="pt ${run.lit[i] ? "" : "off"}" data-part="${p}">${esc(t)}</span>` : esc(t)).join("") + `</li>`).join("") +
+    `</ol></section>` +
+    `<div class="hd-btn"><div class="hd-btns" role="group" aria-label="Deal">${H.runs.map((r, i) =>
+      `<button data-hd="${i}" aria-pressed="${i === hdSc}"><b>${esc(r.label)}</b><small>${esc(r.sub)}</small></button>`).join("")}</div>` +
+    `<p class="note hd-same">Same inputs, same answer, every time.</p></div>` +
+    `<section class="hd-col hd-answer" aria-label="The answer" aria-live="polite"><h2>The answer</h2><p class="note hd-ctx">${esc(run.label)}</p>` +
+    run.answer.map(a => `<p class="hd-ans c-${HD_CLS[a.kind]}">${esc(a.text)}</p>`).join("") +
+    (run.why ? `<p class="hd-why">${esc(run.why)}</p>` : "") + `</section></div>` +
+    `<details class="hd-graph" ${hdOpen ? "open" : ""}><summary>See the reasoning graph</summary><p class="note">Read from left to right: what happened, the tests, the exception, the effect, the conclusion.</p><div id="hd-graph"></div></details>` +
+    `<p class="hd-foot">Some clauses need a lawyer’s reading. When a contract says “a significant change”, the system does not guess; it plans for the stricter reading and flags it — see ` +
+    `<button class="linkbtn" data-why="${esc(mp.sc + "|" + AG[mp.ak].versions[0])}">${esc(AG[mp.ak].name)}</button>.</p>`;
+  hdDone = true;
+  bindWhy(v);
+  v.querySelectorAll("[data-hd]").forEach(b => b.onclick = () => { hdSc = +b.dataset.hd; renderDecide(); v.querySelector(`[data-hd="${hdSc}"]`).focus(); });
+  const light = (parts, on) => v.querySelectorAll(".pt").forEach(e => e.classList.toggle("on", on && parts.includes(e.dataset.part)));
+  v.querySelectorAll(".hd-clause .pt").forEach(e => { const f = () => light([e.dataset.part], true), u = () => light([], false);
+    e.onmouseenter = e.onfocus = f; e.onmouseleave = e.onblur = u; });
+  v.querySelectorAll(".hd-rules li").forEach(e => { const ps = H.lines[+e.dataset.line].parts.map(p => p[1]).filter(Boolean), f = () => light(ps, true), u = () => light([], false);
+    e.onmouseenter = e.onfocus = f; e.onmouseleave = e.onblur = u; });
+  const d = v.querySelector(".hd-graph");
+  d.ontoggle = () => { hdOpen = d.open; if (hdOpen) hdGraph(); };
+  if (hdOpen) hdGraph();
+}
+function hdGraph() {
+  const el = document.getElementById("hd-graph");
+  if (!D.graphs) {
+    el.innerHTML = '<p class="note">Loading the reasoning graph…</p>';
+    return loadGraphs().then(hdGraph).catch(() => { el.innerHTML = '<p class="note">The reasoning graphs load from <code>graphs.json</code> next to this page. Open the page through a web server.</p>'; });
+  }
+  const g = {row: {status: "firm", atoms: [], unconfirmed: [], graph: D.how.runs[hdSc].graph}, branch: null, flip: null, diff: "", step: null, showAll: false, sel: null};
+  el.innerHTML = `<div class="rg-scroll" tabindex="0" role="group" aria-label="Reasoning graph for this deal">${svgHtml(g).svg}</div>`;
 }
 // ---------------- print: the schedule for the chosen event on one page ----------------
 function printHtml(sc) {
@@ -1396,9 +1491,10 @@ function route() {
     if (DEALS.some(s => s.id === want2) && want2 !== rippleSc) { rippleSc = want2; rippleDone = false; if (!changed) renderQueue(); }
     backTo = "ripple=" + rippleSc;
   }
-  const tab = seen.startsWith("ripple") ? "ripple" : "reviewers";
+  const tab = seen.startsWith("ripple") ? "ripple" : seen === "decide" ? "decide" : "reviewers";
+  if (tab === "decide" && !hdDone) renderDecide();
   if (tab === "ripple" && !rippleDone) { renderRipple(true); rippleDone = true; }
-  for (const t of ["ripple", "reviewers"]) {
+  for (const t of ["ripple", "decide", "reviewers"]) {
     document.getElementById("view-" + t).hidden = t !== tab;
     const a = document.getElementById("nav-" + t);
     a.href = "#" + t + sfx();
