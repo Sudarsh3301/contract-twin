@@ -997,6 +997,8 @@ function rangeText(iv, f) {
 const ivLabel = x => x.status === "blocked" ? "open item" : plainLabel(x.label) + (x.status === "provisional" ? " (worst case)" : "");
 function flipHtml(g) {
   return g.row.flips.map((f, p) => {
+    if (f.intervals.length < 2) return `<div class="flip"><p>${esc(f.text)}: <b>${esc(ivLabel(f.intervals[0]))}</b> at any value from ` +
+      `${esc(fmtNum(f.lo, f.unit))} to ${esc(fmtNum(f.hi, f.unit))}. Changing it would not change this answer.</p></div>`;      // one interval: nothing to slide
     const nowI = f.intervals.findIndex(iv => (iv.lo < f.now || iv.lo_in && iv.lo === f.now) && (f.now < iv.hi || iv.hi_in && f.now === iv.hi));
     const i = g.flip && g.flip.p === p ? g.flip.i : nowI, iv = f.intervals[i], span = f.hi - f.lo || 1;
     const seg = f.intervals.map((x, j) => `<button data-act="flipseg" data-p="${p}" data-i="${j}" aria-pressed="${j === i}" class="c-${x.status === "blocked" ? "blocked" : sevClass(x.sev)}" ` +
