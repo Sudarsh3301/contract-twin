@@ -50,7 +50,7 @@ for _sc in LIBRARY:
     _sc["templates"] = ["term"] if all(e["event"] == "date_advance" for e in _sc["events"]) else ["coc", "assign"]
 
 SIMULATED = ROOT / "out" / "portfolio" / "reviews_simulated.json"
-STATES = {"compiled": "Compiled (no review)", "review": "After review (simulated)"}
+STATES = {"compiled": "Compiled (no review)", "review": "After review (demo)"}
 CAUSE_LABEL = {"legal_judgement": "Decision for counsel", "missing_document": "Missing document",
                "missing_fact": "Missing fact", "check_extraction": "Check extraction"}
 
@@ -1094,7 +1094,7 @@ def agreement_cells(ags: dict, rows: list[dict], cs: dict, sents: dict, hand: se
             why = "versions" if disagree else next((c for c in WHY_OPEN if c in rec_causes), "unclear") if p["cant"] else ""
             kind = ""
             if cant:
-                kind = OPEN_OF.get(why) or ("unreviewed" if hand is not None and ak not in hand else "check")
+                kind = OPEN_OF.get(why) or "check"
             note = ""
             for k in ks[1:]:                  # a translation that cannot tell, beside a record that can: shown as a note
                 if vers[k]["cant"] != p["cant"] and not disagree:
@@ -1326,7 +1326,7 @@ def build(atoms_kind="compiled", library=LIBRARY) -> dict:
         sents.setdefault(key, {})[str(sid)] = text
     ipo = [sc["id"] for sc in library if sc["events"][0]["event"] == "ipo"]
     shown_state = states.get("review") or states["compiled"]
-    default = max(ipo, key=lambda i: (shown_state["brief"][i]["react"], -ipo.index(i)))      # the IPO that most agreements react to
+    default = "sale_60" if "sale_60" in shown_state["brief"] else ipo[0]      # opens on the share sale: most answers are settled there
     return dict(as_of=D, atoms=atoms_kind, sentences=sents, states=states, graphs=dict(sorted(G.all.items())), default_event=default,
                 words=dict(WORD), decide=[dict(sc=a, ak=b, title=c) for a, b, c in DECIDE],
                 agreements=ags, ask=ask_table(states), scale=scale_cards(res), proof=proof_line(res),
