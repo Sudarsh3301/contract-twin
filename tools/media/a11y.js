@@ -75,6 +75,27 @@ async function decideKeys(b) {
       const t = await p.$eval("#view-decide", e => e.innerText);
       assert(!bad.test(t), `${tag}: scenario ${i + 1} shows no engine words, "=", snake_case, contract keys or sentence numbers ${(t.match(bad) || [""])[0]}`);
       assert(await p.$eval("#hd-graph svg.graph", () => true), `${tag}: the graph stays open when the scenario changes`);
+      // decision path: every question lights its clause phrase and its rule words, on hover and on focus
+      const qs = await p.$$eval(".wy [data-parts]", xs => xs.map((x, k) => [k, x.dataset.parts]));
+      await p.mouse.move(0, 0);       // a resting pointer must not light other questions while focus scrolls
+      for (const [k, parts] of qs) {
+        await p.focus(`.wy [data-parts] >> nth=${k}`);
+        const on = await p.$$eval(".pt.on", xs => [...new Set(xs.map(x => x.dataset.part))].sort().join(" "));
+        assert(on === parts.split(" ").sort().join(" "), `${tag}: scenario ${i + 1} question ${k + 1} lights ${parts} (got ${on})`);
+        assert(await p.$$eval(".hd-clause .pt.on", xs => xs.length) > 0 && await p.$$eval(".hd-rules .pt.on", xs => xs.length) > 0, `${tag}: scenario ${i + 1} question ${k + 1} lights the clause phrase and the rule line`);
+      }
+      // graph: arrows on every line, a gate on every exception, click lights causes and results, Esc clears
+      const gc = await p.evaluate(() => ({edges: document.querySelectorAll("#hd-graph .edge").length, arrows: document.querySelectorAll("#hd-graph .arrow").length,
+        gates: document.querySelectorAll("#hd-graph .gate").length, exc: [...document.querySelectorAll("#hd-graph .node.k-exception")].length}));
+      assert(gc.edges === gc.arrows && gc.edges > 0, `${tag}: scenario ${i + 1}: an arrow on every line ${JSON.stringify(gc)}`);
+      assert(gc.gates >= gc.exc && gc.exc > 0, `${tag}: scenario ${i + 1}: a gate mark on every exception ${JSON.stringify(gc)}`);
+      const res = await p.$$eval("#hd-graph .node.k-outcome", xs => xs.map(x => x.dataset.node));
+      await p.click(`#hd-graph [data-node="${res[res.length - 1]}"]`); await p.waitForTimeout(150);
+      const lit = await p.evaluate(() => ({hit: document.querySelectorAll("#hd-graph .edge.hit").length, fade: document.querySelectorAll("#hd-graph .node.fade").length, all: document.querySelectorAll("#hd-graph .node").length}));
+      assert(lit.hit > 0 && lit.fade < lit.all, `${tag}: scenario ${i + 1}: clicking a result lights its causes ${JSON.stringify(lit)}`);
+      if (res.length > 1) assert(lit.fade > 0, `${tag}: scenario ${i + 1}: clicking one result fades the other effect ${JSON.stringify(lit)}`);
+      await p.focus("#hd-graph .rg-scroll"); await p.keyboard.press("Escape"); await p.waitForTimeout(150);
+      assert(await p.$$eval("#hd-graph .node.fade, #hd-graph .edge.hit", xs => xs.length) === 0, `${tag}: scenario ${i + 1}: Esc clears the trace`);
     }
     await p.goto(base + "/index.html#ripple=sale_60"); await p.waitForTimeout(700);
     assert(await p.$$eval("#p-decide a[href^='#decide']", xs => xs.length) === 1, `${tag}: the Overview strip links to the page`);

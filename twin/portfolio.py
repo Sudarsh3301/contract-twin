@@ -21,6 +21,7 @@ import re
 import sqlite3
 import sys
 from collections import Counter
+from datetime import date
 from pathlib import Path
 
 from . import compile as comp
@@ -111,6 +112,7 @@ def clause_max(t: str, fam: dict | None) -> int:
 
 # ---------------- reasons in plain words ----------------
 _PLAIN = [
+    (r"the trigger is false under every reading, so (.*)", lambda m: f"the trigger does not hold under any reading, so {m[1]}"),
     (r"clause concerns the counterparty's change of control", lambda m: "the clause is about the other party's change of control"),
     (r"buyer ([\d.]+)% vs (gt|gte) ([\d.]+)%", lambda m: f"buyer gets {m[1]}%; the clause needs {'more than' if m[2] == 'gt' else 'at least'} {m[3]}%"),
     (r"buyer ([\d.]+)% vs (gt|gte) ([\d.]+)% \((.*)\)",
@@ -201,7 +203,7 @@ def words(s) -> str:
 def vwords(v) -> str:
     """A clause value in words: lists joined, effects as 'right to terminate (them)', notice periods as '60 days'."""
     if v is None:
-        return "not stated"
+        return "not in the clause"
     if v is True or v is False:
         return "yes" if v else "no"
     if isinstance(v, (int, float)):
@@ -267,7 +269,7 @@ def step_text(st) -> str:
     if st.kind == "atom":
         name = ATOM_NAME[base[5:]]
         if base == "atom:threshold_pct":
-            return f"{name}: {nf(v)}% or more" if v is not None else f"{name}: not stated"
+            return f"{name}: {nf(v)}% or more" if v is not None else f"{name}: not in the clause"
         if base == "atom:threshold_op":
             return f"{name}: " + {"gt": "more than that share", "gte": "that share or more"}.get(v, vwords(v))
         return f"{name}: {vwords(v)}"
@@ -303,7 +305,7 @@ def step_text(st) -> str:
         name = ATOM_NAME.get(atom, atom.replace("_", " ").capitalize())
         m = re.match(r".* (?:is|are) (unknown|silent|refers_to_missing)(?:: (\d+) different outcomes across (\d+) values)?$", st.label)
         if m:
-            what = {"unknown": "not settled", "silent": "not stated in the clause", "refers_to_missing": "in another document"}[m[1]]
+            what = {"unknown": "not settled", "silent": "not in the clause", "refers_to_missing": "in another document"}[m[1]]
             return f"{name}: {what}" + (f" ({m[2]} different outcomes are possible)" if m[2] else "")
         m = re.match(r".* unknown: every tried value gives this outcome", st.label)
         if m:
@@ -1304,17 +1306,61 @@ def how_run(fam: dict, f: dict, events: list, G: "Graphs") -> dict:
         ans.append(dict(kind="noend", text="They cannot end the agreement: they agreed to the change in advance."))
     if not trig:
         ans.append(dict(kind="none", text="No change of control, so nothing is triggered."))
-    if on("exc:same_management"):
-        why = "The exception applies: going public with the same management team is not a change of control."
-    elif any(on(i) for i in val if i.startswith("exc:consented")):
-        why = "Their consent removes their right to end the agreement. It does not remove our duty to notify."
-    elif val.get("limb:ownership_threshold") == 0 and on("limb:management_change"):
-        why = (f"The stake test fails ({nf(s.buyer_pct)}% is not {f['more']} {f['pct']}%). "
-               f"The management test decides it: management changes.")
-    else:
-        why = ""
-    return dict(answer=ans, lit=lit, why=why, graph=G.add(rs),
+    path = how_path(fam, f, rs, s)
+    return dict(answer=ans, lit=lit, path=path, graph=G.add(rs), heavy=path["heavy"],
                 reactions=[[r.status, r.kind, r.holder, str(r.due) if r.due else ""] for r in rs])
+
+
+PATH_TESTS = [("ownership_threshold", "stake"), ("management_change", "mgmt")]       # in the order the clause gives them
+
+
+def how_path(fam: dict, f: dict, rs: list, s) -> dict:
+    """One run as the questions a lawyer asks, read from the run's trace: each trigger test with its answer, the exception,
+    and one box per effect. Words only: the path repeats what the rules decided and never decides anything."""
+    steps = {st.id: st for r in rs for st in r.trace}
+    on = lambda i: i in steps and int(steps[i].value) == 2
+    stake, pct = f"{f['more']} {f['pct']}%", nf(dict(steps["fact:buyer_pct"].inputs)["value"])
+    exc = on("exc:same_management")
+    q = dict(stake=(f"Does the buyer get {stake} of the shares?", f"{pct}% is sold", "The stake test also passes — not needed, either is enough."),
+             mgmt=("Does control of management change?", None, "Management also changes — not needed, either is enough."))
+    tests = []
+    for lid, part in PATH_TESTS:
+        yes, (ask, note, also) = on("limb:" + lid), q[part]
+        tests.append(dict(part=part, q=ask, yes=yes, also=also, note=note or ("new management comes in" if yes else "management stays the same")))
+    passed = [t for t in tests if t["yes"]]
+    assert exc or passed, "a run that is neither excepted nor triggered has no path to show"
+    for t in tests:
+        t["role"] = "decides" if passed and t is passed[0] else "also" if t["yes"] else ""
+        t["alt"] = ("Yes would also have triggered it" if not t["yes"] else
+                    "No → nothing is triggered" if t["role"] == "decides" and len(passed) == 1 else "")
+    ex = dict(part="exception", q="Exception — does the same management team stay?", yes=exc,
+              sub=f"The clause excepts going public, or a sale of {stake}, when the same management team stays.",
+              note="the same team stays" if exc else "new management comes in")
+    base = dict(exception=ex, heavy=[])
+    if exc:
+        return dict(base, tests=[], verdict=dict(pre="so it ", em="is not", post=" a change of control. Nothing is triggered."), boxes=[],
+                    summary="The same management team stays, so the exception applies and nothing is triggered.")
+    by = {dict(st.inputs)["index"]: r for r in rs for st in r.trace if st.kind == "effect"}
+    consented = any(on(i) for i in steps if i.startswith("exc:consented"))
+    boxes = []
+    for i, e in enumerate(fam["effects"]):
+        r = by[i]
+        if e["effect"] == "notice":
+            assert r.status == "TRIGGERED", r.status
+            boxes.append(dict(part="notice", kind="notice", head="Duty to notify", cond=None, note="No exception applies to this one", off=False,
+                              result=f"We must notify them by {wdate(r.due)}.", calc=f"{wdate(s.as_of, False)} + {e['notice'][0]} business days"))
+        else:
+            cond = dict(part="consent", q="Did they agree in advance?", yes=consented, note="closed — they cannot end it" if consented else "stays open: they can still end it")
+            boxes.append(dict(part="end", kind="end", head="Right to end the agreement", cond=cond, note="", off=consented, calc="",
+                              result="They cannot end the agreement." if consented else f"They may end the agreement on {e['notice'][0]} days’ notice."))
+    decider = passed[0]
+    failed = next((t for t in tests if not t["yes"]), None)
+    name = dict(stake="stake", mgmt="management")
+    summary = ("Their consent closes only the right to end; the duty to notify stays." if consented else
+               f"The {name[failed['part']]} test failed, but the {name[decider['part']]} test decided it." if failed else
+               f"The {name[decider['part']]} test decided it.")
+    return dict(base, tests=tests, boxes=boxes, summary=summary, heavy=["limb:" + dict((p, l) for l, p in PATH_TESTS)[decider["part"]]],
+                verdict=dict(pre="so it ", em="is", post=" a change of control."))
 
 
 def how(ctx: Ctx, G: "Graphs") -> dict:
@@ -1338,6 +1384,47 @@ def how(ctx: Ctx, G: "Graphs") -> dict:
     return dict(sentences=sents, lines=how_lines(f), read=how_read(f), runs=runs)
 
 
+def path_texts(p: dict) -> list[str]:
+    """Every sentence the decision path shows."""
+    out = [p["summary"], p["exception"]["q"], p["exception"]["sub"], p["exception"]["note"], p["verdict"]["pre"] + p["verdict"]["em"] + p["verdict"]["post"]]
+    for t in p["tests"]:
+        out += [t["q"], t["note"], t["also"], t["alt"]]
+    for b in p["boxes"]:
+        out += [b["head"], b["note"], b["result"], b["calc"]] + ([b["cond"]["q"], b["cond"]["note"]] if b["cond"] else [])
+    return [x for x in out if x]
+
+
+def path_errors(h: dict, ctx: Ctx) -> list[str]:
+    """Each question maps to a phrase in the clause and a rule line. The path's end results equal the run's answer, and the
+    test marked 'decides it' is one the result depends on: with it (and any other passing test) turned off, nothing triggers."""
+    marked = {m["part"] for s in h["sentences"] for m in s["marks"]}
+    used = {p for ln in h["lines"] for _, p in ln["parts"]}
+    fam, errs = ctx.atoms[HOW_KEY]["coc"], []
+    off = dict(stake=dict(buyer_pct=10), mgmt=dict(management_changes=False))
+    events = {sc["id"]: sc["events"] for sc in LIBRARY}
+    for r in h["runs"]:
+        p, end = r["path"], {x[1]: x for x in r["reactions"] if x[0] == "TRIGGERED"}
+        parts = [p["exception"]["part"]] + [t["part"] for t in p["tests"]] + [b["part"] for b in p["boxes"]] + [b["cond"]["part"] for b in p["boxes"] if b["cond"]]
+        errs += [f"{r['id']}: question without a phrase or rule line: {x}" for x in parts if x not in marked or x not in used]
+        if p["exception"]["yes"] != (not end) or bool(p["boxes"]) == p["exception"]["yes"]:
+            errs.append(f"{r['id']}: path ends differently from the run")
+        for b in p["boxes"]:
+            if b["kind"] == "notice" and ("notice" not in end or wdate(date.fromisoformat(end["notice"][3])) not in b["result"]):
+                errs.append(f"{r['id']}: notify date differs from the run")
+            if b["kind"] == "end" and b["off"] != ("termination_right" not in end):
+                errs.append(f"{r['id']}: right to end differs from the run")
+        dec = [t for t in p["tests"] if t["role"] == "decides"]
+        if dec:
+            ev = [dict(e) for e in (events[next(sc for i, _, _, sc in HOW_RUNS if i == r["id"])] if r["id"] != "agreed" else HOW_AGREED)]
+            for t in p["tests"]:
+                if t["yes"]:
+                    ev[0].update(off[t["part"]])
+            nothing = outcome("coc", fam, state_of(dict(events=ev)))
+            if len(dec) != 1 or any(x.status == "TRIGGERED" for x in nothing["reactions"]):
+                errs.append(f"{r['id']}: turning the passing tests off still triggers: the deciding test is not one the result depends on")
+    return errs
+
+
 def how_errors(h: dict) -> list[str]:
     """Each marked phrase sits whole inside its sentence (never cut mid-word); every rule line has a phrase in the clause; no engine words in the page text."""
     errs, marked = [], {m["part"] for s in h["sentences"] for m in s["marks"]}
@@ -1356,7 +1443,7 @@ def how_errors(h: dict) -> list[str]:
         if any(p and p not in marked for _, p in ln["parts"]):
             errs.append(f"rule part without a phrase in the clause: {ln['parts']}")
     texts = [h["read"]] + [t for ln in h["lines"] for t, _ in ln["parts"]] + \
-            [x for r in h["runs"] for x in [r["label"], r["sub"], r["why"]] + [a["text"] for a in r["answer"]]]
+            [x for r in h["runs"] for x in [r["label"], r["sub"]] + [a["text"] for a in r["answer"]] + path_texts(r["path"])]
     errs += [f"engine word in page text: {t!r}" for t in texts if HOW_BANNED.search(t)]
     return errs
 
@@ -1816,7 +1903,7 @@ def check(out: Path) -> None:
               f"provisional worst cases match readings(); cases {st['header']['cases']}")
     assert all(sc in {x["id"] for x in LIBRARY} and ak in data["agreements"] for sc, ak, _ in DECIDE), "the strip names real cases"
     h = data["how"]
-    herr = how_errors(h) + [e for st in data["states"].values() for e in how_run_errors(h, st["rows"])]
+    herr = how_errors(h) + path_errors(h, Ctx()) + [e for st in data["states"].values() for e in how_run_errors(h, st["rows"])]
     assert not herr, herr
     assert [r["answer"][0]["text"] for r in h["runs"]][0].startswith("We must notify them by Thu 5 Nov 2026 (Mon 2 Nov + 3 business days)"), h["runs"][0]["answer"]
     print("how it decides: phrases whole, every rule line has a phrase, runs equal the portfolio rows in both states; "

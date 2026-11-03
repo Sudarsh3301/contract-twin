@@ -21,7 +21,7 @@
   --counsel: #6a3fa0; --counsel-bg: #ece3f7;
   --clear: #1b6b3a; --clear-bg: #dcf0e3; --plan: #8a5a00; --plan-bg: #fbeccd; --option: #3d5a73; --option-bg: #e1e9f0;
   --focus: #1f5fa8; --warn: #8f4e00; --ok: #0f6e66;
-  --vT: #0f6e66; --vF: #5e5c56; --vU: #8f4e00; --edge: #b9b5ac; --lit: #1f5fa8;
+  --vT: #0f6e66; --vF: #5e5c56; --vU: #8f4e00; --edge: #85817a; --lit: #1f5fa8;
 }
 :root[data-theme="light"] { color-scheme: light; }
 @media (prefers-color-scheme: dark) {
@@ -33,7 +33,7 @@
     --blocked: #c9c6bf; --blocked-bg: #33322f; --counsel: #c9a6f5; --counsel-bg: #36294a;
   --clear: #7fd8a0; --clear-bg: #17382a; --plan: #ffc766; --plan-bg: #47381a; --option: #9fc0dc; --option-bg: #26343f;
     --focus: #8fbaf0; --warn: #ffb866; --ok: #7fd8cd;
-    --vT: #7fd8cd; --vF: #aaa7a0; --vU: #ffb866; --edge: #55534e; --lit: #8fbaf0;
+    --vT: #7fd8cd; --vF: #aaa7a0; --vU: #ffb866; --edge: #8c8982; --lit: #8fbaf0;
   }
 }
 :root[data-theme="dark"] {
@@ -45,7 +45,7 @@
   --blocked: #c9c6bf; --blocked-bg: #33322f; --counsel: #c9a6f5; --counsel-bg: #36294a;
   --clear: #7fd8a0; --clear-bg: #17382a; --plan: #ffc766; --plan-bg: #47381a; --option: #9fc0dc; --option-bg: #26343f;
   --focus: #8fbaf0; --warn: #ffb866; --ok: #7fd8cd;
-  --vT: #7fd8cd; --vF: #aaa7a0; --vU: #ffb866; --edge: #55534e; --lit: #8fbaf0;
+  --vT: #7fd8cd; --vF: #aaa7a0; --vU: #ffb866; --edge: #8c8982; --lit: #8fbaf0;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
@@ -312,7 +312,17 @@ details.reasoning > summary { font-size: 16px; font-weight: 600; color: var(--in
 .rg-link { display: none; }
 .rg-link polyline { stroke: var(--lit); stroke-width: 1.5; stroke-dasharray: 4 3; }
 svg.graph { display: block; font-family: system-ui, sans-serif; }
-.graph .edge { fill: none; stroke: var(--edge); stroke-width: 1.4; }
+.graph .edge { fill: none; stroke: var(--edge); stroke-width: 1.6; }
+.graph .arrow { fill: var(--edge); stroke: none; }
+.graph .eg.pend { opacity: .25; }
+.graph .eg.fade { opacity: .14; }
+.graph .edge.heavy { stroke: var(--ink); stroke-width: 3.2; } .graph .arrow.heavy { fill: var(--ink); }
+.graph .edge.hit { stroke: var(--lit); stroke-width: 2.8; } .graph .arrow.hit { fill: var(--lit); }
+.graph .gate circle { fill: var(--panel); stroke: var(--ink); stroke-width: 2; }
+.graph .gate.closed circle { fill: var(--termination); stroke: var(--termination); }
+.graph .gate.closed path { stroke: var(--panel); stroke-width: 2; fill: none; }
+.graph .gate.unsure circle { stroke: var(--warn); stroke-dasharray: 3 2; }
+.graph .node.fade { opacity: .22; }
 .graph .edge.lit { stroke: var(--lit); stroke-width: 1.8; stroke-dasharray: 6 4; animation: flow 1.2s linear infinite; }
 @keyframes flow { to { stroke-dashoffset: -20; } }
 .graph .node rect.box { stroke-width: 1.6; rx: 6; fill: var(--cbg); stroke: var(--c); }
@@ -322,15 +332,16 @@ svg.graph { display: block; font-family: system-ui, sans-serif; }
 .graph .node.k-exception { --c: var(--consent); --cbg: var(--consent-bg); }
 .graph .node.k-effect { --c: var(--prepayment); --cbg: var(--prepayment-bg); }
 .graph .node.k-outcome { --c: var(--counsel); --cbg: var(--counsel-bg); }
-.graph .node.vF rect.box { stroke: var(--ink); stroke-width: 2.6; stroke-dasharray: 5 3; }
-.graph .node.vF text.t { text-decoration: line-through; }
+.graph .node.vF rect.box { stroke: var(--vF); stroke-width: 1.8; stroke-dasharray: 5 3; fill: var(--soft); }
+.graph .node.vF text.t, .graph .node.vF text.cap, .graph .node.vF text.val { fill: var(--muted); }
+.graph .node.k-exception.vF rect.box { stroke: var(--c); stroke-width: 1.6; stroke-dasharray: none; fill: var(--cbg); }
+.graph .node.k-exception.vF text.t { fill: var(--ink); } .graph .node.k-exception.vF text.cap { fill: var(--c); }
 .graph .node.vU rect.box { stroke: var(--warn); stroke-width: 2.8; }
 .graph .node.pending rect.box { fill: var(--panel); stroke: var(--line); stroke-dasharray: 2 3; stroke-width: 1.4; }
 .graph .node.pending text { fill: var(--muted); }
 .graph .node text { fill: var(--ink); font-size: 12px; }
 .graph .node text.cap { font-size: 12px; font-weight: 700; fill: var(--c); }
 .graph .node text.val { font-weight: 700; font-size: 12px; fill: var(--c); }
-.graph .node.vF text.val { fill: var(--ink); }
 .graph .node.vU text.val { fill: var(--warn); }
 .graph .node { cursor: pointer; }
 .graph .node:focus { outline: none; }
@@ -438,7 +449,32 @@ svg.graph { display: block; font-family: system-ui, sans-serif; }
 .hd-rules li b { font-size: 13px; letter-spacing: .03em; }
 .hd-read { margin: 4px 0 0; font-size: 14px; }
 .hd-ans { margin: 0 0 8px; padding: 6px 0 6px 12px; border-left: 5px solid var(--c); font-size: 17px; line-height: 1.45; }
-.hd-why { margin: 10px 0 0; font-size: 15px; font-weight: 600; }
+.wy { margin-top: 16px; }
+.wy-steps { list-style: none; margin: 0 0 12px 6px; padding: 0 0 0 16px; border-left: 2px solid var(--line); display: grid; gap: 8px; max-width: 760px; }
+.wy-q { padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+.wy-q.decides { border-color: var(--focus); border-width: 2px; background: var(--notice-bg); }
+.wy-q.also { background: none; border-style: dashed; }
+.wy-q:focus-visible, .wy-box:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.wy-ask { font-weight: 600; }
+.wy-a { margin-top: 2px; }
+.wy-alt { color: var(--muted); font-size: 14px; margin-top: 2px; }
+.wy-pill { display: inline-block; font-weight: 700; padding: 0 10px; border-radius: 10px; border: 1px solid var(--ink); font-size: 14px; }
+.wy-pill.yes { background: var(--ink); color: var(--panel); }
+.wy-tag { margin-left: 8px; font-size: 13px; font-weight: 700; color: var(--focus); border: 1px solid var(--focus); border-radius: 10px; padding: 0 8px; }
+.wy-or { color: var(--muted); font-size: 13px; font-style: italic; padding-left: 12px; }
+.wy-v { padding: 2px 12px; font-size: 16px; }
+.wy-boxes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.wy-box { background: var(--panel); border: 1px solid var(--line); border-left: 6px solid var(--c); border-radius: 8px; padding: 8px 14px 10px; }
+.wy-box.k-notice { --c: var(--notice); } .wy-box.k-end { --c: var(--termination); }
+.wy-box h3 { margin: 0 0 4px; font-size: 16px; }
+.wy-box p { margin: 0 0 4px; }
+.wy-cond { font-size: 14px; color: var(--muted); }
+.wy-cond:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.wy-res { font-size: 17px; font-weight: 600; }
+.wy-box.off { background: var(--soft); border-left-color: var(--line); border-style: dashed; color: var(--muted); }
+.wy-box.off .wy-res, .wy-box.off h3 { color: var(--muted); font-weight: 600; }
+.wy-sum { margin: 12px 0 0; font-size: 16px; font-weight: 600; }
+@media (max-width: 699px) { .wy-boxes { grid-template-columns: minmax(0, 1fr); } .wy-steps { margin-left: 2px; padding-left: 10px; } }
 .hd-ctx { margin: 0 0 8px; }
 .hd-graph { margin-top: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 18px 14px; }
 .hd-graph > summary { margin: 0; font-weight: 600; color: var(--ink); }
@@ -851,7 +887,7 @@ function renderQueue() {
 // ---------------- reasoning graph ----------------
 // Everything here selects and draws what the Python engine exported: graphs, branches, slider intervals, corrections.
 // No rule is evaluated in the browser.
-const CAP = {fact: "event fact", atom: "clause fact", fork: "clause fact · open", limb: "test", exception: "exception", effect: "effect", outcome: "conclusion"};
+const CAP = {fact: "From the deal", atom: "From the clause", fork: "From the clause", limb: "Test", exception: "Exception", effect: "Effect", outcome: "Result"};
 const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)");
 const NW = 158, NH = 74, CW = 172, RH = 90;
 const confirmed = new Set();      // atoms confirmed on this page only (nothing is stored)
@@ -863,12 +899,14 @@ const shortVal = v => { const s = typeof v === "string" ? v : jv(v); return s.le
 
 function valText(st, pending) {
   if (pending) return "not yet";
-  if (st.kind === "outcome") return {T: "reaction", F: "no reaction", U: "open"}[st.value];
-  if (st.kind === "atom") return "stated";
-  if (st.kind === "fork") return "assumed" in st.inputs ? "assumed" : "unknown";
-  if (st.kind === "fact") return typeof st.inputs.value === "boolean" || st.value === "F" ? (st.value === "T" ? "yes" : "no") : "given";
-  return {T: "true", F: "false", U: "unknown"}[st.value];
+  const yn = {T: "yes", F: "no", U: "not settled"}[st.value];
+  if (st.kind === "atom") return "";
+  if (st.kind === "fork") return "assumed" in st.inputs ? "assumed" : "";
+  if (st.kind === "fact") return typeof st.inputs.value === "boolean" || st.value === "F" ? yn : "";
+  return st.kind === "limb" && st.value === "F" ? "no ✗" : yn;
 }
+const stepText = n => String(n.text || n.label).replace(/^(Effect|Result): /, "");      // the heading already says which
+const lab = (st, val) => [CAP[st.kind], val].filter(Boolean).join(", ");
 function wrap(s, n) {
   const words = String(s).split(" "), out = [""];
   for (const w of words) {
@@ -896,8 +934,8 @@ function diffSteps(g) {
 }
 function visible(g, all) {
   if (g.showAll || g.diff) return {nodes: all, hidden: 0};
-  const hideF = all.some(s => s.kind === "outcome" && s.value !== "F"), lb = lbAtoms(g);
-  let keep = all.filter(s => !(hideF && s.kind === "limb" && s.value === "F"));
+  const lb = lbAtoms(g);
+  let keep = all;
   const used = new Set(keep.flatMap(s => s.parents));
   keep = keep.filter(s => !(s.kind === "fact" || s.kind === "atom") || used.has(s.id) || lb.has(s.atoms[0]));
   if (keep.length > 25) keep = keep.filter(s => s.kind !== "fact");
@@ -975,8 +1013,8 @@ function tokens(v) {
 }
 function paneHtml(g, st) {
   if (!st) return "";
-  let h = `<h4>${esc(CAP[st.kind])}: ${esc(valText(st))}</h4><p>${esc(st.text || st.label)}</p>`;
-  if (st.was) h += `<p class="note">In “${esc(SC[g.diff].name)}”: ${esc(valText(st.was))} · ${esc(st.was.text || st.was.label)}</p>`;
+  let h = `<h4>${esc(lab(st, valText(st)).replace(", ", ": "))}</h4><p>${esc(stepText(st))}</p>`;
+  if (st.was) h += `<p class="note">In “${esc(SC[g.diff].name)}”: ${esc(valText(st.was))} · ${esc(stepText(st.was))}</p>`;
   const a = st.atoms[0];
   if (!a) return h + (st.kind === "outcome" ? `<p class="note">A reaction shown here means the clause is potentially triggered under this reading; it is not a legal conclusion.</p>` : "");
   const i = S().atominfo[`${g.k}|${g.row.template}|${a}`];
@@ -1001,28 +1039,53 @@ function paneHtml(g, st) {
     `${highlight(D.sentences[g.k][sid], tokens(st.inputs.value))}</blockquote>`).join("") || '<p class="note">No sentence cited.</p>');
   return h;
 }
+// Where a bezier edge sits at fraction u (used to put the gate mark just before the arrow).
+const bez = (x1, y1, x2, y2, u) => { const mx = (x1 + x2) / 2, v = 1 - u, f = (a, b, c, d) => v * v * v * a + 3 * v * v * u * b + 3 * v * u * u * c + u * u * u * d; return [f(x1, mx, mx, x2), f(y1, y1, y2, y2)]; };
+// Slots along a box side so lines that meet one box do not all end at one point.
+const slot = (i, k) => k < 2 ? NH / 2 : 12 + i * (NH - 24) / (k - 1);
 function svgHtml(g) {
   const all = steps(g), {nodes, hidden} = visible(g, all), {pos, w, h} = layout(nodes), ord = order(nodes);
   const rank = Object.fromEntries(ord.map((n, i) => [n.id, i])), lb = lbAtoms(g), pend = new Set(pendingAtoms(g));
   g.order = ord.map(n => n.id); g.n = ord.length;
   if (g.step === null || g.step > g.n) g.step = g.n;
-  const ids = new Set(nodes.map(n => n.id));
-  let s = `<svg class="graph" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="group" aria-label="Reasoning graph, ${nodes.length} steps">`;
-  for (const n of nodes) for (const p of n.parents) if (ids.has(p)) {
-    const a = pos[p], b = pos[n.id], x1 = a.x + NW, y1 = a.y + NH / 2, x2 = b.x, y2 = b.y + NH / 2, mx = (x1 + x2) / 2;
-    const lit = rank[n.id] === g.step - 1 && g.step < g.n;
-    if (rank[p] < g.step && rank[n.id] < g.step || lit) s += `<path class="edge ${lit ? "lit" : ""}" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}"/>`;
-    else s += `<path class="edge" style="opacity:.25" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}"/>`;
+  const ids = new Set(nodes.map(n => n.id)), byId = Object.fromEntries(nodes.map(n => [n.id, n]));
+  const edges = nodes.flatMap(n => n.parents.filter(p => ids.has(p)).map(p => [p, n.id]));
+  const ins = {}, outs = {};
+  edges.forEach(([p, c]) => { (ins[c] = ins[c] || []).push(p); (outs[p] = outs[p] || []).push(c); });
+  Object.values(ins).forEach(l => l.sort((a, z) => pos[a].y - pos[z].y));
+  Object.values(outs).forEach(l => l.sort((a, z) => pos[a].y - pos[z].y));
+  const key = new Set(g.row.heavy || []);
+  const heavyEdge = (p, c) => key.has(p) || (key.has(c) && byId[p].kind === "fact") || (byId[p].kind === "atom" && lb.has(byId[p].atoms[0]));
+  const T = g.trace && g.trace === g.sel && ids.has(g.trace) && !g.timer ? g.trace : null;
+  const anc = new Set([T]), desc = new Set([T]);
+  if (T) {
+    for (const q = [T]; q.length;) for (const p of byId[q.pop()].parents) if (ids.has(p) && !anc.has(p)) { anc.add(p); q.push(p); }
+    for (const q = [T]; q.length;) { const x = q.pop(); for (const c of outs[x] || []) if (!desc.has(c)) { desc.add(c); q.push(c); } }
+  }
+  const inTrace = id => !T || anc.has(id) || desc.has(id);
+  let s = `<svg class="graph" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="group" aria-label="Reasoning graph, ${nodes.length} steps. Arrows point from cause to result.">`;
+  for (const [p, c] of edges) {
+    const a = pos[p], b = pos[c], x1 = a.x + NW, y1 = a.y + slot(outs[p].indexOf(c), outs[p].length), x2 = b.x, y2 = b.y + slot(ins[c].indexOf(p), ins[c].length), mx = (x1 + x2) / 2;
+    const lit = rank[c] === g.step - 1 && g.step < g.n, shown = rank[p] < g.step && rank[c] < g.step || lit;
+    const hit = T && (anc.has(p) && anc.has(c) || desc.has(p) && desc.has(c)), cls = hit ? "hit" : heavyEdge(p, c) ? "heavy" : "";
+    s += `<g class="eg ${shown ? "" : "pend"} ${T && !hit ? "fade" : ""}"><path class="edge ${cls} ${lit ? "lit" : ""}" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}"/>` +
+      `<path class="arrow ${cls}" d="M${x2},${y2} l-10,-5.5 v11 z"/>`;
+    if (byId[p].kind === "exception") {         // a condition on the way to an effect: open ring = did not apply, red cross = applied and stopped the path
+      const [gx, gy] = bez(x1, y1, x2 - 10, y2, .86), v = byId[p].value, name = v === "T" ? "closed: the exception applied, so the path stops" : v === "F" ? "open: the exception did not apply, so the path continues" : "not settled";
+      s += `<g class="gate ${v === "T" ? "closed" : v === "U" ? "unsure" : "open"}" transform="translate(${gx.toFixed(1)},${gy.toFixed(1)})"><title>${name}</title><circle r="7"/>` +
+        (v === "T" ? `<path d="M-3,-3 L3,3 M3,-3 L-3,3"/>` : "") + `</g>`;
+    }
+    s += `</g>`;
   }
   for (const n of nodes) {
     const p = pos[n.id], pending = rank[n.id] >= g.step, a = n.atoms[0], isLb = a && lb.has(a) && n.kind === "atom";
-    const lines = wrap(n.text || n.label, 22), val = valText(n, pending);
-    s += `<g class="node k-${n.kind} v${n.value} ${pending ? "pending" : ""} ${isLb ? "lb" : ""} ${g.sel === n.id ? "sel" : ""} ${rank[n.id] === g.step - 1 && g.step < g.n ? "now" : ""}" ` +
-      `data-node="${esc(n.id)}" transform="translate(${p.x},${p.y})" role="button" tabindex="-1" aria-label="${esc(CAP[n.kind] + ", " + val + ": " + (n.text || n.label))}">` +
-      `<title>${esc(n.text || n.label)}</title>${isLb ? `<rect class="ring" x="-4" y="-4" width="${NW + 8}" height="${NH + 8}"/>` : ""}<rect class="box" width="${NW}" height="${NH}"/>` +
+    const lines = wrap(stepText(n), 22), val = valText(n, pending);
+    s += `<g class="node k-${n.kind} v${n.value} ${pending ? "pending" : ""} ${isLb ? "lb" : ""} ${g.sel === n.id ? "sel" : ""} ${T && !inTrace(n.id) ? "fade" : ""} ${rank[n.id] === g.step - 1 && g.step < g.n ? "now" : ""}" ` +
+      `data-node="${esc(n.id)}" transform="translate(${p.x},${p.y})" role="button" tabindex="-1" aria-label="${esc(lab(n, val) + ": " + stepText(n))}">` +
+      `<title>${esc(stepText(n))}</title>${isLb ? `<rect class="ring" x="-4" y="-4" width="${NW + 8}" height="${NH + 8}"/>` : ""}<rect class="box" width="${NW}" height="${NH}"/>` +
       `<text class="cap" x="8" y="17">${esc(CAP[n.kind])}</text><text class="val" x="${NW - 8}" y="17" text-anchor="end">${esc(val)}</text>` +
       lines.map((l, i) => `<text class="t" x="8" y="${35 + i * 15}">${esc(l)}</text>`).join("") +
-      (n.was && !n.other ? `<text class="diffwas" x="8" y="${NH + 14}">was ${esc(valText(n.was))}${n.only ? " (new here)" : ""}</text>` : "");
+      (n.was && !n.other ? `<text class="diffwas" x="8" y="${NH + 14}">was ${esc(valText(n.was) || "set differently")}${n.only ? " (new here)" : ""}</text>` : "");
     if (isLb && g.row.unconfirmed.includes(a)) {
       const done = !pend.has(a);
       s += `<g class="pill ${done ? "done" : ""}" data-act="confirm" data-atom="${esc(a)}" transform="translate(${NW - 92},${-24})"><rect width="88" height="19"/>` +
@@ -1048,10 +1111,12 @@ function renderGraph(i) {
       '<code>graphs.json</code> next to this page. Open the page through a web server (any static host, or <code>python -m http.server</code> in this folder).</p>'; });
     return;
   }
-  const howto = `<details class="howto"><summary>Read left to right: facts, tests, exceptions, effect, conclusion. <b>?</b></summary>` +
-    `<p>Colour shows the kind of step; the outline shows its value (solid true, dashed and struck through false, amber unknown). Ringed clause facts are key: another value would change the answer. ` +
-    `Select a clause fact to see its clause. Arrow keys move along the trace, Enter opens the clause, Esc closes it.</p></details>`;
+  const howto = `<details class="howto"><summary>Read left to right: deal and clause, tests, exceptions, effect, result. <b>?</b></summary>` +
+    `<p>Arrows point from cause to result. A ring on a line is an exception: open, it did not apply and the path goes on; red with a cross, it applied and the path stops. ` +
+    `A greyed test with ✗ failed. A heavy line comes from the fact that decides the answer; a ringed clause fact is key, because another value would change the answer. ` +
+    `Click a box to light its causes and its results; click again or press Esc to clear. Arrow keys move along the trace, Enter opens the clause.</p></details>`;
   const hadFocus = el.contains(document.activeElement) && document.activeElement.classList.contains("rg-scroll");
+  const was = el.querySelector(".rg-scroll"), scroll = was ? [was.scrollLeft, was.scrollTop] : null;
   const {svg, hidden} = svgHtml(g), [, qc] = qualifier(g), r = g.row;
   const sel = g.sel && steps(g).find(s => s.id === g.sel);
   const others = D.scenarios.filter(s => s.id !== g.sc && otherRow(g, s.id));
@@ -1074,6 +1139,7 @@ function renderGraph(i) {
   if (rx) rx.innerHTML = rxHtml(r, g.k, g.flip && !g.diff ? r.flips[g.flip.p].intervals[g.flip.i] : null);
   const fl = document.getElementById("fl-" + i);
   if (fl) fl.innerHTML = g.diff || !r.flips.length ? "" : `<h3>What would change this answer</h3>` + flipHtml(g);
+  if (scroll) { const now = el.querySelector(".rg-scroll"); now.scrollLeft = scroll[0]; now.scrollTop = scroll[1]; }
   if (hadFocus) el.querySelector(".rg-scroll").focus({preventScroll: true});
   connect(el, g);
 }
@@ -1095,14 +1161,15 @@ function graphEvents(i) {
     const t = e.target.closest("[data-act],[data-node]");
     if (!t || !e.currentTarget.contains(t)) return;
     const a = t.dataset.act;
-    if (e.type === "click" && t.dataset.node && !a) { g.sel = g.sel === t.dataset.node ? null : t.dataset.node; return renderGraph(i); }
+    if (e.type === "click" && t.dataset.node && !a) { g.sel = g.trace = g.sel === t.dataset.node ? null : t.dataset.node; return renderGraph(i); }
     if (e.type === "click" && a === "play") {
       if (g.timer) stopPlay(g);
       else { if (g.step >= g.n) g.step = 0;
+        g.trace = null;
         g.timer = setInterval(() => { g.step++; if (g.step >= g.n) stopPlay(g); g.sel = g.order[g.step - 1] || null; renderGraph(i); }, REDUCED.matches ? 900 : 600); }
       return renderGraph(i);
     }
-    if (a === "scrub" && e.type === "input") { stopPlay(g); g.step = +t.value; g.sel = g.order[g.step - 1] || null; return renderGraph(i); }
+    if (a === "scrub" && e.type === "input") { stopPlay(g); g.step = +t.value; g.trace = null; g.sel = g.order[g.step - 1] || null; return renderGraph(i); }
     if (a === "all" && e.type === "change") { g.showAll = t.checked; g.step = null; return renderGraph(i); }
     if (a === "diff" && e.type === "change") { g.diff = t.value; g.branch = null; g.flip = null; g.step = null; g.sel = null; return renderGraph(i); }
     if (a === "flip" && e.type === "input") { g.flip = {p: +t.dataset.p, i: +t.value}; g.branch = null; g.step = null; return renderGraph(i); }
@@ -1120,17 +1187,18 @@ function graphEvents(i) {
   };
   [document.getElementById("rw-" + i), document.getElementById("fl-" + i)].filter(Boolean)
     .forEach(w => ["click", "input", "change"].forEach(type => w.addEventListener(type, act)));
-  el.addEventListener("keydown", e => {
-    if (!e.target.classList.contains("rg-scroll")) return;
-    const k = e.key, pos = g.order.indexOf(g.sel);
-    if (["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"].includes(k)) {
-      e.preventDefault(); stopPlay(g);
-      const nxt = k === "ArrowRight" || k === "ArrowDown" ? Math.min(g.n - 1, pos + 1) : Math.max(0, pos < 0 ? 0 : pos - 1);
-      g.sel = g.order[nxt]; g.step = Math.max(g.step, nxt + 1); renderGraph(i);
-      const n = el.querySelector(`[data-node="${CSS.escape(g.sel)}"]`); if (n) n.scrollIntoView({block: "nearest", inline: "nearest"});
-    } else if (k === "Enter" && g.sel) { e.preventDefault(); const q = el.querySelector("[data-quote]"); if (q) { q.setAttribute("tabindex", "-1"); q.focus(); } }
-    else if (k === "Escape" && g.sel) { e.stopPropagation(); g.sel = null; renderGraph(i); }
-  });
+  el.addEventListener("keydown", e => { if (e.target.classList.contains("rg-scroll")) graphKey(e, g, () => renderGraph(i), el); });
+}
+// Arrow keys move along the trace and light its causes and results; Enter opens the clause; Esc clears.
+function graphKey(e, g, redraw, el) {
+  const k = e.key, pos = g.order.indexOf(g.sel);
+  if (["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"].includes(k)) {
+    e.preventDefault(); stopPlay(g);
+    const nxt = k === "ArrowRight" || k === "ArrowDown" ? Math.min(g.n - 1, pos + 1) : Math.max(0, pos < 0 ? 0 : pos - 1);
+    g.sel = g.trace = g.order[nxt]; g.step = Math.max(g.step, nxt + 1); redraw();
+    const n = el.querySelector(`[data-node="${CSS.escape(g.sel)}"]`); if (n) n.scrollIntoView({block: "nearest", inline: "nearest"});
+  } else if (k === "Enter" && g.sel) { e.preventDefault(); const q = el.querySelector("[data-quote]"); if (q) { q.setAttribute("tabindex", "-1"); q.focus(); } }
+  else if (k === "Escape" && g.sel) { e.stopPropagation(); g.sel = g.trace = null; redraw(); }
 }
 function mountGraphs(id, k, rows) {
   GV.forEach(stopPlay);
@@ -1372,6 +1440,25 @@ function hdQuote(sn, cap, off) {
   }
   return `<blockquote><span class="cap">${esc(cap)}</span>${h + esc(sn.text.slice(at))}</blockquote>`;
 }
+// The decision path: the questions a lawyer asks, in order, read from the run's trace (D.how.runs[].path). Nothing is decided here.
+const wyAns = (yes, note) => `<span class="wy-pill ${yes ? "yes" : "no"}">${yes ? "Yes" : "No"}</span>${note ? " · " + esc(note) : ""}`;
+function wyHtml(p) {
+  const row = (parts, cls, body) => `<li class="wy-q ${cls}" data-parts="${parts.join(" ")}" tabindex="0">${body}</li>`;
+  let h = `<section class="hd-col wy" aria-label="Why"><h2>Why</h2><ol class="wy-steps">`;
+  p.tests.forEach((q, i) => {
+    if (i) h += `<li class="wy-or" aria-hidden="true">or</li>`;
+    h += q.role === "also" ? row([q.part], "also", `<div class="wy-alt">${esc(q.also)}</div>`) :
+      row([q.part], q.role, `<div class="wy-ask">${esc(q.q)}</div><div class="wy-a">${wyAns(q.yes, q.note)}${q.role ? '<span class="wy-tag">This decides it</span>' : ""}</div>` +
+        (q.alt ? `<div class="wy-alt">${esc(q.alt)}</div>` : ""));
+  });
+  const x = p.exception, v = p.verdict;
+  h += row([x.part], "exc", `<div class="wy-ask">${esc(x.q)}</div><div class="wy-a">${wyAns(x.yes, x.note)}</div><div class="wy-alt">${esc(x.sub)}</div>`) +
+    `<li class="wy-v">${esc(v.pre)}<b>${esc(v.em)}</b>${esc(v.post)}</li></ol>`;
+  if (p.boxes.length) h += `<div class="wy-boxes">` + p.boxes.map(b => `<article class="wy-box k-${b.kind} ${b.off ? "off" : ""}" data-parts="${b.part}" tabindex="0"><h3>${esc(b.head)}</h3>` +
+    (b.cond ? `<p class="wy-cond" data-parts="${b.cond.part} ${b.part}" tabindex="0">${esc(b.cond.q)} ${wyAns(b.cond.yes, "")} → ${esc(b.cond.note)}</p>` : `<p class="wy-cond">${esc(b.note)}</p>`) +
+    `<p class="wy-res">${esc(b.result)}</p>${b.calc ? `<p class="wy-alt">${esc(b.calc)}</p>` : ""}</article>`).join("") + `</div>`;
+  return h + `<p class="wy-sum">${esc(p.summary)}</p></section>`;
+}
 function renderDecide() {
   const H = D.how, run = H.runs[hdSc], line = hdLineOf(), off = p => !run.lit[line[p]], v = document.getElementById("view-decide");
   const mp = D.decide.find(x => x.ak === "cuad:mPhase"), caps = ["The definition", "The right to end the agreement", "The duty to notify"];
@@ -1387,8 +1474,8 @@ function renderDecide() {
     `<p class="note hd-same">Same inputs, same answer, every time.</p></div>` +
     `<section class="hd-col hd-answer" aria-label="The answer" aria-live="polite"><h2>The answer</h2><p class="note hd-ctx">${esc(run.label)}</p>` +
     run.answer.map(a => `<p class="hd-ans c-${HD_CLS[a.kind]}">${esc(a.text)}</p>`).join("") +
-    (run.why ? `<p class="hd-why">${esc(run.why)}</p>` : "") + `</section></div>` +
-    `<details class="hd-graph" ${hdOpen ? "open" : ""}><summary>Show reasoning graph</summary><p class="note">Read from left to right: what happened, the tests, the exception, the effect, the conclusion.</p><div id="hd-graph"></div></details>` +
+    `</section></div>` + wyHtml(run.path) +
+    `<details class="hd-graph" ${hdOpen ? "open" : ""}><summary>Show reasoning graph</summary><p class="note">Read from left to right: the deal and the clause, the tests, the exception, the effect, the result.</p><div id="hd-graph"></div></details>` +
     `<p class="hd-foot">Some clauses need a lawyer’s reading. When a contract says “a significant change”, the system does not guess; it plans for the stricter reading and flags it — see ` +
     `<button class="linkbtn" data-why="${esc(mp.sc + "|" + AG[mp.ak].versions[0])}">${esc(AG[mp.ak].name)}</button>.</p>`;
   hdDone = true;
@@ -1398,6 +1485,8 @@ function renderDecide() {
   v.querySelectorAll(".hd-clause .pt").forEach(e => { const f = () => light([e.dataset.part], true), u = () => light([], false);
     e.onmouseenter = e.onfocus = f; e.onmouseleave = e.onblur = u; });
   v.querySelectorAll(".hd-rules li").forEach(e => { const ps = H.lines[+e.dataset.line].parts.map(p => p[1]).filter(Boolean), f = () => light(ps, true), u = () => light([], false);
+    e.onmouseenter = e.onfocus = f; e.onmouseleave = e.onblur = u; });
+  v.querySelectorAll(".wy [data-parts]").forEach(e => { const ps = e.dataset.parts.split(" "), f = () => light(ps, true), u = () => light([], false);
     e.onmouseenter = e.onfocus = f; e.onmouseleave = e.onblur = u; });
   const d = v.querySelector(".hd-graph");
   d.ontoggle = () => { hdOpen = d.open; if (hdOpen) hdGraph(); };
@@ -1411,17 +1500,26 @@ function hdGraph() {
   }
   if (!hdG || hdG.sc !== hdSc) {        // a new scenario starts a fresh graph; stop any play-through of the old one
     if (hdG) stopPlay(hdG);
-    hdG = {sc: hdSc, row: {status: "firm", atoms: [], unconfirmed: [], graph: D.how.runs[hdSc].graph}, branch: null, flip: null, diff: "",
-           step: null, showAll: false, sel: null, timer: null, order: [], n: 0};
+    hdG = {sc: hdSc, row: {status: "firm", atoms: [], unconfirmed: [], graph: D.how.runs[hdSc].graph, heavy: D.how.runs[hdSc].heavy}, branch: null, flip: null, diff: "",
+           step: null, showAll: false, sel: null, trace: null, timer: null, order: [], n: 0};
   }
   const g = hdG, refocus = document.activeElement && document.activeElement.hasAttribute("data-hdplay");
+  const was = el.querySelector(".rg-scroll"), scroll = was ? [was.scrollLeft, was.scrollTop] : null, hadFocus = was && was === document.activeElement;
   const {svg} = svgHtml(g);
   el.innerHTML = `<div class="rg-bar"><button class="plain" data-hdplay>${g.timer ? "❚❚ Pause" : "▶ Play through"}</button><span>Step ${g.step} of ${g.n}</span></div>` +
-    `<div class="rg-scroll" tabindex="0" role="group" aria-label="Reasoning graph for this deal">${svg}</div>`;
+    `<p class="note">Arrows point from cause to result. A ring on a line is an exception: open, it did not apply and the path goes on; red with a cross, it applied and the path stops. ` +
+    `A greyed test with ✗ failed. Click a box to light its causes and its results; click again or press Esc to clear.</p>` +
+    `<div class="rg-scroll" tabindex="0" role="group" aria-label="Reasoning graph for this deal. Arrow keys move along the trace; Escape clears.">${svg}</div>`;
+  const sc = el.querySelector(".rg-scroll");
+  if (scroll) { sc.scrollLeft = scroll[0]; sc.scrollTop = scroll[1]; }
+  if (hadFocus) sc.focus({preventScroll: true});
+  sc.onclick = e => { const n = e.target.closest("[data-node]"); if (!n) return; stopPlay(g); g.sel = g.trace = g.sel === n.dataset.node ? null : n.dataset.node; hdGraph(); };
+  sc.onkeydown = e => graphKey(e, g, hdGraph, el);
   const btn = el.querySelector("[data-hdplay]");
   btn.onclick = () => {
     if (g.timer) { stopPlay(g); return hdGraph(); }
     if (g.step >= g.n) g.step = 0;
+    g.sel = g.trace = null;
     g.timer = setInterval(() => {
       if (!document.getElementById("hd-graph") || hdG !== g) return stopPlay(g);      // the page or the scenario changed
       g.step++; if (g.step >= g.n) stopPlay(g); g.sel = g.order[g.step - 1] || null; hdGraph();

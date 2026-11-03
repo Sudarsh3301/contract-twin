@@ -1,0 +1,392 @@
+[
+ {
+  "name": "page_light_1440",
+  "hash": "decide",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 600
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('.wy').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/path_sell_light_1440.png"
+   },
+   {
+    "click": "[data-hd='1']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('.wy').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/path_ipo_light_1440.png"
+   },
+   {
+    "click": "[data-hd='2']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('.wy').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/path_agreed_light_1440.png"
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "click": ".hd-graph summary"
+   },
+   {
+    "wait": 600
+   },
+   {
+    "eval": "document.querySelector('#hd-graph [data-node=\"outcome:1\"]').dispatchEvent(new MouseEvent('click',{bubbles:true}))"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('#hd-graph').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/graph_clicked_light_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "page_light_390",
+  "hash": "decide",
+  "w": 390,
+  "h": 844,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 600
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('.wy').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/path_sell_light_390.png"
+   },
+   {
+    "click": "[data-hd='1']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('.wy').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/path_ipo_light_390.png"
+   },
+   {
+    "click": "[data-hd='2']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('.wy').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/path_agreed_light_390.png"
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "click": ".hd-graph summary"
+   },
+   {
+    "wait": 600
+   },
+   {
+    "eval": "document.querySelector('#hd-graph [data-node=\"outcome:1\"]').dispatchEvent(new MouseEvent('click',{bubbles:true}))"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('#hd-graph').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/graph_clicked_light_390.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_light",
+  "hash": "ev=sale_60|cuad:DynTek",
+  "w": 1440,
+  "h": 900,
+  "dark": false,
+  "steps": [
+   {
+    "wait": 800
+   },
+   {
+    "eval": "document.querySelector('#reasoning summary').click()"
+   },
+   {
+    "wait": 900
+   },
+   {
+    "eval": "const n=[...document.querySelectorAll('#rg-0 [data-node^=outcome]')].pop(); n.dispatchEvent(new MouseEvent('click',{bubbles:true}))"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('#rg-0').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/drawer_graph_clicked_light.png"
+   }
+  ]
+ },
+ {
+  "name": "page_dark_1440",
+  "hash": "decide",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 600
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('.wy').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/path_sell_dark_1440.png"
+   },
+   {
+    "click": "[data-hd='1']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('.wy').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/path_ipo_dark_1440.png"
+   },
+   {
+    "click": "[data-hd='2']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('.wy').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/path_agreed_dark_1440.png"
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "click": ".hd-graph summary"
+   },
+   {
+    "wait": 600
+   },
+   {
+    "eval": "document.querySelector('#hd-graph [data-node=\"outcome:1\"]').dispatchEvent(new MouseEvent('click',{bubbles:true}))"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('#hd-graph').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/graph_clicked_dark_1440.png"
+   }
+  ]
+ },
+ {
+  "name": "page_dark_390",
+  "hash": "decide",
+  "w": 390,
+  "h": 844,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 600
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('.wy').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/path_sell_dark_390.png"
+   },
+   {
+    "click": "[data-hd='1']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('.wy').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/path_ipo_dark_390.png"
+   },
+   {
+    "click": "[data-hd='2']"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('.wy').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/path_agreed_dark_390.png"
+   },
+   {
+    "click": "[data-hd='0']"
+   },
+   {
+    "click": ".hd-graph summary"
+   },
+   {
+    "wait": 600
+   },
+   {
+    "eval": "document.querySelector('#hd-graph [data-node=\"outcome:1\"]').dispatchEvent(new MouseEvent('click',{bubbles:true}))"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('#hd-graph').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/graph_clicked_dark_390.png"
+   }
+  ]
+ },
+ {
+  "name": "drawer_dark",
+  "hash": "ev=sale_60|cuad:DynTek",
+  "w": 1440,
+  "h": 900,
+  "dark": true,
+  "steps": [
+   {
+    "wait": 800
+   },
+   {
+    "eval": "document.querySelector('#reasoning summary').click()"
+   },
+   {
+    "wait": 900
+   },
+   {
+    "eval": "const n=[...document.querySelectorAll('#rg-0 [data-node^=outcome]')].pop(); n.dispatchEvent(new MouseEvent('click',{bubbles:true}))"
+   },
+   {
+    "wait": 300
+   },
+   {
+    "eval": "document.querySelector('#rg-0').scrollIntoView()"
+   },
+   {
+    "wait": 150
+   },
+   {
+    "shot": "t20/drawer_graph_clicked_dark.png"
+   }
+  ]
+ }
+]
