@@ -5,3 +5,6 @@ out/
 data/raw/
 *.sqlite
 .vercel
+
+tasks/
+CLAUDE.md
