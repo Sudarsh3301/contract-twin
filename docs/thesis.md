@@ -25,6 +25,36 @@ Each claim has a status. Built = in the code and measured. Partial = some eviden
 | C7 | Within the clause types covered, the check is exhaustive: every combination of fact values has a rule result. | Built | Full truth tables (15,552 rows) and metamorphic tests in `tests/test_rules.py`. |
 | C8 | A new or draft contract can be compiled and run through the event library before signing, to see what it would trigger. | Not built | Same pipeline; no draft stress-test yet. |
 | C9 | Hostile event sequences and alternative readings can be searched to find the worst case for a portfolio. | Not built | Design only. |
+| C10 | Reactions cascade across the portfolio: a termination or default in one contract becomes an event for the contracts that guarantee, cross-default to, or depend on it. | Not built | Needs a portfolio graph (see "Data structures"). |
+| C11 | A deal is described as primitive changes (share transfer, new parent, listing, date), so a new deal shape needs no new rules. | Partial | Events update one company state today; they are named, not decomposed. |
+| C12 | Each reaction has a lifecycle with a deadline (pending, given, missed), so a missed consent opens the next right on the right date. | Partial | Deadlines are computed; no lifecycle states yet. |
+
+## Data structures: keep the core, add layers
+
+The core stays: typed facts per clause type plus rules written by hand. It is a decision-table design, the same shape
+as standard financial contract types (ACTUS) and Accord templates. The closest published system, DACL, compiles
+contracts once into typed primitives and runs events on a deterministic engine: 99.5% on 400 events against 58-83%
+for frontier models reasoning over the full contract, with about 10x fewer tokens (arXiv 2605.02472; vendor paper,
+synthetic events, 4 contracts, no open-textured terms). Every published attempt to let a model write the rules or the
+logic directly scored about 45-83%, so the rules stay hand-written.
+
+Layers that add a capability, in order of value:
+
+1. Portfolio graph (C10): entities, contracts, control edges with percentages, guarantees, cross-defaults, references.
+   The rules run at each contract; an output becomes an event on linked contracts, breadth-first with a depth limit.
+   Control chains also answer "whose control" by code instead of by the model. Smallest version: a table of control,
+   guarantee and cross-default edges filled in by a person, plus the feedback loop; test on one group with a guarantor.
+2. Events as primitive changes (C11), as in the FINOS CDM event model: rules match primitives, not event names; each
+   run keeps the state before and after, for replay and diffs.
+3. Reaction lifecycle with deadlines (C12): a status and a deadline on each reaction; a date advance moves overdue
+   items to "missed" and opens what follows.
+Cheap side item: export the rules as decision tables a lawyer can read, and check them with a solver for gaps and
+overlaps (C7).
+
+Not worth it now: rewriting the core in a deontic or event-calculus language; letting a model write rules, Prolog or
+solver code; argumentation frameworks (no measured results on commercial contracts found); ontology alignment;
+probabilistic programs. No representation fixes the reading step: narrower typed questions with closed answers and a
+required cited span are the lever.
 
 ## Scope
 
@@ -120,6 +150,9 @@ Ideas that failed the test. One line each, with the claim they would serve if th
 
 ## Sources for the research pass
 
+DACL: https://arxiv.org/html/2605.02472v1 · FINOS CDM events: https://cdm.finos.org/docs/event-model ·
+L4 regulative rules: https://l4.legalese.com/reference/regulative-rules · Contract graph extraction: https://arxiv.org/html/2511.06618v1 ·
+LLM to Z3 faithfulness: https://arxiv.org/html/2606.16118 · DeonticBench: https://www.emergentmind.com/papers/2604.04443 ·
 Kim et al., Correlated Errors in LLMs, ICML 2025: https://arxiv.org/abs/2506.07962 ·
 Graus, ICAIL 2026: https://arxiv.org/html/2604.17153 · SARA formalisation: https://arxiv.org/html/2508.21051v3 ·
 Catala generation, NLLP 2025: https://aclanthology.org/2025.nllp-1.4/ · ExtractConf: https://arxiv.org/abs/2606.24420 ·
