@@ -497,6 +497,8 @@ def assemble(template, atoms, guard_hit=False):
         if k not in ok:
             bad.append(f"{k} is {atoms[k]['status']}")
     if template == "coc":
+        if atoms["carve_outs"]["status"] in ("unknown", "refers_to_missing"):     # an exception that may apply is not absent
+            bad.append(f"carve_outs is {atoms['carve_outs']['status']}")
         for k in ("whose", "threshold_pct", "competitor_threshold_pct", "threshold_op", "retained_holder", "retained_pct", "transaction_types", "carve_outs",
                   "open_texture", "definition_location", "post_ipo_threshold_pct"):
             if k in ok:
@@ -673,6 +675,8 @@ def _check():
     assert assemble("coc", atoms)["_unknown"], "missing whose/triggers must block the rules"
     fam = assemble("coc", {**atoms, "open_texture": {"status": "unknown", "value": None, "sids": [], "k_agree": 0}})
     assert "open_texture is unknown" in fam["_optional_unknown"] and "open_texture is unknown" not in fam["_unknown"]
+    fam = assemble("coc", {**atoms, "carve_outs": {"status": "unknown", "value": None, "sids": [], "k_agree": 0}})
+    assert "carve_outs is unknown" in fam["_unknown"] and "carve_outs is unknown" not in fam.get("_optional_unknown", [])
     assert assemble("coc", {**atoms, "present": {"status": "known", "value": "no", "sids": [1], "k_agree": 3}}) is None
     assert {(60.0, "days"), (3.0, "business_days"), (6.0, "months")} <= periods("within sixty (60) days, three (3) Business Days or 6 months")
     eff = lambda h, n, u, c=False: {"effect": "termination_right", "effect_holder": h, "notice_n": n, "notice_unit": u, "unless_consented": c}
