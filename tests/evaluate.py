@@ -434,7 +434,7 @@ def html(bs):
             "h1{font-size:1.7rem}h2{font-size:1.2rem;margin-top:2rem;border-top:1px solid var(--ln);padding-top:1rem}.t{overflow-x:auto}"
             "table{border-collapse:collapse;margin:.5rem 0;font-size:.92rem}th,td{border:1px solid var(--ln);padding:.3rem .6rem;text-align:left;vertical-align:top}"
             "code,pre{font:.88rem ui-monospace,monospace}pre{overflow-x:auto;border:1px solid var(--ln);padding:.7rem}footer{color:var(--mu);font-size:.85rem;margin-top:2rem}"
-            "a{color:inherit}</style></head><body><main><p><a href=index.html>&larr; Back to the demo</a></p>" + "".join(body) +
+            "a{color:inherit}</style><script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script><script defer src=\"/_vercel/insights/script.js\"></script></head><body><main><p><a href=index.html>&larr; Back to the demo</a></p>" + "".join(body) +
             f"<footer>{foot}</footer></main></body></html>\n")
 
 

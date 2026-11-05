@@ -193,6 +193,7 @@ table.atoms { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6
 .act button { grid-row: 1 / span 2; grid-column: 3; }
 .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; padding: 1px 8px; border-radius: 12px; border: 1px solid var(--c); color: var(--c); background: var(--cbg); white-space: nowrap; }
 .badge.plan { border-style: dashed; }
+.badge.firm { --c: var(--muted); --cbg: transparent; font-weight: 600; }
 .lang { font-size: 12px; font-weight: 700; border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; color: var(--muted); white-space: nowrap; }
 .why { display: grid; gap: 10px; margin-bottom: 14px; }
 .why h4 { margin: 0 0 4px; font-size: 15px; }
@@ -254,7 +255,7 @@ svg.ripple { width: 100%; height: auto; max-width: 560px; background: var(--pane
 .strip3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 8px 0 0; }
 .dcard { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .dcard h3 { margin: 0; font-size: 16px; }
-.dcard blockquote { margin: 0; font-size: 14px; max-height: 9.5em; overflow: hidden; }
+.dcard blockquote { margin: 0; font-size: 14px; }
 .dcard ol { margin: 0; padding-left: 20px; font-size: 14px; }
 .dcard ol li { margin: 2px 0; }
 .dcard .go { margin-top: auto; align-self: flex-start; }
@@ -487,6 +488,15 @@ button.linkbtn:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (max-width: 899px) { .hd { grid-template-columns: minmax(0, 1fr); grid-template-areas: "clause" "rule" "btn" "answer"; } }
 </style>
+<script>
+window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+(function () {     // one page view per tab, deal and evidence view: the page navigates by its hash, which the script cannot see
+  const send = () => { const h = decodeURIComponent(location.hash.slice(1)) || "ripple";
+    window.va("pageview", {route: "/" + h.split(/[=@]/)[0], path: "/" + h.replace(/[=|@]/g, "/")}); };
+  addEventListener("hashchange", send); send();
+})();
+</script>
+<script defer src="/_vercel/insights/script.js" data-disable-auto-track="1"></script>
 </head>
 <body>
 <header>
@@ -514,7 +524,7 @@ button.linkbtn:focus-visible { outline: 2px solid var(--focus); outline-offset: 
 "use strict";
 const D = JSON.parse(document.getElementById("data").textContent);
 const TEMPLATE = {coc: "change of control", assign: "assignment", term: "term and renewal"};
-const STATUS = {firm: "Answered", provisional: "Worst case planned", blocked: "Open item"};
+const STATUS = {firm: "Firm", provisional: "Worst case planned", blocked: "Open item"};
 const WHY_LABEL = {missing_document: "Document missing", missing_fact: "Fact missing", check_extraction: "Check the extraction",
   legal_judgement: "A legal call", versions: "Language versions disagree", unclear: "Not yet clear"};
 const WHY_HELP = {missing_document: "The answer is in another document, or in a definition we do not have.",
@@ -606,7 +616,7 @@ function openTail(b) {
   if (o.counsel.length) parts.push(`${itemsOf(o.counsel.length, "question", "questions")} for counsel`);
   if (o.check.length) parts.push(`${itemsOf(o.check.length, "fact", "facts")} to check`);
   if (o.unreviewed.length) parts.push(`${o.unreviewed.length} not reviewed in this demo`);
-  return `${itemsOf(b.cant, "point", "points")} flagged for review`;
+  return `${itemsOf(b.cant, "agreement", "agreements")} wait on a point for review`;
 }
 function sentence(sc) {
   const b = S().brief[sc], g = b.groups, parts = [];
@@ -617,10 +627,10 @@ function sentence(sc) {
   if (g.notify) parts.push(`we must notify ${g.notify}`);
   if (g.other) parts.push(`${g.other} ${plural(g.other, "has", "have")} another effect (${b.other_kinds.map(k => KIND_WORD[k] || k).join(", ")})`);
   const nd = b.notify_due ? `we must give notice by ${fmtDate(b.notify_due)}` : "";
-  const wc = b.worst_counsel ? ` (${b.worst_counsel} for counsel to confirm)` : "";
+  const wc = b.worst_counsel ? ` (${b.worst_counsel} only on the stricter reading, for counsel to confirm)` : "";
   let s = `If ${esc(eventPhrase(sc))}: ` + (b.react ? `<b>${b.react} of ${b.agreements} agreements</b> react${wc} — ${esc(parts.join(", "))}.` : `<b>no agreement</b> is certain to react against us.`);
-  if (b.options) s += ` We hold a right to terminate ${b.options} ${plural(b.options, "agreement", "agreements")}.`;
-  if (b.more) s += ` They carry ${b.more} more ${plural(b.more, "effect", "effects")}${nd ? ", and " + nd : ""}.`;
+  if (b.options) s += ` ${b.options} more ${plural(b.options, "agreement lets", "agreements let")} us terminate.`;
+  if (b.more) s += ` ${b.more === 1 ? "One agreement carries a second effect" : `These agreements carry ${b.more} further effects`}${nd ? ", and " + nd : ""}.`;
   else if (nd) s += ` ${nd.charAt(0).toUpperCase() + nd.slice(1)}.`;
   if (b.cant) s += ` <a href="#openitems${sfx()}" data-jump="openitems">${esc(openTail(b))}</a>.`;
   return s + ` ${b.none} ${plural(b.none, "has", "have")} no reaction.`;
@@ -692,7 +702,7 @@ function cellHtml(id, k) {
   const cls = cell.sev ? cell.cls : blk ? "blocked" : "none";
   const main = cell.sev ? plainLabel(cell.labels[0]) : blk ? "Open item" : "no reaction";
   const more = cell.sev && cell.labels.length > 1 ? ` <span class="cz">+ ${esc(plainLabel(cell.labels.slice(1).join("; ")))}</span>` : "";
-  const tag = prov ? `plan for worst case · clears with ${cell.clears} ${plural(cell.clears, "fact", "facts")}` : blk ? (cell.sev ? "rest is open" : "") : "answered";
+  const tag = prov ? `plan for worst case · clears with ${cell.clears} ${plural(cell.clears, "fact", "facts")}` : blk ? (cell.sev ? "rest is open" : "") : "firm";
   const cz = cell.causes.map(c => `<span class="${c === "legal_judgement" ? "counsel" : ""}">${esc(D.cause_label[c])}</span>`).join(" · ");
   return `<td><button class="cell c-${cls} ${prov ? "prov" : ""} ${blk ? "blk" : ""} ${cell.pending ? "pending" : ""}" data-ev="${esc(id + "|" + k)}" ` +
     `aria-label="${esc(SC[id].name)}, ${esc(nm(k))}: ${esc(main)}, ${esc(STATUS[cell.status])}${cz ? ", " + esc(cell.causes.map(c => D.cause_label[c]).join(", ")) : ""}">` +
@@ -713,12 +723,12 @@ function renderMap() {
   h += `<div class="big"><b>${e.pending_outcomes}</b> pending outcomes rest on <b>${e.single_atom_confirmations}</b> unconfirmed atoms over ${e.clauses} clauses. ` +
     `They need <b>${e.cards}</b> reasoning-path cards instead of ${e.single_atom_confirmations} one-atom confirmations. <b>${st.questions.length}</b> atoms the model could not settle come first. ` +
     `Both lists start with what could cause the most harm.</div>`;
-  h += `<table class="counts"><tr><th>Event</th><th>Answered</th><th>Plan for worst case</th><th>Open items</th><th>Legal calls</th><th>Open facts</th><th>Pending outcomes</th><th>Material open</th></tr>` +
+  h += `<table class="counts"><tr><th>Event</th><th>Firm</th><th>Plan for worst case</th><th>Open items</th><th>Legal calls</th><th>Open facts</th><th>Pending outcomes</th><th>Material open</th></tr>` +
     D.scenarios.map(s => { const m = st.summaries[s.id];
       return `<tr><td>${esc(s.name)}</td><td>${m.firm}</td><td>${m.provisional}</td><td>${m.blocked}</td><td>${m.counsel}</td><td>${m.open_questions}</td><td>${m.pending}</td><td>${m.material_open}</td></tr>`; }).join("") +
     `</table><p class="note prose">Material open: open facts and cards whose worst answer in that event is a termination right, a prepayment or a consent. Counts here are per contract file and per clause, so a translation counts as its own file.</p>`;
   h += `<h2>Exposure map, per contract file</h2><div class="legend">${[["termination", "They may terminate"], ["prepayment", "They may demand prepayment"], ["consent", "Consent"], ["notice", "Notice"], ["deadline", "Deadline"], ["other", "Other effect"], ["blocked", "Open item"], ["none", "No reaction"]].map(([c, l]) => `<span class="chip c-${c}">${l}</span>`).join("")}` +
-    `<span>Solid edge: answered. Dashed edge: plan for worst case. Hatched: open item. Open because:</span>${causeChips(Object.keys(D.cause_label))}</div>`;
+    `<span>Solid edge: firm. Dashed edge: plan for worst case. Hatched: open item. Open because:</span>${causeChips(Object.keys(D.cause_label))}</div>`;
   h += `<div class="tools"><span>Click an event to sort contracts by it; click a contract to sort events by it. ${esc(sortNote)}</span><button class="plain" id="reset">Reset order</button></div>`;
   h += `<div class="tablewrap"><table class="map"><thead><tr><th class="corner">Contract file (our party)</th>` +
     colOrder.map(id => `<th scope="col"><button class="hbtn" data-col="${id}"><span class="nm">${esc(SC[id].name)}</span></button></th>`).join("") + `</tr></thead><tbody>`;
@@ -758,7 +768,7 @@ function answerOf(id, ak, k) {
 function rxHtml(r, k, iv) {
   const st = iv ? iv.status : r.status, rs = iv ? iv.rx : st === "firm" ? r.reactions : r.worst;
   const at = iv ? `<p class="note">At ${esc(fmtNum(iv.at, r.flips.find(f => f.intervals.includes(iv)).unit))} (picked on the slider):</p>` : "";
-  if (st === "firm") return at + `<dl class="kv">${reactionLines(rs, k)}</dl>` + (!iv && r.tried ? `<p class="note">Answered in every reading of the open ${plural(r.tried.length, "fact", "facts")} ` +
+  if (st === "firm") return at + `<dl class="kv">${reactionLines(rs, k)}</dl>` + (!iv && r.tried ? `<p class="note">Firm in every reading of the open ${plural(r.tried.length, "fact", "facts")} ` +
     `${r.tried.map(x => `<code>${esc(x)}</code>`).join(", ")}; the reason shows the first reading tried, not a compiled value.</p>` : "");
   if (st === "provisional") return at + `<p><b>Worst case for us:</b></p><dl class="kv">${reactionLines(rs, k)}</dl>` + (iv ? "" : `<p><b>Readings</b> (clears with ${r.clears} ${plural(r.clears, "fact", "facts")}):</p>` +
     `<ul class="branches">${r.branches.map(b => `<li><span class="chip c-${sevClass(b.sev)}">${esc(plainLabel(b.label))}</span> — ${esc(b.when)}</li>`).join("")}</ul>`);
@@ -827,7 +837,7 @@ function answerOpts(allowed) {
   return m ? m[0].split(" or ").map(x => wj(x.replace(/"/g, ""))).concat("Not stated") : null;
 }
 const plainAllowed = a => wj(a.replace(/^any list drawn from: /, "choose any that apply: ").replace(/^a list of effects: /, "choose the effects: "));
-const plainImpact = s => s.replace(/become firm/g, "become answered").replace(/none of (\d+) become firm/, "none of $1 becomes answered");
+const plainImpact = s => s.replace(/become firm/g, "become firm").replace(/none of (\d+) become firm/, "none of $1 becomes firm");
 const askOf = (t, a) => D.ask[`${t}|${a}`] || wj(a);
 function counselItems(sc) {
   const out = [];
@@ -976,7 +986,7 @@ function qualifier(g) {
   if (r.status === "provisional") return ["Worst case planned", "plan"];
   const c = Object.entries(corrected).find(([key]) => key.startsWith(ck(g, "")));
   if (c) return [`Corrected (simulated): ${c[1].label}`, "notice"];
-  return pendingAtoms(g).length ? ["Answered · not yet fully confirmed", "clear"] : ["Answered", "clear"];
+  return pendingAtoms(g).length ? ["Firm · not yet fully confirmed", "clear"] : ["Firm", "clear"];
 }
 function ring(g) {
   const lb = lbAtoms(g), total = lb.size, done = total - pendingAtoms(g).length, f = total ? done / total : 1, C = 2 * Math.PI * 8;
@@ -1230,25 +1240,25 @@ const usd = v => v >= 1000 ? "$" + Math.round(v).toLocaleString("en-US") : "$" +
 const perAgreement = st => st.effort.cards / agKeys.length;       // reasoning-path cards (one card = the facts behind one clause, confirmed together)
 function proofsHtml() {
   const p = D.proof, rt = D.runtime, a0 = D.states.compiled.automation, secs = rt.median_ms ? (rt.median_ms / 1000).toFixed(1) : "";
-  return `<p class="lead">Pick a deal and see, in seconds, every contract that reacts, with the clause quoted.</p><div class="proofs">` +
-    `<div class="c-clear"><b>Stays on your servers</b>Built on open AI models you can run in-house — no contract has to leave the building.</div>` +
-    `<div class="c-notice"><b>Same answer every time</b>Every answer quotes its clause. Where a clause is unclear, it plans for the stricter reading and flags it.<span class="sm">${p.wrong_firm} wrong answers on ${p.cases} test cases.</span></div>` +
+  return `<p class="lead">Pick a deal and see, in seconds, every contract that reacts, with the clause quoted. Shown here on ${agKeys.length} public contracts, treated as in force.</p><div class="proofs">` +
+        `<div class="c-notice"><b>Same deal, same answer</b>Each contract is read once; fixed rules then decide every deal and quote the clause. Unclear points go to counsel.<span class="sm">${p.wrong_firm} wrong answers on our ${p.cases} test cases; ${p.sent_to_person} sent to counsel.</span></div>` +
     `<div class="c-deadline"><b>Read once, run every deal</b>Reading a contract costs about ${Math.round(D.scale.compile_per_contract_usd * 100)} cents, once. After that the whole portfolio re-runs in ${secs} s.<span class="sm">${DEALS.length} deals × ${agKeys.length} agreements on this page.</span></div>` +
-    `<div class="c-consent"><b>About ${Math.round(perAgreement(D.states.compiled))} checks per contract</b>A lawyer confirms about ${Math.round(perAgreement(D.states.compiled))} points per agreement, once, with the clause on screen. Every later deal reuses them.</div></div>`;
+    `<div class="c-consent"><b>About ${Math.round(perAgreement(D.states.compiled))} checks per contract</b>Leaves about ${Math.round(perAgreement(D.states.compiled))} points per agreement for a lawyer to confirm, once, with the clause on screen. Every later deal reuses them.</div>` +
+    `<div class="c-clear"><b>Open models</b>Built on open-weight AI models, which can be hosted on your own servers.</div></div>`;
 }
 function effortHtml() {
   const c = D.states.compiled, r = D.states.review, a = c.automation, n = agKeys.length, now = D.states[stateName];
   const sw = `<div class="seg" role="group" aria-label="Review state">` + [["compiled", "Before review"], ["review", "After review (demo)"]].map(([k, l]) =>
     `<button data-state="${k}" aria-pressed="${k === stateName}" ${D.states[k] ? "" : "disabled"}>${l}</button>`).join("") + `</div>`;
-  return `<section class="panel acard" id="p-effort"><h2>Review effort</h2><div class="effort"><div><p>Before any review, <b>${a.answered} of ${a.total}</b> answers (one per agreement per deal) are already settled. ` +
+  return `<section class="panel acard" id="p-effort"><h2>Review effort</h2><div class="effort"><div><p>Before any review, <b>${a.answered} of ${a.total}</b> answers (one per agreement per deal) are already firm. ` +
     `A lawyer then confirms about <b>${Math.round(perAgreement(c))}</b> checks per agreement (${c.effort.cards} checks over ${n} agreements), once, with the clause on screen; every later deal reuses those answers.</p>` +
-    (r ? `<p class="note">${stateName === "review" ? `After review: ${now.automation.answered} of ${now.automation.total} answered.` :
+    (r ? `<p class="note">${stateName === "review" ? `After review: ${now.automation.answered} of ${now.automation.total} firm.` :
       `Switch to “After review” to see what a reviewer adds.`}</p>` : "") + `</div>${sw}</div></section>`;
 }
 function testedHtml() {
   const sc = D.scale, same = D.proof.cases - +sc.status_same.split("/")[0];
   return `<section class="panel" id="p-test"><h2>How we tested</h2><p>Compile about ${usd(sc.compile_per_contract_usd)} per contract once; every later deal costs nothing.</p>` +
-    `<p class="note prose">Asked the same question 3 times, an AI model changed its answer on ${same} of ${D.proof.cases} cases. This tool never did. <a href="results.html">Full results</a>.</p></section>`;
+    `<p class="note prose">Asked the same question 3 times, an AI model changed its answer on ${same} of ${D.proof.cases} cases. Once a contract is read, this tool gives the same answer every time. <a href="results.html">Full results</a>.</p></section>`;
 }
 
 // ---------------- three panels ----------------
@@ -1268,7 +1278,7 @@ let readPick = 0;
 function panelReading() {
   const R = D.reading, o = R.options[readPick], q = R.quote, at = q.indexOf("(e) is subject");
   const short = q.slice(at);
-  return `<section class="panel" id="p-read"><h2>You choose the reading; the twin applies it to every deal</h2>` +
+  return `<section class="panel" id="p-read"><h2>You choose the reading; the tool applies it to every deal</h2>` +
     `<p class="prose"><b><bdi>${esc(R.name)}</bdi></b> ${esc(R.type)}, clause ${esc(R.clause)}:</p><blockquote dir="auto">… ${esc(short)}</blockquote>` +
     `<p class="note prose">The contract does not define change of control. Before review this question is open. Pick what it means here.</p>` +
     `<div class="rbtns" role="group" aria-label="Reading of change of control">${R.options.map((x, i) => `<button data-read="${i}" aria-pressed="${i === readPick}">${esc(x.label)}</button>`).join("")}</div>` +
@@ -1289,7 +1299,7 @@ function panelLLM() {
   const c = D.llm.cases.find(x => x.id === "N06");
   if (!c) return "";
   const n = new Set(c.runs.map(x => llmAnswer(x))).size;
-  return `<section class="panel" id="p-llm"><h2>Same answer every time</h2><p class="note prose">Asked the same question three times, an AI model gave ${n} different answers. This tool gives one, every time.</p><div class="cases">` +
+  return `<section class="panel" id="p-llm"><h2>Same deal, same answer</h2><p class="note prose">Asked the same question three times, an AI model gave ${n} different answers. This tool gives one, every time.</p><div class="cases">` +
     `<div class="case"><h3>${esc(c.title)}</h3>` +
     Object.values(c.quotes).map(t => `<blockquote dir="auto">${esc(t)}</blockquote>`).join("") +
     `<div class="twinbox"><b>This tool, every time:</b> Notice due ${esc(fmtDate(c.twin.due))}</div>` +
@@ -1302,7 +1312,7 @@ const byName = (x, z) => AG[x[0]].name.localeCompare(AG[z[0]].name);
 const earliest = a => a.effects.map(e => e.due).filter(Boolean).sort()[0] || "9999";
 function actRow(sc, ak, a) {
   const plan = a.status !== "firm", e = a.effects[0];
-  return `<li class="act c-${GCLS[a.group]}"><span class="st"><span class="badge ${plan ? "plan c-plan" : "c-clear"}">${a.counsel_wc ? "Counsel to confirm" : plan ? "▲ Plan for worst case" : "✓ Answered"}</span></span>` +
+  return `<li class="act c-${GCLS[a.group]}"><span class="st"><span class="badge ${plan ? "plan c-plan" : "firm"}">${a.counsel_wc ? "Counsel to confirm" : plan ? "▲ Plan for worst case" : "Firm"}</span></span>` +
     `<div class="what"><bdi>${esc(compose(a.effects, AG[ak].name))}</bdi>${plan && !a.counsel_wc ? " (worst case)" : ""}.</div>` +
     `<div class="meta">${esc(AG[ak].type)}${e.ref ? " · " + esc(clauseWord(e.ref)) : ""} ${langMark(ak, a)}</div>` +
     `<button class="plain" data-why="${esc(sc + "|" + ak)}" aria-label="Why: ${esc(AG[ak].name)}">Why?</button></li>`;
@@ -1345,7 +1355,7 @@ function shapeSvg(shape, r) {
   return shape === "clear" ? `<circle class="shape" r="${r}"/>` :
     `<polygon class="shape" points="0,${-r * 1.2} ${r * 1.1},${r * .85} ${-r * 1.1},${r * .85}"/>`;
 }
-const MARK = {clear: "✓", plan: "!"}, SHAPE_WORD = {clear: "Answered", plan: "Worst case planned"};
+const MARK = {clear: "✓", plan: "!"}, SHAPE_WORD = {clear: "Firm", plan: "Worst case planned"};
 function nodesFor(sc) {        // the agreements that react; open items are one group of their own
   const cs = S().acells[sc], out = [], by = f => Object.entries(cs).filter(([, a]) => f(a)).sort(byName);
   for (const g of GROUPS) by(a => a.group === g && !a.cant).forEach(([ak, a]) => out.push({ak, a, group: g, cls: GCLS[g], shape: a.status === "firm" ? "clear" : "plan"}));
@@ -1441,7 +1451,7 @@ function decideHtml() {
       const kinds = ks => r.why.filter(w => ks.includes(w[0])).map(w => w[1]).join(" ");
       const last = kinds(["effect", "result"]) + (a && a.counsel_wc ? ` Worst case: ${compose(a.effects, AG[c.ak].name)}.` : "");
       return `<div class="dcard"><h3><bdi>${esc(AG[c.ak].name)}</bdi> · ${esc(chipLabel(c.sc, true))}</h3><p class="note">${esc(c.title)}</p>` +
-        (sid !== undefined ? `<blockquote dir="auto">${highlight(excerpt(D.sentences[k][sid], toks), toks)}</blockquote>` : "") +
+        (sid !== undefined ? `<blockquote dir="auto">${highlight(excerpt(D.sentences[k][sid], toks, 440), toks)}</blockquote>` : "") +
         `<ol><li>${esc(cap1(eventPhrase(c.sc)) + ".")}</li><li>${esc(kinds(["test", "exception"]))}</li><li>${esc(last)}</li></ol>` +
         `<button class="plain go" data-why="${esc(c.sc + "|" + k)}" aria-label="Open ${esc(AG[c.ak].name)}">Open</button></div>`;
     }).join("") + `</div></section>`;

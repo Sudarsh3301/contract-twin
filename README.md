@@ -1,20 +1,29 @@
 # Contract twin
 
-A proof of concept for running "what if" events over a whole contract portfolio, deterministically, on open-weight
-models that can be self-hosted.
+**Run a deal against every contract.** Pick an event (sell 60% of the company, list it, put a new parent above it)
+and see which agreements need consent, which counterparties may terminate and which notices fall due, each with the
+clause quoted.
 
-Ask: *"If 60% of our shares are sold, or we list, or we insert a holding company, or the clock moves 90 days — which
-contracts need consent, which need notice, who can terminate, which deadlines start?"* Get each answer with the
-clause text that caused it, the same answer every run, and an explicit **NEEDS_LAWYER** wherever the text leaves a
-real question open.
+<a href="https://contract-twin.vercel.app"><picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/demo-dark.png">
+  <img alt="The live demo: pick a deal and see every agreement that reacts, with the clause quoted" src="docs/img/demo-light.png">
+</picture></a>
 
-**Live demo:** https://contract-twin.vercel.app (static; every outcome precomputed, no model is called by the page) · results and limits: https://contract-twin.vercel.app/results.html
+**[Open the live demo](https://contract-twin.vercel.app)**
 
-Not legal advice. Outputs say "clause X is potentially triggered under reading Y". Nothing here is lawyer-reviewed.
+- **Same deal, same answer.** Each contract is read once; fixed rules then decide every deal and quote the clause.
+  0 wrong answers on our 37 test cases; 9 sent to counsel instead.
+- **Read once, run every deal.** Reading a contract costs about 3 cents. After that, a new deal across the whole
+  portfolio needs no AI call.
+- **About 3 checks per contract.** What the text leaves open becomes a short list of points for a lawyer to confirm,
+  once, with the clause on screen.
+- **Open models.** Built on open-weight AI models, which can be hosted on your own servers.
+
+Proof of concept · not legal advice · not lawyer-reviewed · [how we tested](https://contract-twin.vercel.app/results.html)
 
 ## How it works
 ```
-contract text ─► ingest ─► compile (open LLM, once) ─► atoms ─► rules (Python, reviewed) ─► reactions + evidence
+contract text ─► ingest ─► compile (open LLM, once) ─► atoms ─► rules (Python, by hand) ─► reactions + evidence
                  sentences    typed answers + cited       │        three-valued logic            ▲
                  + offsets    sentence ids, checked       │                                      │
                                                          events (share sale, IPO, holding insertion, date)
@@ -33,7 +42,7 @@ contract text ─► ingest ─► compile (open LLM, once) ─► atoms ─► 
    decided per contract. Running a new scenario needs no model call.
 
 Why this split: open models are weak at writing legal logic themselves but strong at answering narrow questions
-inside reviewed logic; the model is never asked what a contract "does".
+inside hand-written logic; the model is never asked what a contract "does".
 
 ## Data
 | Set | What | Source / licence |
@@ -41,7 +50,7 @@ inside reviewed logic; the model is never asked what a contract "does".
 | `data/curated/cuad/` | 27 real commercial contracts (22 with change-of-control, anti-assignment and renewal labels; 5 mentioning an IPO) | CUAD v1, The Atticus Project, CC BY 4.0 |
 | `data/curated/edgar/` | 3 credit-agreement amendments with "Qualifying IPO" change-of-control definitions | SEC EDGAR public filings |
 | `data/curated/arabic/` | 8 Arabic texts: Dubai unified tenancy contract, 2 Saudi model contracts, 3 Arabic contracts written to mirror CUAD clauses, 2 machine translations | Government forms (no licence stated; public), own writing, Qwen translations |
-| `cases/scenario_cases.json` | 37 scenarios on real clauses with expected outcomes written before the rules | own |
+| `cases/scenario_cases.json` | 37 scenarios on real clauses with expected outcomes written before the rules (2 corrected after the blind check) | own |
 | `cases/gold_atoms*.json` | hand-labelled atoms per clause | own, not lawyer-reviewed |
 
 Two of the Saudi PDFs have a broken font map (about a third of the words come out garbled); they are kept as-is as a
@@ -76,7 +85,7 @@ Compilation needs an OpenRouter key in `.env` (never committed).
 
 ## Layout
 `twin/` code · `docs/catalogue.md` drafting variants and atom design · `cases/` scenarios, gold atoms, blind-check
-results · `data/curated/` inputs · `tests/` checks · `tasks/` work specs and reports for contributors · `out/` generated.
+results · `data/curated/` inputs · `tests/` checks · `tasks/` work specs and reports for contributors · `docs/img/` README pictures (`tools/media/screens.py`) · `out/` generated.
 
 ## Limits
 Proof of concept. Three clause types (change of control, assignment, term/renewal) and four event types. Direct
