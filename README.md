@@ -89,5 +89,10 @@ results · `data/curated/` inputs · `tests/` checks · `tasks/` work specs and 
 
 ## Limits
 Proof of concept. Three clause types (change of control, assignment, term/renewal) and four event types. Direct
-reactions only (no cascades). No lawyer has reviewed the rules, cases or labels. Arabic is checked for consistency
+reactions only (no cascades). The 33 agreements come from different companies; they are treated as one portfolio to
+show the sweep, not as one group's linked contracts (no guarantees, cross-defaults or parent chains yet). No lawyer has reviewed the rules, cases or labels. Arabic is checked for consistency
 with the English source, not for accuracy.
+
+## Licence
+Code: [MIT](LICENSE). Data keeps its source licence: CUAD contracts CC BY 4.0 (The Atticus Project); SEC EDGAR filings
+and Gulf government forms are public documents (see `data/curated/arabic/_index.json`). Not legal advice.
